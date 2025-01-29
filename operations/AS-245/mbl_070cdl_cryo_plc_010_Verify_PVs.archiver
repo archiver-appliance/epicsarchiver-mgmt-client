@@ -1,0 +1,111 @@
+# Permisive: lvl dec
+MBL-070Crm:SC-FSM-120:WU_4K_lvl_dec 1Hz
+# Permisive: lvl dec
+MBL-070Crm:SC-FSM-120:WU_300K_lvl_dec 1Hz
+MBL-070Crm:SC-FSM-120:PerT310 1Hz
+# Permisive for T505
+MBL-070Crm:SC-FSM-120:PerT505 1Hz
+# Permisive for T700
+MBL-070Crm:SC-FSM-120:PerT700 1Hz
+# Permisive for T712
+MBL-070Crm:SC-FSM-120:PerT712 1Hz
+# Permisive for T800
+MBL-070Crm:SC-FSM-120:PerT800 1Hz
+# Permisive Reserve9
+MBL-070Crm:SC-FSM-120:PerRes9 1Hz
+# Permisive Reserve10
+MBL-070Crm:SC-FSM-120:PerRes10 1Hz
+# Operation Mode Undefined
+MBL-070CDL:SC-FSM-300:OM_Undefined
+# Operation Mode Stopped
+MBL-070CDL:SC-FSM-300:OM_Stopped
+# Operation Mode Purging
+MBL-070CDL:SC-FSM-300:OM_Purging
+# Operation Mode Stand By 4K
+MBL-070CDL:SC-FSM-300:OM_Stand_by_4K
+# Operation Mode Stand By 2K
+MBL-070CDL:SC-FSM-300:OM_Stand_by_2K
+# Operation Mode Nominal 2K + RF
+MBL-070CDL:SC-FSM-300:OM_Nominal_2K_RF
+# Operation Mode Starting
+MBL-070CDL:SC-FSM-300:OM_Starting
+# Operation Mode Ready for RF
+MBL-070CDL:SC-FSM-300:OM_Ready_for_RF
+# Operation Mode RF_OFF
+MBL-070CDL:SC-FSM-300:OM_RF_OFF
+# Operation Mode Single CD 4K
+MBL-070CDL:SC-FSM-300:OM_S_CD_300-4K
+# Operation Mode Single CD 300K
+MBL-070CDL:SC-FSM-300:OM_S_CD_4-2K
+# Operation Mode Single WU 300K
+MBL-070CDL:SC-FSM-300:OM_S_WU_4-300K
+# Operation Mode Single WU 4K
+MBL-070CDL:SC-FSM-300:OM_S_WU_2-4K
+# Cryomodule ready for pumpdown
+MBL-070CDL:SC-FSM-300:Rdy_for_pumpdown
+# From ACCP pumpdown started
+MBL-070CDL:SC-FSM-300:Pumpdown_started
+# Ready for warmup to 4K
+MBL-070CDL:SC-FSM-300:Rdy_for_4K_WU
+# From ACCP WU 4K started
+MBL-070CDL:SC-FSM-300:WU_4K_started
+# Ready for warmup to 300K
+MBL-070CDL:SC-FSM-300:Rdy_for_300K_WU
+# From ACCP WU 300K started
+MBL-070CDL:SC-FSM-300:WU_300K_started
+# From MPLC decrease level
+MBL-070CDL:SC-FSM-300:WU_4K_lvl_dec
+# From MPLC decrease level
+MBL-070CDL:SC-FSM-300:WU_300K_lvl_dec
+# RF_ON
+MBL-070CDL:SC-FSM-300:RF_ON
+# OM number currently active
+MBL-070CDL:SC-FSM-300:OM_ACTIVE_NO
+# More steps available can shown in S_NO
+MBL-070CDL:SC-FSM-300:S_MORE
+# Semiauto. mode/step with trans. enabled
+MBL-070CDL:SC-FSM-300:TAP_ON
+# Semiauto. mode/ignore trans. enabled
+MBL-070CDL:SC-FSM-300:TOP_ON
+# Step is activated
+MBL-070CDL:SC-FSM-300:OM_Stopped:S1
+# interlock leaving state
+MBL-070CDL:SC-FSM-300:OM_Stopped:L1
+# Supervision entering state
+MBL-070CDL:SC-FSM-300:OM_Stopped:V1
+# Reserved
+MBL-070CDL:SC-FSM-300:OM_Stopped:R1
+# Error is acknowledged
+MBL-070CDL:SC-FSM-300:OM_Stopped:A1
+# Step is deactivated
+MBL-070CDL:SC-FSM-300:OM_Stopped:S0
+# Interlock entering state
+MBL-070CDL:SC-FSM-300:OM_Stopped:L0
+# Supervision leaving state
+MBL-070CDL:SC-FSM-300:OM_Stopped:V0
+# Step is active
+MBL-070CDL:SC-FSM-300:OM_Stopped:X
+# Interlock is not satisfied
+MBL-070CDL:SC-FSM-300:OM_Stopped:LA
+# Supervision active
+MBL-070CDL:SC-FSM-300:OM_Stopped:VA
+# Reserved
+MBL-070CDL:SC-FSM-300:OM_Stopped:RA
+# Reserved
+MBL-070CDL:SC-FSM-300:OM_Stopped:AA
+# System-internal
+MBL-070CDL:SC-FSM-300:OM_Stopped:SS
+# Result of the programmed intrlck
+MBL-070CDL:SC-FSM-300:OM_Stopped:LS
+# Result of the programmed supervision
+MBL-070CDL:SC-FSM-300:OM_Stopped:VS
+#  User step number
+MBL-070CDL:SC-FSM-300:OM_Stopped:SNO
+# Total step activation time
+MBL-070CDL:SC-FSM-300:OM_Stopped:T
+# Step activation time without disturbance
+MBL-070CDL:SC-FSM-300:OM_Stopped:U
+# Maximal step activation time
+MBL-070CDL:SC-FSM-300:OM_Stopped:T_M
+# Warning time
+MBL-070CDL:SC-FSM-300:OM_Stopped:T_W
