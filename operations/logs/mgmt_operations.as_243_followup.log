@@ -1,0 +1,95 @@
+2025-02-12 14:53:11,606 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 14:53:11,626 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas1_Name HTTP/1.1" 200 457
+2025-02-12 14:53:11,627 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 14:53:11,636 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 14:53:11,636 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas1_Name is ArchivingStatus.BeingArchived to HBL-010CDL:SC-PID-82304:Meas1_Name is ArchivingStatus.NotBeingArchived
+2025-02-12 14:53:11,636 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 14:53:11,645 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas2_Name HTTP/1.1" 200 457
+2025-02-12 14:53:11,645 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 14:53:11,652 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 14:53:11,652 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas2_Name is ArchivingStatus.BeingArchived to HBL-010CDL:SC-PID-82304:Meas2_Name is ArchivingStatus.NotBeingArchived
+2025-02-12 14:53:11,652 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 14:53:11,659 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas3_Name HTTP/1.1" 200 457
+2025-02-12 14:53:11,660 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 14:53:11,666 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 14:53:11,666 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas3_Name is ArchivingStatus.BeingArchived to HBL-010CDL:SC-PID-82304:Meas3_Name is ArchivingStatus.NotBeingArchived
+2025-02-12 15:04:00,310 - __main__ - INFO - Renaming HBL-010CDL:Cryo-PID-82304:Meas1_Name to HBL-010CDL:SC-PID-82304:Meas1_Name
+2025-02-12 15:04:00,313 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,318 - urllib3.connectionpool - DEBUG - Resetting dropped connection: archiver-linac-04.tn.esss.lu.se
+2025-02-12 15:04:00,347 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:04:00,348 - __main__ - INFO - New PV status: ArchivingStatus.NotBeingArchived
+2025-02-12 15:04:00,348 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,360 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas1_Name HTTP/1.1" 200 457
+2025-02-12 15:04:00,360 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,373 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:04:00,373 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-12 15:04:00,398 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas1_Name HTTP/1.1" 200 346
+2025-02-12 15:04:00,398 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/renamePV
+2025-02-12 15:04:00,504 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/renamePV?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas1_Name&newname=HBL-010CDL%3ASC-PID-82304%3AMeas1_Name HTTP/1.1" 200 124
+2025-02-12 15:04:00,505 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/resumeArchivingPV
+2025-02-12 15:04:00,561 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/resumeArchivingPV?pv=HBL-010CDL%3ASC-PID-82304%3AMeas1_Name HTTP/1.1" 200 182
+2025-02-12 15:04:00,561 - epicsarchiver.mgmt.archiver_mgmt_operations - DEBUG - PV HBL-010CDL:Cryo-PID-82304:Meas1_Name successfully renamed to HBL-010CDL:SC-PID-82304:Meas1_Name
+2025-02-12 15:04:00,561 - __main__ - INFO - Renamed HBL-010CDL:Cryo-PID-82304:Meas1_Name to HBL-010CDL:SC-PID-82304:Meas1_Name
+2025-02-12 15:04:00,561 - __main__ - INFO - Renaming HBL-010CDL:Cryo-PID-82304:Meas2_Name to HBL-010CDL:SC-PID-82304:Meas2_Name
+2025-02-12 15:04:00,561 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,572 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:04:00,572 - __main__ - INFO - New PV status: ArchivingStatus.NotBeingArchived
+2025-02-12 15:04:00,573 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,587 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas2_Name HTTP/1.1" 200 457
+2025-02-12 15:04:00,587 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,598 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:04:00,598 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-12 15:04:00,615 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas2_Name HTTP/1.1" 200 346
+2025-02-12 15:04:00,615 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/renamePV
+2025-02-12 15:04:00,821 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/renamePV?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas2_Name&newname=HBL-010CDL%3ASC-PID-82304%3AMeas2_Name HTTP/1.1" 200 124
+2025-02-12 15:04:00,821 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/resumeArchivingPV
+2025-02-12 15:04:00,841 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/resumeArchivingPV?pv=HBL-010CDL%3ASC-PID-82304%3AMeas2_Name HTTP/1.1" 200 182
+2025-02-12 15:04:00,841 - epicsarchiver.mgmt.archiver_mgmt_operations - DEBUG - PV HBL-010CDL:Cryo-PID-82304:Meas2_Name successfully renamed to HBL-010CDL:SC-PID-82304:Meas2_Name
+2025-02-12 15:04:00,841 - __main__ - INFO - Renamed HBL-010CDL:Cryo-PID-82304:Meas2_Name to HBL-010CDL:SC-PID-82304:Meas2_Name
+2025-02-12 15:04:00,841 - __main__ - INFO - Renaming HBL-010CDL:Cryo-PID-82304:Meas3_Name to HBL-010CDL:SC-PID-82304:Meas3_Name
+2025-02-12 15:04:00,841 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,855 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:04:00,855 - __main__ - INFO - New PV status: ArchivingStatus.NotBeingArchived
+2025-02-12 15:04:00,855 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,867 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas3_Name HTTP/1.1" 200 457
+2025-02-12 15:04:00,868 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:00,879 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:04:00,879 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-12 15:04:00,891 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas3_Name HTTP/1.1" 200 346
+2025-02-12 15:04:00,891 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/renamePV
+2025-02-12 15:04:01,063 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/renamePV?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas3_Name&newname=HBL-010CDL%3ASC-PID-82304%3AMeas3_Name HTTP/1.1" 200 124
+2025-02-12 15:04:01,063 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/resumeArchivingPV
+2025-02-12 15:04:01,082 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/resumeArchivingPV?pv=HBL-010CDL%3ASC-PID-82304%3AMeas3_Name HTTP/1.1" 200 182
+2025-02-12 15:04:01,082 - epicsarchiver.mgmt.archiver_mgmt_operations - DEBUG - PV HBL-010CDL:Cryo-PID-82304:Meas3_Name successfully renamed to HBL-010CDL:SC-PID-82304:Meas3_Name
+2025-02-12 15:04:01,082 - __main__ - INFO - Renamed HBL-010CDL:Cryo-PID-82304:Meas3_Name to HBL-010CDL:SC-PID-82304:Meas3_Name
+2025-02-12 15:04:02,494 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:02,507 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas1_Name HTTP/1.1" 200 155
+2025-02-12 15:04:02,507 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:02,528 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas1_Name HTTP/1.1" 200 381
+2025-02-12 15:04:02,528 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas1_Name is ArchivingStatus.Paused to HBL-010CDL:SC-PID-82304:Meas1_Name is ArchivingStatus.BeingArchived
+2025-02-12 15:04:02,528 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:02,542 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas2_Name HTTP/1.1" 200 155
+2025-02-12 15:04:02,542 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:02,554 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas2_Name HTTP/1.1" 200 381
+2025-02-12 15:04:02,554 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas2_Name is ArchivingStatus.Paused to HBL-010CDL:SC-PID-82304:Meas2_Name is ArchivingStatus.BeingArchived
+2025-02-12 15:04:02,554 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:02,565 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas3_Name HTTP/1.1" 200 155
+2025-02-12 15:04:02,565 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:02,582 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas3_Name HTTP/1.1" 200 381
+2025-02-12 15:04:02,582 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas3_Name is ArchivingStatus.Paused to HBL-010CDL:SC-PID-82304:Meas3_Name is ArchivingStatus.BeingArchived
+2025-02-12 15:04:25,381 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:25,386 - urllib3.connectionpool - DEBUG - Resetting dropped connection: archiver-linac-04.tn.esss.lu.se
+2025-02-12 15:04:25,406 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas1_Name HTTP/1.1" 200 155
+2025-02-12 15:04:25,407 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:25,416 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas1_Name HTTP/1.1" 200 381
+2025-02-12 15:04:25,416 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas1_Name is ArchivingStatus.Paused to HBL-010CDL:SC-PID-82304:Meas1_Name is ArchivingStatus.BeingArchived
+2025-02-12 15:04:25,416 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:25,429 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas2_Name HTTP/1.1" 200 155
+2025-02-12 15:04:25,429 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:25,440 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas2_Name HTTP/1.1" 200 381
+2025-02-12 15:04:25,440 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas2_Name is ArchivingStatus.Paused to HBL-010CDL:SC-PID-82304:Meas2_Name is ArchivingStatus.BeingArchived
+2025-02-12 15:04:25,440 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:25,452 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ACryo-PID-82304%3AMeas3_Name HTTP/1.1" 200 155
+2025-02-12 15:04:25,452 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:04:25,466 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-010CDL%3ASC-PID-82304%3AMeas3_Name HTTP/1.1" 200 381
+2025-02-12 15:04:25,466 - __main__ - INFO - from HBL-010CDL:Cryo-PID-82304:Meas3_Name is ArchivingStatus.Paused to HBL-010CDL:SC-PID-82304:Meas3_Name is ArchivingStatus.BeingArchived
