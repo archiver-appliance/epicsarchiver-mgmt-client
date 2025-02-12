@@ -1329,3 +1329,64 @@
 2025-02-12 15:47:35,534 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040Crm%3ACryo-PID-002%3AMeas3_Name HTTP/1.1" 200 429
 2025-02-12 15:47:35,535 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
 2025-02-12 15:47:35,548 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040Crm%3ASC-PID-002%3AFeedbackName3 HTTP/1.1" 200 430
+2025-02-12 15:48:38,145 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,151 - urllib3.connectionpool - DEBUG - Resetting dropped connection: archiver-linac-04.tn.esss.lu.se
+2025-02-12 15:48:38,227 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82603%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,228 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,239 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82603%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,240 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,251 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82603%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,251 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,263 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82604%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,264 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,276 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82604%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,276 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,288 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82604%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,288 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,299 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82605%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,299 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,311 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82605%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,311 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,322 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82605%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,323 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,334 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82606%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,334 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,346 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82606%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,347 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,357 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82606%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,357 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,368 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82660%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,368 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,380 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82660%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,380 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,392 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82660%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,393 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,406 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82661%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,406 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,418 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82661%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,418 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,427 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82661%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,428 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,438 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82662%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,438 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,449 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82662%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,449 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,461 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82662%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,462 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,474 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82663%3AMeas1_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,474 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,487 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82663%3AMeas2_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,488 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,498 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040CDL%3ASC-PID-82663%3AMeas3_Name HTTP/1.1" 200 86
+2025-02-12 15:48:38,498 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,511 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040Crm%3ASC-PID-001%3AMeas1_Name HTTP/1.1" 200 84
+2025-02-12 15:48:38,512 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,523 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040Crm%3ASC-PID-001%3AMeas2_Name HTTP/1.1" 200 84
+2025-02-12 15:48:38,523 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,533 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040Crm%3ASC-PID-001%3AMeas3_Name HTTP/1.1" 200 84
+2025-02-12 15:48:38,534 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,621 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040Crm%3ASC-PID-002%3AMeas1_Name HTTP/1.1" 200 84
+2025-02-12 15:48:38,621 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,632 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040Crm%3ASC-PID-002%3AMeas2_Name HTTP/1.1" 200 84
+2025-02-12 15:48:38,632 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-12 15:48:38,644 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=HBL-040Crm%3ASC-PID-002%3AMeas3_Name HTTP/1.1" 200 84
