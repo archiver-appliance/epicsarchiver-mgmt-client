@@ -1,0 +1,17 @@
+2025-02-28 14:17:53,437 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/getPVStatus
+2025-02-28 14:17:53,445 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): archiver-linac-04.tn.esss.lu.se:17665
+2025-02-28 14:17:53,485 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/getPVStatus?pv=TD-M%3ACtrl-SCE-1%3ADbuf-Sts-I&pv=TD-M%3ACtrl-SCE-1%3AScTable-Sts-I HTTP/1.1" 200 437
+2025-02-28 14:19:23,251 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 14:19:23,253 - urllib3.connectionpool - DEBUG - Resetting dropped connection: archiver-linac-04.tn.esss.lu.se
+2025-02-28 14:19:23,297 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=TD-M%3ACtrl-SCE-1%3ADbuf-Sts-I HTTP/1.1" 200 306
+2025-02-28 14:19:23,297 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 14:19:23,310 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=TD-M%3ACtrl-SCE-1%3AScTable-Sts-I HTTP/1.1" 200 318
+2025-02-28 14:19:39,927 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/deletePV
+2025-02-28 14:19:45,850 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/deletePV?pv=TD-M%3ACtrl-SCE-1%3ADbuf-Sts-I&delete_data=False HTTP/1.1" 200 539
+2025-02-28 14:19:45,851 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/deletePV
+2025-02-28 14:19:52,306 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/deletePV?pv=TD-M%3ACtrl-SCE-1%3AScTable-Sts-I&delete_data=False HTTP/1.1" 200 542
+2025-02-28 14:20:49,425 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/archivePV
+2025-02-28 14:20:49,427 - urllib3.connectionpool - DEBUG - Resetting dropped connection: archiver-linac-04.tn.esss.lu.se
+2025-02-28 14:20:51,718 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/archivePV?pv=pva%3A%2F%2FTD-M%3ACtrl-SCE-1%3ADbuf-Sts-I&appliance=archiver-linac-10 HTTP/1.1" 200 79
+2025-02-28 14:20:51,719 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/archivePV
+2025-02-28 14:20:51,731 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/archivePV?pv=pva%3A%2F%2FTD-M%3ACtrl-SCE-1%3AScTable-Sts-I&appliance=archiver-linac-10 HTTP/1.1" 200 82
