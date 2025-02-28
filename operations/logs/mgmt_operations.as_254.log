@@ -1,0 +1,57 @@
+2025-02-28 13:58:52,326 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,358 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): archiver-linac-04.tn.esss.lu.se:17665
+2025-02-28 13:58:52,451 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AFlowSP HTTP/1.1" 200 314
+2025-02-28 13:58:52,451 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,462 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AOpMode_Manual HTTP/1.1" 200 342
+2025-02-28 13:58:52,462 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,475 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AP_ForcePosition HTTP/1.1" 200 350
+2025-02-28 13:58:52,475 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,486 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ARAWValue HTTP/1.1" 200 322
+2025-02-28 13:58:52,486 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,503 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AST_Closed_Raw HTTP/1.1" 200 342
+2025-02-28 13:58:52,503 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,517 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AST_Opened_Raw HTTP/1.1" 200 342
+2025-02-28 13:58:52,517 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,528 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AActualFlow HTTP/1.1" 200 330
+2025-02-28 13:58:52,528 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,540 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AFlowMV HTTP/1.1" 200 314
+2025-02-28 13:58:52,540 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,550 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AMoveInterlock HTTP/1.1" 200 342
+2025-02-28 13:58:52,550 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,561 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AOpMode_Auto HTTP/1.1" 200 334
+2025-02-28 13:58:52,561 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,581 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AOpMode_Forced HTTP/1.1" 200 342
+2025-02-28 13:58:52,581 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,592 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AP_Manipulated HTTP/1.1" 200 342
+2025-02-28 13:58:52,593 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,604 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AP_RampDNRANGE HTTP/1.1" 200 342
+2025-02-28 13:58:52,604 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,616 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AP_RampDNTIME HTTP/1.1" 200 338
+2025-02-28 13:58:52,616 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,627 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AP_RampUPRANGE HTTP/1.1" 200 342
+2025-02-28 13:58:52,627 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,638 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AP_RampUPTIME HTTP/1.1" 200 338
+2025-02-28 13:58:52,638 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,648 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AP_Setpoint HTTP/1.1" 200 330
+2025-02-28 13:58:52,648 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,658 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AValveMV HTTP/1.1" 200 318
+2025-02-28 13:58:52,659 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,668 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AValvePosition HTTP/1.1" 200 342
+2025-02-28 13:58:52,668 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,679 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3AValveSP HTTP/1.1" 200 318
+2025-02-28 13:58:52,679 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,694 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ACmd_Auto HTTP/1.1" 200 322
+2025-02-28 13:58:52,694 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,703 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ACmd_Force HTTP/1.1" 200 326
+2025-02-28 13:58:52,703 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,712 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ACmd_ForceValInp HTTP/1.1" 200 350
+2025-02-28 13:58:52,712 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,725 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ACmd_RampOFF HTTP/1.1" 200 334
+2025-02-28 13:58:52,725 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,740 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ACmd_AckAlarm HTTP/1.1" 200 338
+2025-02-28 13:58:52,740 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,756 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ACmd_ForceValOut HTTP/1.1" 200 350
+2025-02-28 13:58:52,756 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,768 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ACmd_Manual HTTP/1.1" 200 330
+2025-02-28 13:58:52,769 - epicsarchiver.common.base_archiver - DEBUG - GET url: http://archiver-linac-04.tn.esss.lu.se:17665/mgmt/bpl/pauseArchivingPV
+2025-02-28 13:58:52,781 - urllib3.connectionpool - DEBUG - http://archiver-linac-04.tn.esss.lu.se:17665 "GET /mgmt/bpl/pauseArchivingPV?pv=CrS-CMS%3ACryo-CV-42320%3ACmd_RampON HTTP/1.1" 200 330
