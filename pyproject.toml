@@ -38,12 +38,25 @@ Source = "https://github.com/skybrewer/archiver-mgmt-operations"
 [tool.hatch.version]
 path = "src/archiver_mgmt_operations/__about__.py"
 
+[tool.hatch.envs.default.env-vars]
+UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
+PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
+
+[tool.hatch.envs.hatch-test.env-vars]
+UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
+PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
+
 [tool.hatch.envs.types]
 extra-dependencies = [
   "mypy>=1.0.0",
 ]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/archiver_mgmt_operations tests}"
+
+[tool.hatch.envs.hatch-test]
+extra-dependencies = [
+  "responses"
+]
 
 [tool.coverage.run]
 source_pkgs = ["archiver_mgmt_operations", "tests"]
