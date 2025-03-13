@@ -1,0 +1,72 @@
+
+variables:
+  CONTAINER_TEST_IMAGE: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+default:
+  image: python:3.12
+  tags:
+    - docker
+
+include:
+  - project: "ics-infrastructure/gitlab-ci-yml"
+    file: "PreCommit.gitlab-ci.yml"
+
+# Pip's cache doesn't store the python packages
+# https://pip.pypa.io/en/stable/reference/pip_install/#caching
+cache:
+  paths:
+    - .cache/pip
+
+stages:
+  - check
+  - build
+  - test
+  - analyse
+  - release
+  - deploy
+
+
+before_script:
+  - python --version  # For debugging
+  - pip install hatch
+
+run-pre-commit:
+  before_script:
+    - python --version  # For debugging
+    - pip install hatch
+
+test:
+  stage: test
+  script:
+    - hatch test --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+
+cov:
+  stage: analyse
+  script:
+    - hatch test -c
+  coverage: /(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+
+
+lint:
+  stage: check
+  script:
+    - hatch fmt --check
+
+build:
+  stage: build
+  script:
+    - hatch build
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - dist/
