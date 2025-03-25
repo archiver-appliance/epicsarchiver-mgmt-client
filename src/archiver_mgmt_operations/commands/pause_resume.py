@@ -67,6 +67,7 @@ def pause(archiver_fqdn: str, pvs: list[str]) -> None:
         [
             ArchivingStatus.BeingArchived,
             ArchivingStatus.NotBeingArchived,
+            ArchivingStatus.Paused,
         ],
     )
 
