@@ -44,7 +44,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper):
     try:
         pause_resume.pause(archiver_fqdn, pvs)
     except BaseMgmtError as e:
-        LOG.error("Error pausing PVs: %s", e.message)  # noqa: TRY400
+        LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error pausing PVs.", exc_info=True)
         ctx.exit(1)
 
