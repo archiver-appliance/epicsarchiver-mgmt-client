@@ -1,3 +1,5 @@
+"""Command line tool for doing mgmt operations with the archiver."""
+
 import logging
 import sys
 from io import TextIOWrapper
@@ -25,7 +27,7 @@ def cli() -> None:
     default=sys.stdin,
 )
 @click.pass_context
-def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper):
+def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """Pause PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to pause.

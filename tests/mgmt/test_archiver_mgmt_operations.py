@@ -7,16 +7,15 @@ import logging
 
 import pytest
 import responses
-from epicsarchiver.common import ArchDbrType
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
-from requests import HTTPError
-
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
     ArchiverMgmtOperations,
     PutInfoType,
     Storage,
     check_result,
 )
+from epicsarchiver.common import ArchDbrType
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
+from requests import HTTPError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

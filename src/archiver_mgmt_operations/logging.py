@@ -1,3 +1,5 @@
+"""Sets up logging for the application."""
+
 import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
