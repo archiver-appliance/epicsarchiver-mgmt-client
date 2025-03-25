@@ -5,6 +5,8 @@ from io import TextIOWrapper
 import click
 
 from archiver_mgmt_operations.commands import pause_resume
+from archiver_mgmt_operations.logging import CURRENT_COMMAND_LOG
+from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -39,10 +41,13 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper):
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = file.read().split()
 
-    output_valid = pause_resume.pause(archiver_fqdn, pvs)
-
-    if not output_valid:
+    try:
+        pause_resume.pause(archiver_fqdn, pvs)
+    except BaseMgmtError as e:
+        LOG.error("Error pausing PVs: %s", e.message)  # noqa: TRY400
+        LOG.debug("Error pausing PVs.", exc_info=True)
         ctx.exit(1)
+
     ctx.exit(0)
 
 
