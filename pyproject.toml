@@ -108,7 +108,7 @@ ignore = [
 ban-relative-imports = "all"
 
 [tool.ruff.lint.isort]
-known-first-party = ["py_epicsarchiver"]
+known-first-party = ["archiver_mgmt_operations"]
 
 [tool.ruff.lint.flake8-pytest-style]
 fixture-parentheses = false
