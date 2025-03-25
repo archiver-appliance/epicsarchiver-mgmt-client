@@ -4,7 +4,6 @@ from io import TextIOWrapper
 
 import click
 
-from archiver_mgmt_operations import CURRENT_COMMAND_LOG
 from archiver_mgmt_operations.commands import pause_resume
 
 LOG: logging.Logger = logging.getLogger(__name__)
