@@ -35,6 +35,9 @@ Documentation = "https://github.com/skybrewer/archiver-mgmt-operations#readme"
 Issues = "https://github.com/skybrewer/archiver-mgmt-operations/issues"
 Source = "https://github.com/skybrewer/archiver-mgmt-operations"
 
+[project.scripts]
+archiver_mgmt = "archiver_mgmt_operations.command:cli"
+
 [tool.hatch.version]
 path = "src/archiver_mgmt_operations/__about__.py"
 
@@ -49,13 +52,16 @@ PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-
 [tool.hatch.envs.types]
 extra-dependencies = [
   "mypy>=1.0.0",
+  "pytest",
+  "pytest-mock"
 ]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/archiver_mgmt_operations tests}"
 
 [tool.hatch.envs.hatch-test]
 extra-dependencies = [
-  "responses"
+  "responses",
+  "pytest-mock",
 ]
 
 [tool.coverage.run]
