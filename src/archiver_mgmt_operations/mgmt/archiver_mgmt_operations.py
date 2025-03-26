@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import enum
 import logging
-from enum import Enum, auto
-from typing import TYPE_CHECKING, Any, Collection, Dict, List, cast
+from collections.abc import Collection
+from typing import TYPE_CHECKING, cast
 
 from epicsarchiver.mgmt.archiver_mgmt_info import (
     ArchiverMgmtInfo,
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
-class Storage(str, Enum):
+class Storage(enum.StrEnum):
     """Represents the different storage levels of the archiver appliance."""
 
     STS = "STS"
@@ -25,16 +26,16 @@ class Storage(str, Enum):
     LTS = "LTS"
 
 
-class PutInfoType(Enum):
+class PutInfoType(enum.Enum):
     """Represents the different types of put type info."""
 
-    Override = auto()
-    CreateNew = auto()
+    Override = enum.auto()
+    CreateNew = enum.auto()
 
 
-TypeInfo = Dict[str, Collection[str]]
-OperationResult = Dict[str, str]
-OperationResultList = List[OperationResult]
+TypeInfo = dict[str, Collection[str]]
+OperationResult = dict[str, str]
+OperationResultList = list[OperationResult]
 
 
 class ArchiverMgmtOperations(ArchiverMgmtInfo):
@@ -47,7 +48,6 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
         port: EPICS Archiver Appliance management port [default: 17665]
 
     Examples:
-
     .. code-block:: python
 
         from epicsarchiver.archiver.mgmt import ArchiverMgmtOperations
@@ -60,21 +60,44 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
     # EPICS Archiver Appliance documentation of mgmt endpoints:
     # https://epicsarchiver.readthedocs.io/en/latest/developer/mgmt_scriptables.html
 
-    def archive_pv(self, pv: str, **kwargs: Any) -> OperationResultList:
-        r"""Archive a PV.
+    def archive_pv(
+        self,
+        pv: str,
+        sampling_period: str | None = None,
+        sampling_method: str | None = None,
+        controlling_pv: str | None = None,
+        policy: str | None = None,
+        appliance: str | None = None,
+    ) -> OperationResultList:
+        """Archive a PV.
 
         Args:
-            pv: name of the pv to be achived. Can be a comma separated
-                list of names.
-            **kwargs: optional extra keyword arguments -
-                samplingperiod - samplingmethod - controllingPV - policy
-                - appliance
+            pv (str): PV name.
+            sampling_period (str | None, optional): The sampling period, i.e. 1.0 is 1Hz.
+                Defaults to None.
+            sampling_method (str | None, optional): The sampling method, SCAN or MONITOR.
+                Defaults to None.
+            controlling_pv (str | None, optional): A pv to control when to archive this pv.
+                Defaults to None.
+            policy (str | None, optional): The policy, can be found at /mgmt/bpl/getPolicyList.
+                Defaults to None.
+            appliance (str | None, optional): Can specify a specific appliance.
+                Defaults to None.
 
         Returns:
-            list of submitted PVs
+            OperationResultList: _description_
         """
         params = {"pv": pv}
-        params.update(kwargs)
+        if sampling_period:
+            params["samplingperiod"] = sampling_period
+        if sampling_method:
+            params["samplingmethod"] = sampling_method
+        if controlling_pv:
+            params["controllingPV"] = controlling_pv
+        if policy:
+            params["policy"] = policy
+        if appliance:
+            params["appliance"] = appliance
         r = self._get("/archivePV", params=params)
         return cast("OperationResultList", r.json())
 
@@ -130,7 +153,7 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
             list of submitted PVs
         """
         r = self._get("/abortArchivingPV", params={"pv": pv})
-        return cast("List[str]", r.json())
+        return cast("list[str]", r.json())
 
     def add_alias(self, pv: str, alias_name: str) -> None:
         """Add an alias to a pv.
@@ -164,7 +187,7 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
             list of submitted PVs
         """
         r = self._get("/deletePV", params={"pv": pv, "delete_data": delete_data})
-        return cast("List[str]", r.json())
+        return cast("list[str]", r.json())
 
     def rename_pv(self, pv: str, newname: str) -> OperationResult:
         """Rename this pv to a new name.
@@ -202,7 +225,7 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
         if samplingmethod:
             params["samplingmethod"] = samplingmethod
         r = self._get("/changeArchivalParameters", params=params)
-        return cast("List[str]", r.json())
+        return cast("list[str]", r.json())
 
     def pause_rename_resume_pv(self, pv: str, new: str) -> None:
         """Pause, rename and resume a PV.

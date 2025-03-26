@@ -56,8 +56,8 @@ def test_archive_pv_with_extra_args() -> None:
     )
     r = archiver.archive_pv(
         "ISrc-010:HVAC-HT:AmbHumR",
-        samplingperiod=2.0,
-        samplingmethod="SCAN",
+        sampling_period=2.0,
+        sampling_method="SCAN",
     )
     assert len(responses.calls) == 1
     assert r == data
