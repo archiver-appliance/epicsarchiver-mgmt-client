@@ -10,9 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 keywords = []
-authors = [
-  { name = "skybrewer", email = "sky.brewer@ess.eu" },
-]
+authors = [{ name = "skybrewer", email = "sky.brewer@ess.eu" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
@@ -20,11 +18,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = [
-  "click>=8",
-  "rich>=13",
-  "py-epicsarchiver>=0.16"
-]
+dependencies = ["click>=8", "rich>=13", "py-epicsarchiver>=0.16"]
 
 [project.urls]
 Documentation = "https://github.com/skybrewer/archiver-mgmt-operations#readme"
@@ -46,38 +40,28 @@ UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-v
 PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
 
 [tool.hatch.envs.types]
-extra-dependencies = [
-  "mypy>=1.0.0",
-  "pytest",
-  "pytest-mock"
-]
+extra-dependencies = ["mypy>=1.0.0", "pytest", "pytest-mock"]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/archiver_mgmt_operations tests}"
 
 [tool.hatch.envs.hatch-test]
-extra-dependencies = [
-  "responses",
-  "pytest-mock",
-]
+extra-dependencies = ["responses", "pytest-mock"]
 
 [tool.coverage.run]
 source_pkgs = ["archiver_mgmt_operations", "tests"]
 branch = true
 parallel = true
-omit = [
-  "src/archiver_mgmt_operations/__about__.py",
-]
+omit = ["src/archiver_mgmt_operations/__about__.py"]
 
 [tool.coverage.paths]
-archiver_mgmt_operations = ["src/archiver_mgmt_operations", "*/archiver-mgmt-operations/src/archiver_mgmt_operations"]
+archiver_mgmt_operations = [
+  "src/archiver_mgmt_operations",
+  "*/archiver-mgmt-operations/src/archiver_mgmt_operations",
+]
 tests = ["tests", "*/archiver-mgmt-operations/tests"]
 
 [tool.coverage.report]
-exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.ruff]
 line-length = 120
@@ -88,21 +72,19 @@ docstring-code-format = true
 docstring-code-line-length = 80
 
 [tool.ruff.lint]
-select = ["ALL"
-]
+select = ["ALL"]
 ignore = [
-  "ANN204", "ANN401", "COM812", "CPY001", "D412", "ISC001",
+  "COM812", # ignore checking for trailing comma, let formatter handle it
+  "CPY001", # ignore copyright header checking (not needed for internal projects)
+  "ISC001", # Conflicts with the formatter
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**/*" = [
-  "PLC1901",
-  "PLR2004",
-  "PLR6301",
-  "S",
-  "TID252",
+"tests/**/*" = [
+  "PLR2004", # allow magic constants in tests
+  "S101",    # allow asserts in tests
+  "D",       # Don't enforce docstrings in tests
 ]
-"tests/**/*" = ["PLR2004", "S101", "TID252", "D", "SLF001", "INP001", "PLC2701"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -117,3 +99,7 @@ mark-parentheses = false
 [tool.ruff.lint.pydocstyle]
 # Use Google-style docstrings.
 convention = "google"
+
+[tool.ruff.lint.pylint]
+max-positional-args = 10
+max-args = 10
