@@ -10,6 +10,7 @@ from epicsarchiver.common import ArchDbrType
 from archiver_mgmt_operations.commands import archive as cmd_archive
 from archiver_mgmt_operations.commands import change_type as ct
 from archiver_mgmt_operations.commands import pause_resume
+from archiver_mgmt_operations.commands import rename as cmd_rename
 from archiver_mgmt_operations.logging import CURRENT_COMMAND_LOG
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import ArchivePVRequest
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
@@ -49,6 +50,87 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     try:
         pause_resume.pause(archiver_fqdn, pvs)
+    except BaseMgmtError as e:
+        LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error pausing PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+class RenameFileError(BaseMgmtError):
+    """Exception for when the rename file is invalid."""
+
+    def __init__(self, line: str) -> None:
+        """Error for when the rename file is invalid.
+
+        Args:
+            line (str): The bad line.
+        """
+        super().__init__(f"Invalid line {line} in rename file")
+        self.line = line
+
+
+def _parse_rename_file(file: TextIOWrapper) -> list[tuple[str, str]]:
+    """Parse the rename file.
+
+    Args:
+        file (TextIOWrapper): The file to parse.
+
+    Returns:
+        list[tuple[str, str]]: The list of tuples of old and new PVs.
+
+    Raises:
+        RenameFileError: If the file is invalid.
+    """
+    rename_lines = file.read().split()
+    result = []
+    for line in rename_lines:
+        pvs = line.split(",")
+        if len(pvs) != 2:  # noqa: PLR2004
+            LOG.error("Invalid line in rename file: %s", line)
+            raise RenameFileError(line)
+        old_pv, new_pv = pvs
+        result.append((old_pv, new_pv))
+    return result
+
+
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.", multiple=True)
+@click.argument(
+    "file",
+    type=click.File(),
+    default=sys.stdin,
+)
+@click.pass_context
+def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
+    """Rename PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to rename.
+
+    Example file:
+
+    .. code-block:: console
+
+        old_pv,new_pv
+        pv1,pv2
+        pv3,pv4
+
+    The new_pv must not exist in the archiver, and the old_pv must be being archived or paused.
+
+    Example usage:
+
+    .. code-block:: console
+
+        archiver_mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
+
+    """
+    # Read input
+    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
+    pvs = _parse_rename_file(file)
+
+    try:
+        cmd_rename.rename(archiver_fqdn, pvs)
     except BaseMgmtError as e:
         LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error pausing PVs.", exc_info=True)
@@ -208,3 +290,4 @@ cli.add_command(change_type)
 cli.add_command(pause)
 cli.add_command(resume)
 cli.add_command(archive)
+cli.add_command(rename)
