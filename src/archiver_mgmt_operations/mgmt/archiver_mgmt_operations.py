@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, cast
 
 from epicsarchiver.mgmt.archiver_mgmt_info import (
     ArchiverMgmtInfo,
-    ArchivingStatus,
 )
 
 if TYPE_CHECKING:
@@ -262,33 +261,7 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
         r = self._get("/changeArchivalParameters", params=params)
         return cast("list[str]", r.json())
 
-    def pause_rename_resume_pv(self, pv: str, new: str) -> None:
-        """Pause, rename and resume a PV.
-
-        Args:
-            pv: name of the pv
-            new: new name of the pv
-        """
-        result = self.get_archiving_status(pv)
-        if result != ArchivingStatus.BeingArchived:
-            LOG.error("PV %s isn't being archived. Skipping.\n", pv)
-            return
-        result = self.get_archiving_status(new)
-        if result != ArchivingStatus.NotBeingArchived:
-            LOG.error("New PV %s already exists. Skipping.\n", new)
-            return
-        cresult = self.pause_pv(pv)
-        if not check_result(cresult, f"Error while pausing {pv}"):
-            return
-        cresult = self.rename_pv(pv, new)
-        if not check_result(cresult, f"Error while renaming {pv} to {new}"):
-            return
-        cresult = self.resume_pv(new)
-        if not check_result(cresult, f"Error while resuming {new}"):
-            return
-        LOG.debug("PV %s successfully renamed to %s", pv, new)
-
-    def rename_and_append(self, old: str, new: str, storage: Storage) -> None:
+    def rename_and_append(self, old: str, new: str, storage: Storage) -> OperationResult:
         """Appends the data for an older PV into a newer PV.
 
         The older PV is deleted and an alias mapping the older PV name to
@@ -300,22 +273,16 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
             new (str): The name of the newer pv.
             storage (Storage):  The name of the store to consolidate data
                 before appending.
+
+        Returns:
+            OperationResultList: Result of the operation
         """
-        pvs = [old, new]
-        for pv in pvs:
-            status = self.get_archiving_status(pv)
-            if status != ArchivingStatus.Paused:
-                LOG.error("PV %s isn't paused. Skipping.\n", pv)
-                return
         response = self._get(
             "/appendAndAliasPV",
             params={"olderpv": old, "newerpv": new, "storage": storage},
         )
         LOG.debug("/appendAndAliasPV response %s", response.json())
-        result = cast("OperationResultList", response.json())
-        if not check_result(result, f"Error while append_and_alias_pv {old}, {new}"):
-            return
-        LOG.debug("PV %s successfully appended and aliased to %s", old, new)
+        return cast("OperationResult", response.json())
 
     def change_type(self, pv: str, new_type: ArchDbrType) -> OperationResult:
         """Change the type of a pv to a new type.
