@@ -39,13 +39,18 @@ PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-
 UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
 PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
 
-[tool.hatch.envs.types]
-extra-dependencies = ["mypy>=1.0.0", "pytest", "pytest-mock"]
+[tool.hatch.envs.default.scripts]
+type-check = "hatch run types:check"
+
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/archiver_mgmt_operations tests}"
 
+[tool.hatch.envs.types]
+extra-dependencies = ["responses", "mypy>=1.0.0", "pytest", "pytest-mock", 
+  "types-requests",]
+
 [tool.hatch.envs.hatch-test]
-extra-dependencies = ["responses", "pytest-mock"]
+extra-dependencies = ["responses", "pytest-mock", "pytest"]
 
 [tool.coverage.run]
 source_pkgs = ["archiver_mgmt_operations", "tests"]
@@ -103,3 +108,6 @@ convention = "google"
 [tool.ruff.lint.pylint]
 max-positional-args = 10
 max-args = 10
+
+[tool.mypy]
+strict = true

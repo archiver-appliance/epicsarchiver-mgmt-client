@@ -62,6 +62,11 @@ lint:
   script:
     - hatch fmt --check
 
+type-check:
+  stage: check
+  script:
+    - hatch run type-check
+
 build:
   stage: build
   script:
