@@ -1,32 +1,32 @@
 [build-system]
-requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+requires = [ "hatchling" ]
 
 [project]
 name = "archiver-mgmt-operations"
-dynamic = ["version"]
-description = 'Tool for doing archiver mgmt operations'
+description = "Tool for doing archiver mgmt operations"
 readme = "README.md"
-requires-python = ">=3.12"
+keywords = [  ]
 license = "MIT"
-keywords = []
-authors = [{ name = "skybrewer", email = "sky.brewer@ess.eu" }]
+authors = [ { name = "skybrewer", email = "sky.brewer@ess.eu" } ]
+requires-python = ">=3.12"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["click>=8", "rich>=13", "py-epicsarchiver>=0.16"]
+dynamic = [ "version" ]
+dependencies = [ "click>=8", "py-epicsarchiver>=0.16", "rich>=13" ]
 
-[project.urls]
-Documentation = "https://github.com/skybrewer/archiver-mgmt-operations#readme"
-Issues = "https://github.com/skybrewer/archiver-mgmt-operations/issues"
-Source = "https://github.com/skybrewer/archiver-mgmt-operations"
-
-[project.scripts]
-archiver_mgmt = "archiver_mgmt_operations.command:cli"
+urls.Documentation = "https://github.com/skybrewer/archiver-mgmt-operations#readme"
+urls.Issues = "https://github.com/skybrewer/archiver-mgmt-operations/issues"
+urls.Source = "https://github.com/skybrewer/archiver-mgmt-operations"
+scripts.archiver_mgmt = "archiver_mgmt_operations.command:cli"
 
 [tool.hatch.version]
 path = "src/archiver_mgmt_operations/__about__.py"
@@ -46,68 +46,58 @@ type-check = "hatch run types:check"
 check = "mypy --install-types --non-interactive {args:src/archiver_mgmt_operations tests}"
 
 [tool.hatch.envs.types]
-extra-dependencies = ["responses", "mypy>=1.0.0", "pytest", "pytest-mock", 
-  "types-requests",]
+extra-dependencies = [
+  "responses",
+  "mypy>=1.0.0",
+  "pytest",
+  "pytest-mock",
+  "types-requests",
+]
 
 [tool.hatch.envs.hatch-test]
-extra-dependencies = ["responses", "pytest-mock", "pytest"]
+extra-dependencies = [ "responses", "pytest-mock", "pytest" ]
+
+[tool.ruff]
+line-length = 120
+preview = true
+
+format.docstring-code-line-length = 80
+format.docstring-code-format = true
+lint.select = [ "ALL" ]
+lint.ignore = [
+  "COM812", # ignore checking for trailing comma, let formatter handle it
+  "CPY001", # ignore copyright header checking (not needed for internal projects)
+  "ISC001", # Conflicts with the formatter
+]
+lint.per-file-ignores."tests/**/*" = [
+  "D",       # Don't enforce docstrings in tests
+  "PLR2004", # allow magic constants in tests
+  "S101",    # allow asserts in tests
+]
+lint.flake8-pytest-style.fixture-parentheses = false
+lint.flake8-pytest-style.mark-parentheses = false
+lint.flake8-tidy-imports.ban-relative-imports = "all"
+lint.isort.known-first-party = [ "archiver_mgmt_operations" ]
+# Use Google-style docstrings.
+lint.pydocstyle.convention = "google"
+lint.pylint.max-args = 10
+lint.pylint.max-positional-args = 10
 
 [tool.coverage.run]
-source_pkgs = ["archiver_mgmt_operations", "tests"]
+source_pkgs = [ "archiver_mgmt_operations", "tests" ]
 branch = true
 parallel = true
-omit = ["src/archiver_mgmt_operations/__about__.py"]
+omit = [ "src/archiver_mgmt_operations/__about__.py" ]
 
 [tool.coverage.paths]
 archiver_mgmt_operations = [
   "src/archiver_mgmt_operations",
   "*/archiver-mgmt-operations/src/archiver_mgmt_operations",
 ]
-tests = ["tests", "*/archiver-mgmt-operations/tests"]
+tests = [ "tests", "*/archiver-mgmt-operations/tests" ]
 
 [tool.coverage.report]
-exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
-
-[tool.ruff]
-line-length = 120
-preview = true
-
-[tool.ruff.format]
-docstring-code-format = true
-docstring-code-line-length = 80
-
-[tool.ruff.lint]
-select = ["ALL"]
-ignore = [
-  "COM812", # ignore checking for trailing comma, let formatter handle it
-  "CPY001", # ignore copyright header checking (not needed for internal projects)
-  "ISC001", # Conflicts with the formatter
-]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/**/*" = [
-  "PLR2004", # allow magic constants in tests
-  "S101",    # allow asserts in tests
-  "D",       # Don't enforce docstrings in tests
-]
-
-[tool.ruff.lint.flake8-tidy-imports]
-ban-relative-imports = "all"
-
-[tool.ruff.lint.isort]
-known-first-party = ["archiver_mgmt_operations"]
-
-[tool.ruff.lint.flake8-pytest-style]
-fixture-parentheses = false
-mark-parentheses = false
-
-[tool.ruff.lint.pydocstyle]
-# Use Google-style docstrings.
-convention = "google"
-
-[tool.ruff.lint.pylint]
-max-positional-args = 10
-max-args = 10
+exclude_lines = [ "no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:" ]
 
 [tool.mypy]
 strict = true
