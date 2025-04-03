@@ -20,7 +20,7 @@ def cli() -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
@@ -54,7 +54,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
