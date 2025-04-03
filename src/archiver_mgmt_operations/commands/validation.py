@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
     from requests import HTTPError
 
@@ -37,7 +39,7 @@ class ValidOperationResultsError(BaseMgmtError):
 
 
 def validate_operation_results(
-    pvs: list[str],
+    pvs: Sequence[str],
     action_results: list[OperationResult] | OperationResultList,
     operation_name: str,
     expected_status: str = OPERATION_RESULT_OK,
@@ -45,7 +47,7 @@ def validate_operation_results(
     """Validate the results of an operation.
 
     Args:
-        pvs (list[str]): The PVs that were acted on.
+        pvs (Sequence[str]): The PVs that were acted on.
         action_results (list[OperationResult  |  OperationResultList]): The results of the operation.
         operation_name (str): The name of the operation.
         expected_status (str, optional): The expected status. Defaults to OPERATION_RESULT_OK.
@@ -77,14 +79,14 @@ class ValidPVStatusError(BaseMgmtError):
 
 def validate_pvs_status(
     archiver_info: ArchiverMgmtInfo,
-    pvs: list[str],
+    pvs: Sequence[str],
     expected_statuses: list[ArchivingStatus],
 ) -> None:
     """Validate the status of PVs.
 
     Args:
         archiver_info (ArchiverMgmtInfo): The archiver management server.
-        pvs (list[str]): The PVs to validate.
+        pvs (Sequence[str]): The PVs to validate.
         expected_statuses (list[ArchivingStatus]): The allowed statuses for the PVs.
 
     Raises:

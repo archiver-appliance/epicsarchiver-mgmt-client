@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
@@ -18,10 +18,13 @@ from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
     OperationResult,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
-def pause(archiver_fqdn: str, pvs: list[str]) -> None:
+def pause(archiver_fqdn: str, pvs: Sequence[str]) -> None:
     """Pause PVs in the archiver.
 
     Args:
@@ -61,7 +64,7 @@ def pause(archiver_fqdn: str, pvs: list[str]) -> None:
     validate_operation_results(pvs, [cast("OperationResult", result) for result in pause_results], "paused")
 
 
-def resume(archiver_fqdn: str, pvs: list[str]) -> None:
+def resume(archiver_fqdn: str, pvs: Sequence[str]) -> None:
     """The resume command to resume PVs.
 
     Args:
