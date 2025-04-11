@@ -20,7 +20,7 @@ def cli() -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
@@ -36,7 +36,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com pause pvs.csv
+        archiver_mgmt -a archiver.example.com pause pvs.csv
 
     """
     # Read input
@@ -53,4 +53,39 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     ctx.exit(0)
 
 
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.argument(
+    "file",
+    type=click.File(),
+    default=sys.stdin,
+)
+@click.pass_context
+def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
+    """Resume Archiving PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to resume.
+
+    Example usage:
+
+    .. code-block:: console
+
+        archiver_mgmt -a archiver.example.com resume pvs.csv
+
+    """
+    # Read input
+    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
+    pvs = file.read().split()
+
+    try:
+        pause_resume.resume(archiver_fqdn, pvs)
+    except BaseMgmtError as e:
+        LOG.error("Error resuming PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error resuming PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
 cli.add_command(pause)
+cli.add_command(resume)
