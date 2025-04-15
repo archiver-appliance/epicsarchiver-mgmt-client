@@ -94,3 +94,4 @@ def change_type(archiver_fqdn: str, pvs: list[str], new_type: ArchDbrType) -> No
 
     # Validate output
     validate_operation_results(pvs, [cast("OperationResult", result) for result in change_type_results], "change type")
+    pause_resume.resume(archiver_fqdn, pvs)
