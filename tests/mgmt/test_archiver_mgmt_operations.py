@@ -546,9 +546,7 @@ def test_rename_and_append_fail_pv_error_response(
 
 
 @responses.activate
-def test_change_type(
-    caplog: pytest.LogCaptureFixture,
-) -> None:
+def test_change_type() -> None:
     archiver = ArchiverMgmtOperations(TEST_DOMAIN)
     pv = "MY:PV"
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
@@ -559,12 +557,9 @@ def test_change_type(
         status=200,
         match_querystring=True,
     )
-    with caplog.at_level(logging.DEBUG):
-        archiver.change_type(pv, new_type)
-    captured_log = caplog.text
-    LOG.info(captured_log)
+    r = archiver.change_type(pv, new_type)
     assert len(responses.calls) == 1
-    assert "successfully changed type" in captured_log
+    assert r == {"status": "ok"}
 
 
 @pytest.mark.parametrize(
