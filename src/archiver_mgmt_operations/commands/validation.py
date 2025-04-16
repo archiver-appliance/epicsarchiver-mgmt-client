@@ -62,6 +62,7 @@ def validate_operation_results(
             invalid_pvs[pv] = result
     if invalid_pvs != {}:
         raise ValidOperationResultsError(invalid_pvs, operation_name)
+    LOG.info("Operation %s succeeded for PVs %s", operation_name, pvs)
 
 
 class ValidPVStatusError(BaseMgmtError):

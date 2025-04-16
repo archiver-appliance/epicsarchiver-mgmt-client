@@ -282,19 +282,19 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
             return
         LOG.debug("PV %s successfully appended and aliased to %s", old, new)
 
-    def change_type(self, pv: str, new_type: ArchDbrType) -> None:
+    def change_type(self, pv: str, new_type: ArchDbrType) -> OperationResult:
         """Change the type of a pv to a new type.
 
         Args:
             pv (str): Name of the PV
             new_type (ArchDbrType): New DBR_TYPE
+
+        Returns:
+            OperationResult
         """
         LOG.info("Change type of pv %s to %s", pv, new_type)
         response = self._get("/changeTypeForPV", params={"pv": pv, "newtype": new_type.name})
-        result = cast("OperationResultList", response.json())
-        if not check_result(result, f"Error while change_type {pv}"):
-            return
-        LOG.debug("PV %s successfully changed type to %s", pv, new_type)
+        return cast("OperationResult", response.json())
 
     def put_pv_type_info(self, pv: str, type_info: TypeInfo, put_info_type: PutInfoType) -> TypeInfo:
         """Put the type info for a PV.
