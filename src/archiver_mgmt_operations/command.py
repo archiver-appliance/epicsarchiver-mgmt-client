@@ -115,48 +115,6 @@ def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, an
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
-@click.argument(
-    "file",
-    type=click.File(),
-    default=sys.stdin,
-)
-@click.pass_context
-def alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
-    """Add alias to PVs in the archiver.
-
-    ARGUMENT file csv file of what pvs to alias.
-
-    Example file:
-
-    .. code-block:: console
-
-        original_pv,alias_pv_name
-        pv1,pv2
-        pv3,pv4
-
-    Example usage:
-
-    .. code-block:: console
-
-        archiver_mgmt -f archiver.example.com alias pvs.csv
-
-    """
-    # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = parse_two_pv_csv(file)
-
-    try:
-        cmd_alias.add_aliases(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
-        LOG.error("Error adding alias PVs: %s", str(e))  # noqa: TRY400
-        LOG.debug("Error adding alias PVs.", exc_info=True)
-        ctx.exit(1)
-
-    ctx.exit(0)
-
-
-@click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
 @click.argument(
     "file",
@@ -302,6 +260,98 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 
     ctx.exit(0)
 
+
+@click.group()
+def alias() -> None:
+    """Alias PVs in the archiver."""
+
+
+@click.command("add", context_settings={"show_default": True})
+@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
+@click.argument(
+    "file",
+    type=click.File(),
+    default=sys.stdin,
+)
+@click.pass_context
+def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
+    """Add alias to PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to alias.
+
+    Example file:
+
+    .. code-block:: console
+
+        original_pv,alias_pv_name
+        pv1,pv2
+        pv3,pv4
+
+    Example usage:
+
+    .. code-block:: console
+
+        archiver_mgmt -f archiver.example.com alias add pvs.csv
+
+    """
+    # Read input
+    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
+    pvs = parse_two_pv_csv(file)
+
+    try:
+        cmd_alias.add_aliases(archiver_fqdn, pvs)
+    except BaseMgmtError as e:
+        LOG.error("Error adding alias PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error adding alias PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+@click.command("remove", context_settings={"show_default": True})
+@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
+@click.argument(
+    "file",
+    type=click.File(),
+    default=sys.stdin,
+)
+@click.pass_context
+def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
+    """Remove aliases to PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to alias.
+
+    Example file:
+
+    .. code-block:: console
+
+        original_pv,alias_pv_name
+        pv1,pv2
+        pv3,pv4
+
+    Example usage:
+
+    .. code-block:: console
+
+        archiver_mgmt -f archiver.example.com alias remove pvs.csv
+
+    """
+    # Read input
+    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
+    pvs = parse_two_pv_csv(file)
+
+    try:
+        cmd_alias.remove_aliases(archiver_fqdn, pvs)
+    except BaseMgmtError as e:
+        LOG.error("Error removing alias PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error removing alias PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+alias.add_command(add_alias)
+alias.add_command(remove_alias)
 
 cli.add_command(change_type)
 cli.add_command(pause)

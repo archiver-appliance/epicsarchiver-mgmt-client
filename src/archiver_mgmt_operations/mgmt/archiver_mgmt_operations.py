@@ -203,6 +203,20 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
         r_json = r.json()
         return cast("OperationResult", r_json)
 
+    def remove_alias(self, pv: str, alias_name: str) -> OperationResult:
+        """Remove an alias to a pv.
+
+        Args:
+            pv: PV to remove alias.
+            alias_name: name of alias to remove from pv.
+
+        Returns:
+            OperationResult: Status of action and description.
+        """
+        r = self._get("/removeAlias", params={"pv": pv, "aliasname": alias_name})
+        r_json = r.json()
+        return cast("OperationResult", r_json)
+
     def delete_pv(
         self,
         pv: str,

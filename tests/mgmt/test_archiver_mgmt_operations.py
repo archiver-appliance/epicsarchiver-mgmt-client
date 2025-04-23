@@ -257,7 +257,7 @@ def test_update_pv_samplingmethod() -> None:
 
 
 @responses.activate
-def test_add_alias_ok(caplog: pytest.LogCaptureFixture) -> None:
+def test_add_alias_ok() -> None:
     archiver = ArchiverMgmtOperations(TEST_DOMAIN)
     pv = "MY:PV"
     newname = "NEW:PV"
@@ -268,11 +268,9 @@ def test_add_alias_ok(caplog: pytest.LogCaptureFixture) -> None:
         status=200,
         match_querystring=True,
     )
-    with caplog.at_level(logging.DEBUG):
-        archiver.add_alias(pv, newname)
-    captured_log = caplog.text
+    response = archiver.add_alias(pv, newname)
     assert len(responses.calls) == 1
-    assert f"Added an alias {newname} for PV {pv}" in captured_log
+    assert response == {"status": "ok", "desc": f"Added an alias {newname} for PV {pv}"}
 
 
 @responses.activate

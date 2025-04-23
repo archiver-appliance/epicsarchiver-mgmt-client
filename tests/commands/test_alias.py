@@ -22,7 +22,7 @@ def test_alias_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
     mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
     mock_archiver.info = "Archiver Info"
-    mock_archiver.alias_pv.return_value = {"status": "ok", "desc": "aliased"}
+    mock_archiver.add_alias.return_value = {"status": "ok", "desc": "aliased"}
 
     with (
         patch("archiver_mgmt_operations.commands.alias.ArchiverMgmtInfo", return_value=mock_archiver_info),
@@ -37,7 +37,7 @@ def test_alias_success(caplog: pytest.LogCaptureFixture) -> None:
         mock_validate_pvs_status.assert_called()
         assert mock_validate_pvs_status.call_count == 2
         mock_validate_operation_results.assert_called_once()
-        assert "Aliasing PVs" in caplog.text
+        assert "Adding aliases" in caplog.text
         assert "Using archiver" in caplog.text
 
 
@@ -52,7 +52,7 @@ def test_alias_http_error(caplog: pytest.LogCaptureFixture) -> None:
     request_response = Response()
     request_response.status_code = 500
     request_response.reason = "HTTP Error"
-    mock_archiver.alias_pv.side_effect = HTTPError(response=request_response)
+    mock_archiver.add_alias.side_effect = HTTPError(response=request_response)
 
     with (
         patch("archiver_mgmt_operations.commands.alias.ArchiverMgmtInfo", return_value=mock_archiver_info),
@@ -65,8 +65,7 @@ def test_alias_http_error(caplog: pytest.LogCaptureFixture) -> None:
 
         mock_validate_not_same.assert_called_once_with(aliases)
         mock_validate_pvs_status.assert_called()
-        mock_archiver.alias_pv.assert_called_with("old_pv1", "new_pv1")
-        mock_archiver.alias_pv.assert_called_with("old_pv2", "new_pv2")
+        mock_archiver.add_alias.assert_called_once_with("old_pv1", "new_pv1")
         assert mock_validate_pvs_status.call_count == 2
-        assert "Error archiving PVs" in caplog.text
+        assert "Error adding alias PVs" in caplog.text
         assert "HTTPError" in caplog.text
