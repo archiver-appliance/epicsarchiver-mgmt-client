@@ -116,7 +116,7 @@ def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]]) -> None:
     # Validate output
     validate_operation_results(
         [new_pv for _old_pv, new_pv in renames],
-        [cast("OperationResult", result) for result in rename_results],
+        rename_results,
         "renamed",
     )
 
@@ -221,7 +221,7 @@ def append_rename(archiver_fqdns: list[str], renames: list[tuple[str, str]], sto
     # Validate output
     validate_operation_results(
         [new_pv for _old_pv, new_pv in renames],
-        [cast("OperationResult", result) for result in rename_results],
+        rename_results,
         "renamed",
     )
 
