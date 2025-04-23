@@ -6,31 +6,15 @@ from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 from requests import HTTPError, Response
 
 from archiver_mgmt_operations.commands.rename import (
-    NotSamePVError,
     TooMuchStoredDataError,
     rename,
     rename_and_append,
-    validate_not_same,
     validate_size,
 )
 from archiver_mgmt_operations.commands.validation import RequestHTTPError
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
     ArchiverMgmtOperations,
 )
-
-
-def test_validate_not_same_success() -> None:
-    """Test validate_not_same with valid renames."""
-    renames = [("old_pv1", "new_pv1"), ("old_pv2", "new_pv2")]
-    validate_not_same(renames)  # Should not raise an exception
-
-
-def test_validate_not_same_failure() -> None:
-    """Test validate_not_same with invalid renames (same old and new PV)."""
-    renames = [("old_pv1", "new_pv1"), ("pv1", "pv1")]
-    with pytest.raises(NotSamePVError) as exc_info:
-        validate_not_same(renames)
-    assert str(exc_info.value) == "Old and new PVs are the same for PV pv1."
 
 
 def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:

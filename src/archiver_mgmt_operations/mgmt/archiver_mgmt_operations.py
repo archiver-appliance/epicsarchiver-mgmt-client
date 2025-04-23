@@ -189,19 +189,19 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
         r = self._get("/abortArchivingPV", params={"pv": pv})
         return cast("list[str]", r.json())
 
-    def add_alias(self, pv: str, alias_name: str) -> None:
+    def add_alias(self, pv: str, alias_name: str) -> OperationResult:
         """Add an alias to a pv.
 
         Args:
             pv: PV to add alias.
             alias_name: name of alias to add to pv.
+
+        Returns:
+            OperationResult: Status of action and description.
         """
         r = self._get("/addAlias", params={"pv": pv, "aliasname": alias_name})
         r_json = r.json()
-        if r_json["status"] != "ok":
-            LOG.error("Failed to add alias, response %s", str(r_json))
-            return
-        LOG.debug(r_json["desc"])
+        return cast("OperationResult", r_json)
 
     def delete_pv(
         self,
