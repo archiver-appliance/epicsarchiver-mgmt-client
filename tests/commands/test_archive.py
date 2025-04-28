@@ -11,7 +11,6 @@ from archiver_mgmt_operations.commands.archive import (
     archive,
     validate_policy_names,
 )
-from archiver_mgmt_operations.commands.dry_run import DryRun
 from archiver_mgmt_operations.commands.validation import RequestHTTPError
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
     ArchivePVRequest,
@@ -70,7 +69,7 @@ def test_archive_dry_run(caplog: pytest.LogCaptureFixture) -> None:
         patch("archiver_mgmt_operations.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
         patch("archiver_mgmt_operations.commands.archive.validate_policy_names") as mock_validate_policy_names,
     ):
-        archive(archiver_fqdn, pv_requests, DryRun.YES)
+        archive(archiver_fqdn, pv_requests, dry_run=True)
 
         mock_validate_pvs_status.assert_called_once_with(
             mock_archiver_info, ["PV1"], [ArchivingStatus.NotBeingArchived]

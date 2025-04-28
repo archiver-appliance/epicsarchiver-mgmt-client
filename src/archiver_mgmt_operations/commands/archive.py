@@ -7,7 +7,6 @@ import logging
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
-from archiver_mgmt_operations.commands.dry_run import DryRun
 from archiver_mgmt_operations.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
@@ -56,13 +55,13 @@ def validate_policy_names(archiver: ArchiverMgmtOperations, pv_requests: list[Ar
 ARCHIVE_OPERATION_RESULT_STATUS_OK = "Archive request submitted"
 
 
-def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], dry_run: DryRun = DryRun.NOT) -> None:
+def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run: bool = False) -> None:
     """Provide the archive command to archive PVs.
 
     Args:
         archiver_fqdn (str): The fully qualified domain name of the archiver.
         pv_requests (list[ArchivePVRequest]): The PVs to archive.
-        dry_run (DryRun): Whether to do a dry run or not.
+        dry_run (bool): Whether to do a dry run or not.
 
     Raises:
        RequestHTTPError: If there is an error archiving the PVs.
@@ -84,7 +83,7 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], dry_run: Dr
     LOG.info("Archiving PVs %s", pv_requests)
     LOG.info("Using archiver %s", archiver.info)
 
-    if dry_run == DryRun.YES:
+    if dry_run:
         return
 
     try:

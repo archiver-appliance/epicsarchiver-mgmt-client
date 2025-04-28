@@ -10,7 +10,6 @@ from epicsarchiver.common import ArchDbrType
 from archiver_mgmt_operations.commands import archive as cmd_archive
 from archiver_mgmt_operations.commands import change_type as ct
 from archiver_mgmt_operations.commands import pause_resume
-from archiver_mgmt_operations.commands.dry_run import DryRun
 from archiver_mgmt_operations.logging import CURRENT_COMMAND_LOG
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import ArchivePVRequest
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
@@ -135,7 +134,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     try:
         cmd_archive.archive(
-            archiver_fqdn, [_parse_archive_request(request) for request in pv_requests], DryRun(dry_run)
+            archiver_fqdn, [_parse_archive_request(request) for request in pv_requests], dry_run=dry_run
         )
     except BaseMgmtError as e:
         LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
