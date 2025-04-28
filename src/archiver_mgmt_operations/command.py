@@ -7,9 +7,11 @@ from io import TextIOWrapper
 import click
 from epicsarchiver.common import ArchDbrType
 
+from archiver_mgmt_operations.commands import archive as cmd_archive
 from archiver_mgmt_operations.commands import change_type as ct
 from archiver_mgmt_operations.commands import pause_resume
 from archiver_mgmt_operations.logging import CURRENT_COMMAND_LOG
+from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import ArchivePVRequest
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
@@ -89,6 +91,57 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     ctx.exit(0)
 
 
+def _parse_archive_request(request_str: str) -> ArchivePVRequest:
+    pv, _, policy = request_str.partition(",")
+    return ArchivePVRequest(pv, policy=policy or None)
+
+
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--dry-run", "-d", is_flag=True, help="Do a dry run.", default=False)
+@click.argument(
+    "file",
+    type=click.File(),
+    default=sys.stdin,
+)
+@click.pass_context
+def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOWrapper) -> None:  # noqa: FBT001
+    """Archive PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to archive. The csv file should have the following format:
+
+    Example:
+    PV,policy
+    mypv1
+    mypv2,1Hz
+    mypv3,1HzSCAN
+
+    Policy is optional. If not provided, the default policy will be used. You can find the options at
+    archiver.example.com/mgmt/bpl/getPolicyList.
+
+    Example usage:
+
+    .. code-block:: console
+
+        archiver_mgmt -f archiver.example.com archive pvs.csv
+
+    """
+    # Read input
+    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
+    pv_requests = file.read().split()
+
+    try:
+        cmd_archive.archive(
+            archiver_fqdn, [_parse_archive_request(request) for request in pv_requests], dry_run=dry_run
+        )
+    except BaseMgmtError as e:
+        LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error archiving PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
 def archdbrtype_from_param(value: str) -> ArchDbrType | None:
     """Convert a string to a ArchDbrType.
 
@@ -154,3 +207,4 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 cli.add_command(change_type)
 cli.add_command(pause)
 cli.add_command(resume)
+cli.add_command(archive)

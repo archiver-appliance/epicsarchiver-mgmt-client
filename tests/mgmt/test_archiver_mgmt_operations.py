@@ -12,8 +12,10 @@ from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 from requests import HTTPError
 
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
+    ArchivePVRequest,
     ArchiverMgmtOperations,
     PutInfoType,
+    SamplingMethod,
     Storage,
     check_result,
 )
@@ -30,8 +32,8 @@ def test_archive_pv() -> None:
         {"pvName": "ISrc-010:HVAC-HT:AmbHumR", "status": "Archive request submitted"},
     ]
     responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/archivePV?pv=ISrc-010%3AHVAC-HT%3AAmbHumR",
+        responses.POST,
+        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/archivePV",
         json=data,
         status=200,
         match_querystring=True,
@@ -48,16 +50,16 @@ def test_archive_pv_with_extra_args() -> None:
         {"pvName": "ISrc-010:HVAC-HT:AmbHumR", "status": "Archive request submitted"},
     ]
     responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/archivePV?pv=ISrc-010%3AHVAC-HT%3AAmbHumR&samplingperiod=2.0&samplingmethod=SCAN",
+        responses.POST,
+        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/archivePV",
         json=data,
         status=200,
         match_querystring=True,
     )
     r = archiver.archive_pv(
         "ISrc-010:HVAC-HT:AmbHumR",
-        sampling_period=str(2.0),
-        sampling_method="SCAN",
+        sampling_period=2.0,
+        sampling_method=SamplingMethod.SCAN,
     )
     assert len(responses.calls) == 1
     assert r == data
@@ -73,13 +75,13 @@ def test_archive_pvs() -> None:
         json=data,
         status=200,
     )
-    pvs = [{"pv": "first:pv"}, {"pv": "second:pv"}]
-    r = archiver.archive_pvs(pvs)
+    pv_requests = [ArchivePVRequest("first:pv"), ArchivePVRequest("second:pv")]
+    r = archiver.archive_pv_requests(pv_requests)
     assert len(responses.calls) == 1
     body_text = responses.calls[0].request.body
     assert body_text is not None
     body = json.loads(body_text)
-    assert body == pvs
+    assert body == [{"pv": "first:pv"}, {"pv": "second:pv"}]
     assert r == data
 
 
