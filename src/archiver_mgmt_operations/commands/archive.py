@@ -70,9 +70,9 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run:
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdn)
     validate_pvs_status(
-        archiver_info,
-        pvs,
-        [
+        archiver_info=archiver_info,
+        pvs=pvs,
+        expected_statuses=[
             ArchivingStatus.NotBeingArchived,
         ],
     )
