@@ -40,7 +40,7 @@ def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:
         archive(archiver_fqdn, pv_requests)
 
         mock_validate_pvs_status.assert_called_once_with(
-            mock_archiver_info, ["PV1"], [ArchivingStatus.NotBeingArchived]
+            archiver_info=mock_archiver_info, pvs=["PV1"], expected_statuses=[ArchivingStatus.NotBeingArchived]
         )
         mock_validate_policy_names.assert_called_once_with(mock_archiver, pv_requests)
         mock_archiver.archive_pv_requests.assert_called_once_with(pv_requests)
@@ -72,7 +72,7 @@ def test_archive_dry_run(caplog: pytest.LogCaptureFixture) -> None:
         archive(archiver_fqdn, pv_requests, dry_run=True)
 
         mock_validate_pvs_status.assert_called_once_with(
-            mock_archiver_info, ["PV1"], [ArchivingStatus.NotBeingArchived]
+            archiver_info=mock_archiver_info, pvs=["PV1"], expected_statuses=[ArchivingStatus.NotBeingArchived]
         )
         mock_validate_policy_names.assert_called_once_with(mock_archiver, pv_requests)
         mock_archiver.archive_pv_requests.assert_not_called()
@@ -103,7 +103,7 @@ def test_archive_http_error(caplog: pytest.LogCaptureFixture) -> None:
             archive(archiver_fqdn, pv_requests)
 
         mock_validate_pvs_status.assert_called_once_with(
-            mock_archiver_info, ["PV1"], [ArchivingStatus.NotBeingArchived]
+            archiver_info=mock_archiver_info, pvs=["PV1"], expected_statuses=[ArchivingStatus.NotBeingArchived]
         )
         mock_validate_policy_names.assert_called_once_with(mock_archiver, pv_requests)
         mock_archiver.archive_pv_requests.assert_called_once_with(pv_requests)

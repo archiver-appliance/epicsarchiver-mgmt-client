@@ -58,17 +58,17 @@ class ArchivePVRequest:
     """Information to archive a PV."""
 
     pv: str
-    samplingmethod: str | None = None
+    samplingmethod: SamplingMethod | None = None
     samplingperiod: str | None = None
     controllingPV: str | None = None  # noqa: N815
     policy: str | None = None
     appliance: str | None = None
 
-    def as_json(self) -> dict[str, str]:
+    def as_dict(self) -> dict[str, str]:
         """Return the object as a dictionary."""
         output = {"pv": self.pv}
         if self.samplingmethod:
-            output["samplingmethod"] = self.samplingmethod
+            output["samplingmethod"] = self.samplingmethod.value
         if self.samplingperiod:
             output["samplingperiod"] = self.samplingperiod
         if self.controllingPV:
@@ -96,6 +96,7 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
     def archive_pv(
         self,
         pv: str,
+        *,
         sampling_period: float | None = None,
         sampling_method: SamplingMethod | None = None,
         controlling_pv: str | None = None,
@@ -124,12 +125,12 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
         """
         return self.archive_pv_requests([
             ArchivePVRequest(
-                f"pva://{pv}" if protocol == EpicsProto.PVA else pv,
-                sampling_method,
-                str(sampling_period),
-                controlling_pv,
-                policy,
-                appliance,
+                pv=f"pva://{pv}" if protocol is EpicsProto.PVA else pv,
+                samplingmethod=sampling_method,
+                samplingperiod=str(sampling_period),
+                controllingPV=controlling_pv,
+                policy=policy,
+                appliance=appliance,
             )
         ])
 
@@ -142,7 +143,7 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
         Returns:
             OperationResultList: Result of the operation.
         """
-        request_data = [request.as_json() for request in pv_requests]
+        request_data = [request.as_dict() for request in pv_requests]
         LOG.debug("Archiving PVs %s", request_data)
         r = self._post("/archivePV", json=request_data)
         return cast("OperationResultList", r.json())

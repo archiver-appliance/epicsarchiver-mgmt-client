@@ -92,10 +92,8 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
 
 def _parse_archive_request(request_str: str) -> ArchivePVRequest:
-    if "," not in request_str:
-        return ArchivePVRequest(request_str)
-    pv, policy = request_str.split(",")
-    return ArchivePVRequest(pv, policy=policy)
+    pv, _, policy = request_str.partition(",")
+    return ArchivePVRequest(pv, policy=policy or None)
 
 
 @click.command(context_settings={"show_default": True})
