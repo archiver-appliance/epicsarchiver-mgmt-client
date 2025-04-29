@@ -85,9 +85,3 @@ build:
 build-pypi-package:
   only:
     - never
-
-release-pypi-package:
-  script:
-    - twine upload dist/* --skip-existing --verbose
-  only:
-    - tags
