@@ -2,6 +2,10 @@
 variables:
   CONTAINER_TEST_IMAGE: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  TWINE_USERNAME: gitlab
+  TWINE_PASSWORD: secret
+  TWINE_REPOSITORY_URL: https://artifactory.esss.lu.se/artifactory/api/pypi/ics-pypi
+
 
 default:
   image: python:3.12
@@ -11,6 +15,8 @@ default:
 include:
   - project: "ics-infrastructure/gitlab-ci-yml"
     file: "PreCommit.gitlab-ci.yml"
+  - project: "ics-infrastructure/gitlab-ci-yml"
+    file: "ArtifactoryPyPI.gitlab-ci.yml"
 
 # Pip's cache doesn't store the python packages
 # https://pip.pypa.io/en/stable/reference/pip_install/#caching
@@ -75,3 +81,7 @@ build:
     expire_in: 1 day
     paths:
       - dist/
+
+build-pypi-package:
+  only:
+    - never
