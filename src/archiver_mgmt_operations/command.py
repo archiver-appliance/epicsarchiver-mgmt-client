@@ -1,6 +1,5 @@
 """Command line tool for doing mgmt operations with the archiver."""
 
-import enum
 import logging
 import sys
 from io import TextIOWrapper
@@ -96,45 +95,6 @@ def _parse_rename_file(file: TextIOWrapper) -> list[tuple[str, str]]:
     return result
 
 
-class InvalidRenameTypeError(BaseMgmtError):
-    """Exception for when the rename type is invalid."""
-
-    def __init__(self, rename_type: str) -> None:
-        """Error for when the rename type is invalid.
-
-        Args:
-            rename_type (str): The invalid rename type.
-        """
-        super().__init__(f"Invalid rename type {rename_type}.")
-        self.rename_type = rename_type
-
-
-class RenameType(enum.StrEnum):
-    """The type of rename operation to perform."""
-
-    RenameOnly = "rename_only"
-    RenameAndAppend = "rename_and_append"
-
-    @staticmethod
-    def from_str(value: str) -> "RenameType":
-        """Convert a string to a RenameType.
-
-        Args:
-            value (str): The value to convert.
-
-        Returns:
-            RenameType: The RenameType.
-
-        Raises:
-            InvalidRenameTypeError: If the value is invalid.
-        """
-        if value.lower() == "rename_only":
-            return RenameType.RenameOnly
-        if value.lower() == "rename_and_append":
-            return RenameType.RenameAndAppend
-        raise InvalidRenameTypeError(value)
-
-
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.", multiple=True)
 @click.argument(
@@ -143,18 +103,16 @@ class RenameType(enum.StrEnum):
     default=sys.stdin,
 )
 @click.option(
-    "--rename_type",
-    "-r",
-    type=click.Choice(["rename_only", "rename_and_append"], case_sensitive=False),
+    "--and-append",
+    "-aa",
+    type=bool,
+    is_flag=True,
+    default=False,
     required=True,
-    help="""The type of rename operation to perform.
-     For rename_only: The new_pv must not exist in the archiver, and the old_pv must be being archived or paused.
-     For rename_and_append: Both pvs must be being archived or paused.
-     """,
-    callback=lambda _ctx, _param, value: RenameType.from_str(value),
+    help="Append the data of the new PV to the old PV and rename them.",
 )
 @click.pass_context
-def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, rename_type: RenameType) -> None:
+def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, and_append: bool = False) -> None:  # noqa: FBT001, FBT002
     """Rename PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to rename.
@@ -179,10 +137,10 @@ def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, re
     pvs = _parse_rename_file(file)
 
     try:
-        if rename_type == RenameType.RenameOnly:
-            cmd_rename.rename(archiver_fqdn, pvs)
-        else:
+        if and_append:
             cmd_rename.rename_and_append(archiver_fqdn, pvs)
+        else:
+            cmd_rename.rename(archiver_fqdn, pvs)
     except BaseMgmtError as e:
         LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error renaming PVs.", exc_info=True)
