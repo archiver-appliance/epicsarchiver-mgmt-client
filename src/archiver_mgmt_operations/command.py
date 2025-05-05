@@ -96,7 +96,7 @@ def _parse_rename_file(file: TextIOWrapper) -> list[tuple[str, str]]:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.", multiple=True)
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.", multiple=True)
 @click.argument(
     "file",
     type=click.File(),
@@ -252,7 +252,7 @@ def archdbrtype_from_param(value: str) -> ArchDbrType | None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
 @click.option(
     "--new-type",
     type=str,
