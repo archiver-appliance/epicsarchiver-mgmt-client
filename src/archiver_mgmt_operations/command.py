@@ -267,15 +267,15 @@ def archdbrtype_from_param(value: str) -> ArchDbrType | None:
 )
 @click.pass_context
 def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new_type: ArchDbrType | None) -> None:
-    """Pause PVs in the archiver.
+    """Change the type of PVs in the archiver.
 
-    ARGUMENT file csv file of what pvs to pause.
+    ARGUMENT file csv file of what pvs to change type.
 
     Example usage:
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com pause pvs.csv
+        archiver_mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
