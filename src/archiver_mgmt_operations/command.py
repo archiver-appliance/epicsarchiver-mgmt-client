@@ -83,7 +83,7 @@ def _parse_rename_file(file: TextIOWrapper) -> list[tuple[str, str]]:
     Raises:
         RenameFileError: If the file is invalid.
     """
-    rename_lines = file.read().split()
+    rename_lines = file.read().splitlines()
     result = []
     for line in rename_lines:
         pvs = line.split(",")
