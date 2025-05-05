@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TextIO
 
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-    from io import TextIOWrapper
 
     from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
     from requests import HTTPError
@@ -154,7 +153,7 @@ class ParseTwoPVCSVError(BaseMgmtError):
         self.line = line
 
 
-def parse_two_pv_csv(file: TextIOWrapper) -> list[tuple[str, str]]:
+def parse_two_pv_csv(file: TextIO) -> list[tuple[str, str]]:
     """Parse the rename file.
 
     Args:
