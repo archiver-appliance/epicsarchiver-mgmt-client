@@ -23,6 +23,9 @@ from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
+SIZE_KEY = "Estimated storage rate (MB/day)"
+MAX_STORAGE_MB = 1000
+
 
 class NotSamePVError(BaseMgmtError):
     """Exception for when the old and new PVs are the same."""
@@ -148,17 +151,13 @@ class TooMuchStoredDataError(BaseMgmtError):
         self.storage = storage
 
 
-SIZE_KEY = "Estimated storage rate (MB/day)"
-MAX_STORAGE = 1000
-
-
-def validate_not_large(archiver: ArchiverMgmtOperations, old_pvs: list[str], max_storage: float = MAX_STORAGE) -> None:
+def validate_size(archiver: ArchiverMgmtOperations, old_pvs: list[str], max_storage: float = MAX_STORAGE_MB) -> None:
     """Validate the old PVs are not too large.
 
     Args:
         archiver (ArchiverMgmtOperations): The archiver.
         old_pvs (list[str]): The PVs to check.
-        max_storage (float): The maximum storage allowed.
+        max_storage (float): The maximum storage allowed in MB per day.
 
     Raises:
         TooMuchStoredDataError: If the old and new PVs are the same.

@@ -10,8 +10,8 @@ from archiver_mgmt_operations.commands.rename import (
     TooMuchStoredDataError,
     rename,
     rename_and_append,
-    validate_not_large,
     validate_not_same,
+    validate_size,
 )
 from archiver_mgmt_operations.commands.validation import RequestHTTPError
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
@@ -195,7 +195,7 @@ def test_validate_not_large_success(caplog: pytest.LogCaptureFixture) -> None:
     old_pvs = ["old_pv1", "old_pv2"]
 
     with patch("archiver_mgmt_operations.commands.rename.ArchiverMgmtOperations", return_value=mock_archiver):
-        validate_not_large(mock_archiver, old_pvs)
+        validate_size(mock_archiver, old_pvs)
 
     assert "Old PV" not in caplog.text
 
@@ -208,6 +208,6 @@ def test_validate_not_large_failure() -> None:
 
     with patch("archiver_mgmt_operations.commands.rename.ArchiverMgmtOperations", return_value=mock_archiver):
         with pytest.raises(TooMuchStoredDataError) as exc_info:
-            validate_not_large(mock_archiver, old_pvs)
+            validate_size(mock_archiver, old_pvs)
 
         assert "Old PV old_pv1 has 1500.0 MB data stored. Manual intervention required." in str(exc_info.value)
