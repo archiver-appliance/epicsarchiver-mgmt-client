@@ -182,7 +182,7 @@ def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, re
         if rename_type == RenameType.RenameOnly:
             cmd_rename.rename(archiver_fqdn, pvs)
         else:
-            cmd_rename.append_rename(archiver_fqdn, pvs)
+            cmd_rename.rename_and_append(archiver_fqdn, pvs)
     except BaseMgmtError as e:
         LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error renaming PVs.", exc_info=True)

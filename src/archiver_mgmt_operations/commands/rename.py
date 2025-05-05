@@ -133,7 +133,7 @@ def _parallel_execute_rename(
         return list(executer.map(rename_pv_task, executer_input))
 
 
-class NotLargePVError(BaseMgmtError):
+class TooMuchStoredDataError(BaseMgmtError):
     """Exception for when the old PV has a lot of data stored."""
 
     def __init__(self, pv: str, storage: float) -> None:
@@ -161,16 +161,18 @@ def validate_not_large(archiver: ArchiverMgmtOperations, old_pvs: list[str], max
         max_storage (float): The maximum storage allowed.
 
     Raises:
-        NotLargePVError: If the old and new PVs are the same.
+        TooMuchStoredDataError: If the old and new PVs are the same.
     """
     for old_pv in old_pvs:
         pv_details = archiver.get_pv_details(old_pv)
         for detail in pv_details:
             if detail["name"] == SIZE_KEY and float(detail["value"]) > max_storage:
-                raise NotLargePVError(old_pv, float(detail["value"]))
+                raise TooMuchStoredDataError(old_pv, float(detail["value"]))
 
 
-def append_rename(archiver_fqdns: list[str], renames: list[tuple[str, str]], storage: Storage = Storage.MTS) -> None:
+def rename_and_append(
+    archiver_fqdns: list[str], renames: list[tuple[str, str]], storage: Storage = Storage.MTS
+) -> None:
     """Rename and append PVs in the archiver, runs in parallel on multiple archivers.
 
     Args:

@@ -6,10 +6,10 @@ from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 from requests import HTTPError, Response
 
 from archiver_mgmt_operations.commands.rename import (
-    NotLargePVError,
     NotSamePVError,
-    append_rename,
+    TooMuchStoredDataError,
     rename,
+    rename_and_append,
     validate_not_large,
     validate_not_same,
 )
@@ -139,7 +139,7 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
             {"status": "ok", "desc": "Renamed"},
             {"status": "ok", "desc": "Renamed"},
         ]
-        append_rename(archiver_fqdns, renames)
+        rename_and_append(archiver_fqdns, renames)
 
         mock_validate_not_same.assert_called_once_with(renames)
         mock_validate_pvs_status.assert_called()
@@ -176,7 +176,7 @@ def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
     ):
         mock_parallel_execute_rename_and_append.side_effect = HTTPError(response=request_response)
         with pytest.raises(RequestHTTPError):
-            append_rename(archiver_fqdns, renames)
+            rename_and_append(archiver_fqdns, renames)
 
         mock_validate_not_same.assert_called_once_with(renames)
         mock_validate_pvs_status.assert_called()
@@ -207,7 +207,7 @@ def test_validate_not_large_failure() -> None:
     old_pvs = ["old_pv1"]
 
     with patch("archiver_mgmt_operations.commands.rename.ArchiverMgmtOperations", return_value=mock_archiver):
-        with pytest.raises(NotLargePVError) as exc_info:
+        with pytest.raises(TooMuchStoredDataError) as exc_info:
             validate_not_large(mock_archiver, old_pvs)
 
         assert "Old PV old_pv1 has 1500.0 MB data stored. Manual intervention required." in str(exc_info.value)
