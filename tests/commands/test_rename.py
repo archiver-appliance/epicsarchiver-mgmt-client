@@ -104,7 +104,7 @@ def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
         assert mock_validate_pvs_status.call_count == 2
         mock_pause_pvs.assert_called_once()
         mock_parallel_execute_rename.assert_called_once()
-        assert "Error archiving PVs" in caplog.text
+        assert "Error Renaming PVs" in caplog.text
         assert "HTTPError" in caplog.text
 
 
@@ -147,7 +147,7 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
         mock_pause_pvs.assert_called_once()
         mock_validate_operation_results.assert_called_once()
         mock_parallel_execute_rename_and_append.assert_called_once()
-        assert "Renaming PVs" in caplog.text
+        assert "Renaming and Appending PVs" in caplog.text
         assert "Using archivers" in caplog.text
 
 
@@ -183,7 +183,7 @@ def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
         assert mock_validate_pvs_status.call_count == 2
         mock_pause_pvs.assert_called_once()
         mock_parallel_execute_rename_and_append.assert_called_once()
-        assert "Error archiving PVs" in caplog.text
+        assert "Error Renaming and Appending PVs" in caplog.text
         assert "HTTPError" in caplog.text
 
 

@@ -63,8 +63,8 @@ def _pause_pvs(archivers: list[ArchiverMgmtOperations], pvs: list[str]) -> None:
         )
 
     except HTTPError as e:
-        LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
-        LOG.debug("Error archiving PVs.", exc_info=True)
+        LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error pausing PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 
 
@@ -109,8 +109,8 @@ def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]]) -> None:
         # rename all the pvs, this can take a long time so we do it in parallel
         rename_results = _parallel_execute_rename(archivers, renames)
     except HTTPError as e:
-        LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
-        LOG.debug("Error archiving PVs.", exc_info=True)
+        LOG.error("Error Renaming PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error Renaming PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 
     # Validate output
@@ -204,7 +204,7 @@ def rename_and_append(
     )
 
     # Action
-    LOG.info("Renaming PVs %s", renames)
+    LOG.info("Renaming and Appending PVs %s", renames)
 
     archivers = [ArchiverMgmtOperations(archiver_fqdn) for archiver_fqdn in archiver_fqdns]
 
@@ -216,15 +216,15 @@ def rename_and_append(
         # rename all the pvs, this can take a long time so we do it in parallel
         rename_results = _parallel_execute_rename_and_append(archivers, renames, storage)
     except HTTPError as e:
-        LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
-        LOG.debug("Error archiving PVs.", exc_info=True)
+        LOG.error("Error Renaming and Appending PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error Renaming and Appending PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 
     # Validate output
     validate_operation_results(
         [new_pv for _old_pv, new_pv in renames],
         rename_results,
-        "renamed",
+        "Renamed and Appended",
     )
 
 
