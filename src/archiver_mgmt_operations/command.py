@@ -10,6 +10,7 @@ from epicsarchiver.common import ArchDbrType
 from archiver_mgmt_operations.commands import archive as cmd_archive
 from archiver_mgmt_operations.commands import change_type as ct
 from archiver_mgmt_operations.commands import pause_resume
+from archiver_mgmt_operations.commands import rename as cmd_rename
 from archiver_mgmt_operations.logging import CURRENT_COMMAND_LOG
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import ArchivePVRequest
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
@@ -52,6 +53,97 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     except BaseMgmtError as e:
         LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error pausing PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+class RenameFileError(BaseMgmtError):
+    """Exception for when the rename file is invalid."""
+
+    def __init__(self, line: str) -> None:
+        """Error for when the rename file is invalid.
+
+        Args:
+            line (str): The bad line.
+        """
+        super().__init__(f"Invalid line {line} in rename file")
+        self.line = line
+
+
+def _parse_rename_file(file: TextIOWrapper) -> list[tuple[str, str]]:
+    """Parse the rename file.
+
+    Args:
+        file (TextIOWrapper): The file to parse.
+
+    Returns:
+        list[tuple[str, str]]: The list of tuples of old and new PVs.
+
+    Raises:
+        RenameFileError: If the file is invalid.
+    """
+    rename_lines = file.read().splitlines()
+    result = []
+    for line in rename_lines:
+        pvs = line.split(",")
+        if len(pvs) != 2:  # noqa: PLR2004
+            LOG.error("Invalid line in rename file: %s", line)
+            raise RenameFileError(line)
+        old_pv, new_pv = pvs
+        result.append((old_pv, new_pv))
+    return result
+
+
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.", multiple=True)
+@click.argument(
+    "file",
+    type=click.File(),
+    default=sys.stdin,
+)
+@click.option(
+    "--and-append",
+    "-aa",
+    type=bool,
+    is_flag=True,
+    default=False,
+    required=True,
+    help="Append the data of the new PV to the old PV and rename them.",
+)
+@click.pass_context
+def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, and_append: bool = False) -> None:  # noqa: FBT001, FBT002
+    """Rename PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to rename.
+
+    Example file:
+
+    .. code-block:: console
+
+        old_pv,new_pv
+        pv1,pv2
+        pv3,pv4
+
+    Example usage:
+
+    .. code-block:: console
+
+        archiver_mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
+
+    """
+    # Read input
+    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
+    pvs = _parse_rename_file(file)
+
+    try:
+        if and_append:
+            cmd_rename.rename_and_append(archiver_fqdn, pvs)
+        else:
+            cmd_rename.rename(archiver_fqdn, pvs)
+    except BaseMgmtError as e:
+        LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error renaming PVs.", exc_info=True)
         ctx.exit(1)
 
     ctx.exit(0)
@@ -160,7 +252,7 @@ def archdbrtype_from_param(value: str) -> ArchDbrType | None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
 @click.option(
     "--new-type",
     type=str,
@@ -175,15 +267,15 @@ def archdbrtype_from_param(value: str) -> ArchDbrType | None:
 )
 @click.pass_context
 def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new_type: ArchDbrType | None) -> None:
-    """Pause PVs in the archiver.
+    """Change the type of PVs in the archiver.
 
-    ARGUMENT file csv file of what pvs to pause.
+    ARGUMENT file csv file of what pvs to change type.
 
     Example usage:
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com pause pvs.csv
+        archiver_mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
@@ -208,3 +300,4 @@ cli.add_command(change_type)
 cli.add_command(pause)
 cli.add_command(resume)
 cli.add_command(archive)
+cli.add_command(rename)

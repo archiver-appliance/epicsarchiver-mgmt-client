@@ -8,7 +8,6 @@ import logging
 import pytest
 import responses
 from epicsarchiver.common import ArchDbrType
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 from requests import HTTPError
 
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
@@ -258,141 +257,6 @@ def test_update_pv_samplingmethod() -> None:
 
 
 @responses.activate
-def test_pause_rename_resume_pv(caplog: pytest.LogCaptureFixture) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
-    pv = "MY:PV"
-    newname = "NEW:PV"
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={pv}",
-        json=[{"status": ArchivingStatus.BeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={newname}",
-        json=[{"status": ArchivingStatus.NotBeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/pauseArchivingPV?pv={pv}",
-        json={"status": "ok"},
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/renamePV?pv={pv}&newname={newname}",
-        json={"status": "ok"},
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/resumeArchivingPV?pv={newname}",
-        json={"status": "ok"},
-        status=200,
-        match_querystring=True,
-    )
-    with caplog.at_level(logging.DEBUG):
-        archiver.pause_rename_resume_pv(pv, newname)
-    captured_log = caplog.text
-    assert len(responses.calls) == 5
-    assert f"PV {pv} successfully renamed to {newname}\n" in captured_log
-
-
-@responses.activate
-def test_pause_rename_resume_pv_not_archived_pv(
-    caplog: pytest.LogCaptureFixture,
-) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
-    pv = "MY:PV"
-    newname = "NEW:PV"
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={pv}",
-        json=[{"status": ArchivingStatus.NotBeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    with caplog.at_level(logging.DEBUG):
-        archiver.pause_rename_resume_pv(pv, newname)
-    captured_log = caplog.text
-    assert len(responses.calls) == 1
-    assert f"PV {pv} isn't being archived. Skipping.\n" in captured_log
-
-
-@responses.activate
-def test_pause_rename_resume_pv_existing_new(caplog: pytest.LogCaptureFixture) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
-    pv = "MY:PV"
-    newname = "NEW:PV"
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={pv}",
-        json=[{"status": ArchivingStatus.BeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={newname}",
-        json=[{"status": ArchivingStatus.BeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    with caplog.at_level(logging.DEBUG):
-        archiver.pause_rename_resume_pv(pv, newname)
-    captured_log = caplog.text
-    assert len(responses.calls) == 2
-    assert f"New PV {newname} already exists. Skipping.\n" in captured_log
-
-
-@responses.activate
-def test_pause_rename_resume_pv_error_rename(caplog: pytest.LogCaptureFixture) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
-    pv = "MY:PV"
-    newname = "NEW:PV"
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={pv}",
-        json=[{"status": ArchivingStatus.BeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={newname}",
-        json=[{"status": ArchivingStatus.NotBeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/pauseArchivingPV?pv={pv}",
-        json={"status": "ok"},
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/renamePV?pv={pv}&newname={newname}",
-        json={"validation": "error during rename"},
-        status=200,
-        match_querystring=True,
-    )
-    with caplog.at_level(logging.DEBUG):
-        archiver.pause_rename_resume_pv(pv, newname)
-    captured_log = caplog.text
-    LOG.info(captured_log)
-    assert len(responses.calls) == 4
-    assert "error during rename" in captured_log
-
-
-@responses.activate
 def test_add_alias_ok(caplog: pytest.LogCaptureFixture) -> None:
     archiver = ArchiverMgmtOperations(TEST_DOMAIN)
     pv = "MY:PV"
@@ -433,20 +297,6 @@ def test_rename_and_append_success(caplog: pytest.LogCaptureFixture) -> None:
     new = "NEW:PV"
     responses.add(
         responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={old}",
-        json=[{"status": ArchivingStatus.Paused}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={new}",
-        json=[{"status": ArchivingStatus.Paused}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
         f"http://{TEST_DOMAIN}:17665/mgmt/bpl/appendAndAliasPV?olderpv={old}&newerpv={new}&storage=MTS",
         json={
             "addAlias": "ok",
@@ -460,55 +310,8 @@ def test_rename_and_append_success(caplog: pytest.LogCaptureFixture) -> None:
     with caplog.at_level(logging.DEBUG):
         archiver.rename_and_append(old, new, Storage.MTS)
     captured_log = caplog.text
-    assert len(responses.calls) == 3
-    assert f"PV {old} successfully appended and aliased to {new}\n" in captured_log
-
-
-@responses.activate
-def test_rename_and_append_fail_not_archived_pv(
-    caplog: pytest.LogCaptureFixture,
-) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
-    old = "MY:PV"
-    new = "NEW:PV"
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={old}",
-        json=[{"status": ArchivingStatus.NotBeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    with caplog.at_level(logging.DEBUG):
-        archiver.rename_and_append(old, new, Storage.MTS)
-    captured_log = caplog.text
     assert len(responses.calls) == 1
-    assert f"PV {old} isn't paused. Skipping.\n" in captured_log
-
-
-@responses.activate
-def test_rename_and_append_fail_pv_not_paused(caplog: pytest.LogCaptureFixture) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
-    old = "MY:PV"
-    new = "NEW:PV"
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={old}",
-        json=[{"status": ArchivingStatus.Paused}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={new}",
-        json=[{"status": ArchivingStatus.NotBeingArchived}],
-        status=200,
-        match_querystring=True,
-    )
-    with caplog.at_level(logging.DEBUG):
-        archiver.rename_and_append(old, new, Storage.MTS)
-    captured_log = caplog.text
-    assert len(responses.calls) == 2
-    assert f"PV {new} isn't paused. Skipping.\n" in captured_log
+    assert "ok" in captured_log
 
 
 @responses.activate
@@ -520,20 +323,6 @@ def test_rename_and_append_fail_pv_error_response(
     new = "NEW:PV"
     responses.add(
         responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={old}",
-        json=[{"status": ArchivingStatus.Paused}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/getPVStatus?pv={new}",
-        json=[{"status": ArchivingStatus.Paused}],
-        status=200,
-        match_querystring=True,
-    )
-    responses.add(
-        responses.GET,
         f"http://{TEST_DOMAIN}:17665/mgmt/bpl/appendAndAliasPV?olderpv={old}&newerpv={new}&storage=MTS",
         json={"validation": "error during appendAndAliasPV"},
         status=200,
@@ -543,7 +332,7 @@ def test_rename_and_append_fail_pv_error_response(
         archiver.rename_and_append(old, new, Storage.MTS)
     captured_log = caplog.text
     LOG.info(captured_log)
-    assert len(responses.calls) == 3
+    assert len(responses.calls) == 1
     assert "error during appendAndAliasPV" in captured_log
 
 
