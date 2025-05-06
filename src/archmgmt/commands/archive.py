@@ -40,7 +40,7 @@ def validate_policy_names(archiver: ArchiverMgmt, pv_requests: list[ArchivePVReq
     """Validate the policy names.
 
     Args:
-        archiver (ArchiverMgmtOperations): The archiver information.
+        archiver (ArchiverMgmt): The archiver information.
         pv_requests (list[ArchivePVRequest]): The PVs to archive.
 
     Raises:

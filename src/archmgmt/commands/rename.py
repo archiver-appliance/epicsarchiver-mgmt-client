@@ -127,7 +127,7 @@ def validate_size(archiver: ArchiverMgmt, old_pvs: list[str], max_storage: float
     """Validate the old PVs are not too large.
 
     Args:
-        archiver (ArchiverMgmtOperations): The archiver.
+        archiver (ArchiverMgmt): The archiver.
         old_pvs (list[str]): The PVs to check.
         max_storage (float): The maximum storage allowed in MB per day.
 

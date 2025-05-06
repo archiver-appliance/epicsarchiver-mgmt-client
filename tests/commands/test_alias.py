@@ -26,7 +26,7 @@ def test_alias_success(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.alias.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.alias.ArchiverMgmtOperations", side_effect=mock_archiver),
+        patch("archmgmt.commands.alias.ArchiverMgmt", side_effect=mock_archiver),
         patch("archmgmt.commands.alias.validate_not_same") as mock_validate_not_same,
         patch("archmgmt.commands.alias.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.alias.validate_operation_results") as mock_validate_operation_results,
@@ -56,7 +56,7 @@ def test_alias_http_error(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.alias.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.alias.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.alias.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.alias.validate_not_same") as mock_validate_not_same,
         patch("archmgmt.commands.alias.validate_pvs_status") as mock_validate_pvs_status,
     ):

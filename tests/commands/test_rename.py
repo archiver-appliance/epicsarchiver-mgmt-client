@@ -33,7 +33,7 @@ def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
     with (
         patch("archmgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch(
-            "archmgmt.commands.rename.ArchiverMgmtOperations",
+            "archmgmt.commands.rename.ArchiverMgmt",
             side_effect=[mock_archiver1, mock_archiver2],
         ),
         patch("archmgmt.commands.rename.validate_not_same") as mock_validate_not_same,
@@ -73,7 +73,7 @@ def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.rename.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.rename.validate_not_same") as mock_validate_not_same,
         patch("archmgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.rename._pause_pvs") as mock_pause_pvs,
@@ -108,7 +108,7 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
     with (
         patch("archmgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch(
-            "archmgmt.commands.rename.ArchiverMgmtOperations",
+            "archmgmt.commands.rename.ArchiverMgmt",
             side_effect=[mock_archiver1, mock_archiver2],
         ),
         patch("archmgmt.commands.rename.validate_not_same") as mock_validate_not_same,
@@ -150,7 +150,7 @@ def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.rename.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.rename.validate_not_same") as mock_validate_not_same,
         patch("archmgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.rename._pause_pvs") as mock_pause_pvs,
@@ -178,7 +178,7 @@ def test_validate_not_large_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.get_pv_details.return_value = [{"name": "Estimated storage rate (MB/day)", "value": "500"}]
     old_pvs = ["old_pv1", "old_pv2"]
 
-    with patch("archmgmt.commands.rename.ArchiverMgmtOperations", return_value=mock_archiver):
+    with patch("archmgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver):
         validate_size(mock_archiver, old_pvs)
 
     assert "Old PV" not in caplog.text
@@ -190,7 +190,7 @@ def test_validate_not_large_failure() -> None:
     mock_archiver.get_pv_details.return_value = [{"name": "Estimated storage rate (MB/day)", "value": "1500"}]
     old_pvs = ["old_pv1"]
 
-    with patch("archmgmt.commands.rename.ArchiverMgmtOperations", return_value=mock_archiver):
+    with patch("archmgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver):
         with pytest.raises(TooMuchStoredDataError) as exc_info:
             validate_size(mock_archiver, old_pvs)
 

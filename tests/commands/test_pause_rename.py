@@ -33,7 +33,7 @@ def test_pause_success(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.pause_resume.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.pause_resume.validate_operation_results") as mock_validate_operation_results,
     ):
@@ -76,7 +76,7 @@ def test_resume_success(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.pause_resume.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.pause_resume.validate_operation_results") as mock_validate_operation_results,
     ):
@@ -145,7 +145,7 @@ def test_raise_http_error(
 
     with (
         patch("archmgmt.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.pause_resume.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.pause_resume.validate_operation_results") as mock_validate_operation_results,
     ):

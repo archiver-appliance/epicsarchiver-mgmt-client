@@ -30,7 +30,7 @@ def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
         patch("archmgmt.commands.archive.validate_operation_results") as mock_validate_operation_results,
@@ -63,7 +63,7 @@ def test_archive_dry_run(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
     ):
@@ -93,7 +93,7 @@ def test_archive_http_error(caplog: pytest.LogCaptureFixture) -> None:
 
     with (
         patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
         patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
         patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
     ):
