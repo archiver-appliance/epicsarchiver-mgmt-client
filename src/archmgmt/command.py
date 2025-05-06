@@ -15,7 +15,7 @@ from archmgmt.commands import pause_resume
 from archmgmt.commands import rename as cmd_rename
 from archmgmt.input_parsing import double_column_csv, single_column_csv
 from archmgmt.logging import CURRENT_COMMAND_LOG
-from archmgmt.mgmt.archiver_mgmt_operations import ArchivePVRequest
+from archmgmt.mgmt.archiver import ArchivePVRequest
 from archmgmt.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)

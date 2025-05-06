@@ -14,8 +14,8 @@ from archmgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
-from archmgmt.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
+from archmgmt.mgmt.archiver import (
+    ArchiverMgmt,
 )
 
 LOG: logging.Logger = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ def add_aliases(archiver_fqdn: str, alias_maps: list[tuple[str, str]]) -> None:
     # Action
     LOG.info("Adding aliases for PVs %s", alias_maps)
 
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
 
     LOG.info("Using archiver %s", archiver.info)
 
@@ -106,7 +106,7 @@ def remove_aliases(archiver_fqdn: str, alias_maps: list[tuple[str, str]]) -> Non
     # Action
     LOG.info("Removing aliases for PVs %s", alias_maps)
 
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
 
     LOG.info("Using archiver %s", archiver.info)
 

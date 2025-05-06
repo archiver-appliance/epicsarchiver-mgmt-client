@@ -6,8 +6,8 @@ from archmgmt.commands.alias import (
     add_aliases,
 )
 from archmgmt.commands.validation import RequestHTTPError
-from archmgmt.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
+from archmgmt.mgmt.archiver import (
+    ArchiverMgmt,
 )
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 from requests import HTTPError, Response
@@ -19,7 +19,7 @@ def test_alias_success(caplog: pytest.LogCaptureFixture) -> None:
     archiver_fqdn = "archiver.example.com"
     aliases = [("old_pv1", "new_pv1"), ("old_pv2", "new_pv2")]
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     mock_archiver.add_alias.return_value = {"status": "ok", "desc": "aliased"}
 
@@ -46,7 +46,7 @@ def test_alias_http_error(caplog: pytest.LogCaptureFixture) -> None:
     archiver_fqdn = "archiver.example.com"
     aliases = [("old_pv1", "new_pv1"), ("old_pv2", "new_pv2")]
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     request_response = Response()
     request_response.status_code = 500

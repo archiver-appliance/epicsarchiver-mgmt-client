@@ -9,8 +9,8 @@ from archmgmt.commands.change_type import (
     change_type,
 )
 from archmgmt.commands.validation import RequestHTTPError
-from archmgmt.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
+from archmgmt.mgmt.archiver import (
+    ArchiverMgmt,
     OperationResult,
 )
 from epicsarchiver.common import ArchDbrType
@@ -48,7 +48,7 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture) -> None:
     pvs = ["PV1", "PV2"]
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     # Simulate the list comprehension result for change_type
     mock_change_results = [
@@ -97,7 +97,7 @@ def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture) -> N
     pvs = ["PV1"]
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     request_response = Response()
     request_response.status_code = 500
@@ -145,7 +145,7 @@ def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture) -> None:
     pvs = ["PV1"]
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     request_response = Response()
     request_response.status_code = 400
@@ -183,7 +183,7 @@ def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture) -> None:
     pvs = ["PV1"]
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     mock_change_results = [OperationResult(pv="PV1", statusCode=200, statusMessage="OK")]
     mock_archiver.change_type.side_effect = mock_change_results

@@ -9,8 +9,8 @@ from archmgmt.commands.rename import (
     validate_size,
 )
 from archmgmt.commands.validation import RequestHTTPError
-from archmgmt.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
+from archmgmt.mgmt.archiver import (
+    ArchiverMgmt,
 )
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 from requests import HTTPError, Response
@@ -22,9 +22,9 @@ def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
     archiver_fqdns = ["archiver1.example.com", "archiver2.example.com"]
     renames = [("old_pv1", "new_pv1"), ("old_pv2", "new_pv2")]
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver1 = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver1 = MagicMock(spec=ArchiverMgmt)
     mock_archiver1.info = "Archiver1 Info"
-    mock_archiver2 = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver2 = MagicMock(spec=ArchiverMgmt)
     mock_archiver2.info = "Archiver2 Info"
     mock_archiver1.rename_pv.return_value = {"status": "ok", "desc": "Renamed"}
     mock_archiver2.rename_pv.return_value = {"status": "ok", "desc": "Renamed"}
@@ -63,7 +63,7 @@ def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
     archiver_fqdns = ["archiver.example.com"]
     renames = [("old_pv1", "new_pv1")]
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     request_response = Response()
     request_response.status_code = 500
@@ -97,9 +97,9 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
     archiver_fqdns = ["archiver1.example.com", "archiver2.example.com"]
     renames = [("old_pv1", "new_pv1"), ("old_pv2", "new_pv2")]
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver1 = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver1 = MagicMock(spec=ArchiverMgmt)
     mock_archiver1.info = "Archiver1 Info"
-    mock_archiver2 = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver2 = MagicMock(spec=ArchiverMgmt)
     mock_archiver2.info = "Archiver2 Info"
     mock_archiver1.rename_and_append.return_value = {"status": "ok", "desc": "Renamed"}
     mock_archiver2.rename_and_append.return_value = {"status": "ok", "desc": "Renamed"}
@@ -140,7 +140,7 @@ def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
     archiver_fqdns = ["archiver.example.com"]
     renames = [("old_pv1", "new_pv1")]
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     request_response = Response()
     request_response.status_code = 500
@@ -173,7 +173,7 @@ def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
 def test_validate_not_large_success(caplog: pytest.LogCaptureFixture) -> None:
     """Test validate_not_large with PVs that are not too large."""
     caplog.set_level(logging.INFO)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.get_pv_details.return_value = [{"name": "Estimated storage rate (MB/day)", "value": "500"}]
     old_pvs = ["old_pv1", "old_pv2"]
 
@@ -185,7 +185,7 @@ def test_validate_not_large_success(caplog: pytest.LogCaptureFixture) -> None:
 
 def test_validate_not_large_failure() -> None:
     """Test validate_not_large with PVs that are too large."""
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.get_pv_details.return_value = [{"name": "Estimated storage rate (MB/day)", "value": "1500"}]
     old_pvs = ["old_pv1"]
 

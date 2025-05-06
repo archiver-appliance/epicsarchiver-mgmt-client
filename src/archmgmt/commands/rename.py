@@ -15,8 +15,8 @@ from archmgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
-from archmgmt.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
+from archmgmt.mgmt.archiver import (
+    ArchiverMgmt,
     OperationResult,
     Storage,
 )
@@ -28,7 +28,7 @@ SIZE_KEY = "Estimated storage rate (MB/day)"
 MAX_STORAGE_MB = 1000
 
 
-def _pause_pvs(archivers: list[ArchiverMgmtOperations], pvs: list[str]) -> None:
+def _pause_pvs(archivers: list[ArchiverMgmt], pvs: list[str]) -> None:
     try:
         # pause all the pvs
         pause_results = [(archivers[i % len(archivers)]).pause_pv(pv) for i, pv in enumerate(pvs)]
@@ -77,7 +77,7 @@ def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]]) -> None:
     # Action
     LOG.info("Renaming PVs %s", renames)
 
-    archivers = [ArchiverMgmtOperations(archiver_fqdn) for archiver_fqdn in archiver_fqdns]
+    archivers = [ArchiverMgmt(archiver_fqdn) for archiver_fqdn in archiver_fqdns]
 
     LOG.info("Using archivers %s", [archiver.info for archiver in archivers])
 
@@ -98,10 +98,8 @@ def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]]) -> None:
     )
 
 
-def _parallel_execute_rename(
-    archivers: list[ArchiverMgmtOperations], renames: list[tuple[str, str]]
-) -> list[OperationResult]:
-    def rename_pv_task(task_input: tuple[ArchiverMgmtOperations, str, str]) -> OperationResult:
+def _parallel_execute_rename(archivers: list[ArchiverMgmt], renames: list[tuple[str, str]]) -> list[OperationResult]:
+    def rename_pv_task(task_input: tuple[ArchiverMgmt, str, str]) -> OperationResult:
         archiver, old_pv, new_pv = task_input
         return archiver.rename_pv(old_pv, new_pv)
 
@@ -125,7 +123,7 @@ class TooMuchStoredDataError(BaseMgmtError):
         self.storage = storage
 
 
-def validate_size(archiver: ArchiverMgmtOperations, old_pvs: list[str], max_storage: float = MAX_STORAGE_MB) -> None:
+def validate_size(archiver: ArchiverMgmt, old_pvs: list[str], max_storage: float = MAX_STORAGE_MB) -> None:
     """Validate the old PVs are not too large.
 
     Args:
@@ -179,7 +177,7 @@ def rename_and_append(
     # Action
     LOG.info("Renaming and Appending PVs %s", renames)
 
-    archivers = [ArchiverMgmtOperations(archiver_fqdn) for archiver_fqdn in archiver_fqdns]
+    archivers = [ArchiverMgmt(archiver_fqdn) for archiver_fqdn in archiver_fqdns]
 
     LOG.info("Using archivers %s", [archiver.info for archiver in archivers])
 
@@ -202,9 +200,9 @@ def rename_and_append(
 
 
 def _parallel_execute_rename_and_append(
-    archivers: list[ArchiverMgmtOperations], renames: list[tuple[str, str]], storage: Storage
+    archivers: list[ArchiverMgmt], renames: list[tuple[str, str]], storage: Storage
 ) -> list[OperationResult]:
-    def rename_pv_task(task_input: tuple[ArchiverMgmtOperations, str, str]) -> OperationResult:
+    def rename_pv_task(task_input: tuple[ArchiverMgmt, str, str]) -> OperationResult:
         archiver, old_pv, new_pv = task_input
         return archiver.rename_and_append(old_pv, new_pv, storage)
 

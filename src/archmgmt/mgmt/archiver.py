@@ -79,7 +79,7 @@ class ArchivePVRequest:
         return output
 
 
-class ArchiverMgmtOperations(ArchiverMgmtInfo):
+class ArchiverMgmt(ArchiverMgmtInfo):
     """Mgmt Operations EPICS Archiver Appliance client.
 
     Hold a session to the Archiver Appliance web application and use the mgmt interface.

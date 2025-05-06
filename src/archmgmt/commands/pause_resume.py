@@ -13,8 +13,8 @@ from archmgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
-from archmgmt.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
+from archmgmt.mgmt.archiver import (
+    ArchiverMgmt,
     OperationResult,
 )
 
@@ -49,7 +49,7 @@ def pause(archiver_fqdn: str, pvs: Sequence[str]) -> None:
     # Action
     LOG.info("Pausing PVs %s", pvs)
 
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
 
     LOG.info("Using archiver %s", archiver.info)
 
@@ -86,7 +86,7 @@ def resume(archiver_fqdn: str, pvs: Sequence[str]) -> None:
 
     # Action
     LOG.info("Resuming PVs %s", pvs)
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
     LOG.info("Using archiver %s", archiver.info)
 
     try:

@@ -15,8 +15,8 @@ from archmgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
-from archmgmt.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
+from archmgmt.mgmt.archiver import (
+    ArchiverMgmt,
     OperationResult,
 )
 from archmgmt.mgmt_exception import BaseMgmtError
@@ -80,7 +80,7 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
         ],
     )
 
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
 
     pause_resume.pause(archiver_fqdn, pvs)
     # Action

@@ -12,9 +12,9 @@ from archmgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
-from archmgmt.mgmt.archiver_mgmt_operations import (
+from archmgmt.mgmt.archiver import (
     ArchivePVRequest,
-    ArchiverMgmtOperations,
+    ArchiverMgmt,
 )
 from archmgmt.mgmt_exception import BaseMgmtError
 
@@ -36,7 +36,7 @@ class ArchivePolicyNotFoundError(BaseMgmtError):
         self.policy_names = policy_names
 
 
-def validate_policy_names(archiver: ArchiverMgmtOperations, pv_requests: list[ArchivePVRequest]) -> None:
+def validate_policy_names(archiver: ArchiverMgmt, pv_requests: list[ArchivePVRequest]) -> None:
     """Validate the policy names.
 
     Args:
@@ -76,7 +76,7 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run:
             ArchivingStatus.NotBeingArchived,
         ],
     )
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
     validate_policy_names(archiver, pv_requests)
 
     # Action
