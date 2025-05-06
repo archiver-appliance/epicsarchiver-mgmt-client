@@ -26,7 +26,7 @@ dependencies = [ "click>=8", "py-epicsarchiver>=0.16", "rich>=13" ]
 urls.Documentation = "https://github.com/skybrewer/archiver-mgmt-operations#readme"
 urls.Issues = "https://github.com/skybrewer/archiver-mgmt-operations/issues"
 urls.Source = "https://github.com/skybrewer/archiver-mgmt-operations"
-scripts.archiver_mgmt = "archiver_mgmt_operations.command:cli"
+scripts.archapplmgmt = "archiver_mgmt_operations.command:cli"
 
 [tool.hatch.version]
 path = "src/archiver_mgmt_operations/__about__.py"
