@@ -1,4 +1,3 @@
-# /Users/skybrewer/git/ics-software/archiver-appliance/mgmt_operations/tests/commands/test_pause_rename.py
 import logging
 from collections.abc import Callable
 from typing import cast
