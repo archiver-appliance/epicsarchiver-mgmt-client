@@ -3,6 +3,7 @@
 import logging
 import sys
 from io import TextIOWrapper
+from typing import TextIO
 
 import click
 from epicsarchiver.common import ArchDbrType
@@ -12,7 +13,7 @@ from archiver_mgmt_operations.commands import archive as cmd_archive
 from archiver_mgmt_operations.commands import change_type as ct
 from archiver_mgmt_operations.commands import pause_resume
 from archiver_mgmt_operations.commands import rename as cmd_rename
-from archiver_mgmt_operations.commands.validation import parse_two_pv_csv
+from archiver_mgmt_operations.input_parsing import double_column_csv, single_column_csv
 from archiver_mgmt_operations.logging import CURRENT_COMMAND_LOG
 from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import ArchivePVRequest
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
@@ -48,7 +49,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = file.read().split()
+    pvs = single_column_csv(file)
 
     try:
         pause_resume.pause(archiver_fqdn, pvs)
@@ -99,7 +100,7 @@ def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, an
     """
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = parse_two_pv_csv(file)
+    pvs = double_column_csv(file)
 
     try:
         if and_append:
@@ -136,7 +137,7 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = file.read().split()
+    pvs = single_column_csv(file)
 
     try:
         pause_resume.resume(archiver_fqdn, pvs)
@@ -148,9 +149,9 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     ctx.exit(0)
 
 
-def _parse_archive_request(request_str: str) -> ArchivePVRequest:
-    pv, _, policy = request_str.partition(",")
-    return ArchivePVRequest(pv, policy=policy or None)
+def _parse_archive_requests(file: TextIO) -> list[ArchivePVRequest]:
+    requests = double_column_csv(file)
+    return [ArchivePVRequest(pv, policy=policy) for pv, policy in requests]
 
 
 @click.command(context_settings={"show_default": True})
@@ -169,7 +170,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     Example:
     PV,policy
-    mypv1
+    mypv1,
     mypv2,1Hz
     mypv3,1HzSCAN
 
@@ -185,12 +186,10 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
     """
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pv_requests = file.read().split()
+    pv_requests = _parse_archive_requests(file)
 
     try:
-        cmd_archive.archive(
-            archiver_fqdn, [_parse_archive_request(request) for request in pv_requests], dry_run=dry_run
-        )
+        cmd_archive.archive(archiver_fqdn, pv_requests, dry_run=dry_run)
     except BaseMgmtError as e:
         LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error archiving PVs.", exc_info=True)
@@ -249,7 +248,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
         ctx.exit(1)
 
     # Read input
-    pvs = file.read().split()
+    pvs = single_column_csv(file)
 
     try:
         ct.change_type(archiver_fqdn, pvs, new_type)
@@ -296,7 +295,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
     """
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = parse_two_pv_csv(file)
+    pvs = double_column_csv(file)
 
     try:
         cmd_alias.add_aliases(archiver_fqdn, pvs)
@@ -338,7 +337,7 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
     """
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = parse_two_pv_csv(file)
+    pvs = double_column_csv(file)
 
     try:
         cmd_alias.remove_aliases(archiver_fqdn, pvs)

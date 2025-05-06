@@ -1,4 +1,3 @@
-from io import StringIO
 from unittest.mock import MagicMock
 
 import pytest
@@ -6,10 +5,8 @@ from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
 from archiver_mgmt_operations.commands.validation import (
     NotSamePVError,
-    ParseTwoPVCSVError,
     ValidOperationResultsError,
     ValidPVStatusError,
-    parse_two_pv_csv,
     validate_not_same,
     validate_operation_results,
     validate_pvs_status,
@@ -66,34 +63,3 @@ def test_validate_not_same_failure() -> None:
     with pytest.raises(NotSamePVError) as exc_info:
         validate_not_same(renames)
     assert str(exc_info.value) == "Old and new PVs are the same for PV pv1."
-
-
-def test_parse_two_pv_csv_success() -> None:
-    """Test parse_two_pv_csv with a valid file."""
-    file_content = "old_pv1,new_pv1\nold_pv2,new_pv2"
-    file_obj = StringIO(file_content)
-    expected_result = [("old_pv1", "new_pv1"), ("old_pv2", "new_pv2")]
-    assert parse_two_pv_csv(file_obj) == expected_result
-
-
-def test_parse_two_pv_csv_failure() -> None:
-    """Test parse_two_pv_csv with an invalid file (incorrect number of PVs)."""
-    file_content = "old_pv1,new_pv1\nold_pv2"
-    file_obj = StringIO(file_content)
-    with pytest.raises(ParseTwoPVCSVError, match="Invalid line old_pv2 in rename file"):
-        parse_two_pv_csv(file_obj)
-
-
-def test_parse_two_pv_csv_empty_file() -> None:
-    """Test parse_two_pv_csv with an empty file."""
-    file_content = ""
-    file_obj = StringIO(file_content)
-    assert parse_two_pv_csv(file_obj) == []
-
-
-def test_parse_two_pv_csv_with_whitespace() -> None:
-    """Test parse_two_pv_csv with whitespace around the commas."""
-    file_content = "old_pv1 , new_pv1\nold_pv2 ,new_pv2 "
-    file_obj = StringIO(file_content)
-    expected_result = [("old_pv1 ", " new_pv1"), ("old_pv2 ", "new_pv2 ")]
-    assert parse_two_pv_csv(file_obj) == expected_result

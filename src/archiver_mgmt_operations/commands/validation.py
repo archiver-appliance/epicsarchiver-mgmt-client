@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, TextIO
+from typing import TYPE_CHECKING
 
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
 
@@ -126,52 +126,15 @@ class NotSamePVError(BaseMgmtError):
         self.pv = pv
 
 
-def validate_not_same(renames: list[tuple[str, str]]) -> None:
+def validate_not_same(pairs: list[tuple[str, str]]) -> None:
     """Validate the rename operation.
 
     Args:
-        renames (list[tuple[str, str]]): The PVs to rename.
+        pairs (list[tuple[str, str]]): The pairs of PVs.
 
     Raises:
         NotSamePVError: If the old and new PVs are the same.
     """
-    for old_pv, new_pv in renames:
+    for old_pv, new_pv in pairs:
         if old_pv == new_pv:
             raise NotSamePVError(old_pv)
-
-
-class ParseTwoPVCSVError(BaseMgmtError):
-    """Exception for when the rename file is invalid."""
-
-    def __init__(self, line: str) -> None:
-        """Error for when the rename file is invalid.
-
-        Args:
-            line (str): The bad line.
-        """
-        super().__init__(f"Invalid line {line} in rename file")
-        self.line = line
-
-
-def parse_two_pv_csv(file: TextIO) -> list[tuple[str, str]]:
-    """Parse the rename file.
-
-    Args:
-        file (TextIOWrapper): The file to parse.
-
-    Returns:
-        list[tuple[str, str]]: The list of tuples of old and new PVs.
-
-    Raises:
-        ParseTwoPVCSVError: If the file is invalid.
-    """
-    rename_lines = file.read().splitlines()
-    result = []
-    for line in rename_lines:
-        pvs = line.split(",")
-        if len(pvs) != 2:  # noqa: PLR2004
-            LOG.error("Invalid line in rename file: %s", line)
-            raise ParseTwoPVCSVError(line)
-        pv1, pv2 = pvs
-        result.append((pv1, pv2))
-    return result
