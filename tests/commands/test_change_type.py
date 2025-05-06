@@ -3,20 +3,19 @@ from typing import cast
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from epicsarchiver.common import ArchDbrType
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
-from requests import HTTPError, Response
-
-from archiver_mgmt_operations.commands.change_type import (
+from archmgmt.commands.change_type import (
     InvalidArchDbrTypeError,
     archdbrtype_from_str,
     change_type,
 )
-from archiver_mgmt_operations.commands.validation import RequestHTTPError
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
+from archmgmt.commands.validation import RequestHTTPError
+from archmgmt.mgmt.archiver_mgmt_operations import (
     ArchiverMgmtOperations,
     OperationResult,
 )
+from epicsarchiver.common import ArchDbrType
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
+from requests import HTTPError, Response
 
 
 # --- Tests for archdbrtype_from_str ---

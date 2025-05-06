@@ -9,17 +9,17 @@ from epicsarchiver.common import ArchDbrType
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
-from archiver_mgmt_operations.commands import pause_resume
-from archiver_mgmt_operations.commands.validation import (
+from archmgmt.commands import pause_resume
+from archmgmt.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
 )
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
+from archmgmt.mgmt.archiver_mgmt_operations import (
     ArchiverMgmtOperations,
     OperationResult,
 )
-from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
+from archmgmt.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

@@ -8,15 +8,15 @@ from typing import TextIO
 import click
 from epicsarchiver.common import ArchDbrType
 
-from archiver_mgmt_operations.commands import alias as cmd_alias
-from archiver_mgmt_operations.commands import archive as cmd_archive
-from archiver_mgmt_operations.commands import change_type as ct
-from archiver_mgmt_operations.commands import pause_resume
-from archiver_mgmt_operations.commands import rename as cmd_rename
-from archiver_mgmt_operations.input_parsing import double_column_csv, single_column_csv
-from archiver_mgmt_operations.logging import CURRENT_COMMAND_LOG
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import ArchivePVRequest
-from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
+from archmgmt.commands import alias as cmd_alias
+from archmgmt.commands import archive as cmd_archive
+from archmgmt.commands import change_type as ct
+from archmgmt.commands import pause_resume
+from archmgmt.commands import rename as cmd_rename
+from archmgmt.input_parsing import double_column_csv, single_column_csv
+from archmgmt.logging import CURRENT_COMMAND_LOG
+from archmgmt.mgmt.archiver_mgmt_operations import ArchivePVRequest
+from archmgmt.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

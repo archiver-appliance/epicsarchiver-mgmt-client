@@ -2,19 +2,18 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
-from requests import HTTPError, Response
-
-from archiver_mgmt_operations.commands.rename import (
+from archmgmt.commands.rename import (
     TooMuchStoredDataError,
     rename,
     rename_and_append,
     validate_size,
 )
-from archiver_mgmt_operations.commands.validation import RequestHTTPError
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
+from archmgmt.commands.validation import RequestHTTPError
+from archmgmt.mgmt.archiver_mgmt_operations import (
     ArchiverMgmtOperations,
 )
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
+from requests import HTTPError, Response
 
 
 def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:

@@ -9,18 +9,18 @@ from typing import cast
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
-from archiver_mgmt_operations.commands.validation import (
+from archmgmt.commands.validation import (
     RequestHTTPError,
     validate_not_same,
     validate_operation_results,
     validate_pvs_status,
 )
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
+from archmgmt.mgmt.archiver_mgmt_operations import (
     ArchiverMgmtOperations,
     OperationResult,
     Storage,
 )
-from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
+from archmgmt.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

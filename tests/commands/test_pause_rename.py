@@ -4,15 +4,14 @@ from typing import cast
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
-from requests import HTTPError, Response
-
-from archiver_mgmt_operations.commands.pause_resume import pause, resume
-from archiver_mgmt_operations.commands.validation import RequestHTTPError
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
+from archmgmt.commands.pause_resume import pause, resume
+from archmgmt.commands.validation import RequestHTTPError
+from archmgmt.mgmt.archiver_mgmt_operations import (
     ArchiverMgmtOperations,
     OperationResult,
 )
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
+from requests import HTTPError, Response
 
 
 def test_pause_success(caplog: pytest.LogCaptureFixture) -> None:
