@@ -266,7 +266,7 @@ def alias() -> None:
 
 
 @click.command("add", context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
@@ -308,7 +308,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
 
 @click.command("remove", context_settings={"show_default": True})
-@click.option("--archiver_fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
