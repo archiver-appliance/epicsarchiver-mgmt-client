@@ -5,7 +5,7 @@ Project for tracking changes to the archiver via the mgmt operations interface. 
 ## Installation
 
 ```console
-pip install archiver-mgmt-operations -i https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple
+pip install archmgmt -i https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple
 ```
 
 ## Usage

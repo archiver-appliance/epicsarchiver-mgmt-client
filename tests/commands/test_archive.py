@@ -2,6 +2,9 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
+from requests import HTTPError, Response
+
 from archmgmt.commands.archive import (
     ARCHIVE_OPERATION_RESULT_STATUS_OK,
     ArchivePolicyNotFoundError,
@@ -13,8 +16,6 @@ from archmgmt.mgmt.archiver import (
     ArchivePVRequest,
     ArchiverMgmt,
 )
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
-from requests import HTTPError, Response
 
 
 def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:
@@ -28,13 +29,11 @@ def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.archive_pv_requests.return_value = {"PV1": ARCHIVE_OPERATION_RESULT_STATUS_OK}
 
     with (
-        patch("archiver_mgmt_operations.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.archive.validate_policy_names") as mock_validate_policy_names,
-        patch(
-            "archiver_mgmt_operations.commands.archive.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
+        patch("archmgmt.commands.archive.validate_operation_results") as mock_validate_operation_results,
     ):
         archive(archiver_fqdn, pv_requests)
 
@@ -63,10 +62,10 @@ def test_archive_dry_run(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.info = "Archiver Info"
 
     with (
-        patch("archiver_mgmt_operations.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.archive.validate_policy_names") as mock_validate_policy_names,
+        patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
     ):
         archive(archiver_fqdn, pv_requests, dry_run=True)
 
@@ -93,10 +92,10 @@ def test_archive_http_error(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.archive_pv_requests.side_effect = HTTPError(response=request_response)
 
     with (
-        patch("archiver_mgmt_operations.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.archive.validate_policy_names") as mock_validate_policy_names,
+        patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.archive.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             archive(archiver_fqdn, pv_requests)

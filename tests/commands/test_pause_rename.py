@@ -4,14 +4,15 @@ from typing import cast
 from unittest.mock import MagicMock, call, patch
 
 import pytest
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
+from requests import HTTPError, Response
+
 from archmgmt.commands.pause_resume import pause, resume
 from archmgmt.commands.validation import RequestHTTPError
 from archmgmt.mgmt.archiver import (
     ArchiverMgmt,
     OperationResult,
 )
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
-from requests import HTTPError, Response
 
 
 def test_pause_success(caplog: pytest.LogCaptureFixture) -> None:
@@ -31,12 +32,10 @@ def test_pause_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.pause_pv.side_effect = mock_pause_results
 
     with (
-        patch("archiver_mgmt_operations.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
-        patch(
-            "archiver_mgmt_operations.commands.pause_resume.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("archmgmt.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.pause_resume.validate_operation_results") as mock_validate_operation_results,
     ):
         pause(archiver_fqdn, pvs)
 
@@ -76,12 +75,10 @@ def test_resume_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.resume_pv.side_effect = mock_resume_results
 
     with (
-        patch("archiver_mgmt_operations.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
-        patch(
-            "archiver_mgmt_operations.commands.pause_resume.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("archmgmt.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.pause_resume.validate_operation_results") as mock_validate_operation_results,
     ):
         resume(archiver_fqdn, pvs)
 
@@ -147,12 +144,10 @@ def test_raise_http_error(
     setattr(mock_archiver, api_method_name, MagicMock(side_effect=http_error))
 
     with (
-        patch("archiver_mgmt_operations.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
-        patch(
-            "archiver_mgmt_operations.commands.pause_resume.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("archmgmt.commands.pause_resume.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.pause_resume.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.pause_resume.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.pause_resume.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             func_to_test(archiver_fqdn, pvs)

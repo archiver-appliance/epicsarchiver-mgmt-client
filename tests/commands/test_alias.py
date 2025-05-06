@@ -2,6 +2,9 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
+from requests import HTTPError, Response
+
 from archmgmt.commands.alias import (
     add_aliases,
 )
@@ -9,8 +12,6 @@ from archmgmt.commands.validation import RequestHTTPError
 from archmgmt.mgmt.archiver import (
     ArchiverMgmt,
 )
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
-from requests import HTTPError, Response
 
 
 def test_alias_success(caplog: pytest.LogCaptureFixture) -> None:
@@ -24,11 +25,11 @@ def test_alias_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.add_alias.return_value = {"status": "ok", "desc": "aliased"}
 
     with (
-        patch("archiver_mgmt_operations.commands.alias.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.alias.ArchiverMgmtOperations", side_effect=mock_archiver),
-        patch("archiver_mgmt_operations.commands.alias.validate_not_same") as mock_validate_not_same,
-        patch("archiver_mgmt_operations.commands.alias.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.alias.validate_operation_results") as mock_validate_operation_results,
+        patch("archmgmt.commands.alias.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.alias.ArchiverMgmtOperations", side_effect=mock_archiver),
+        patch("archmgmt.commands.alias.validate_not_same") as mock_validate_not_same,
+        patch("archmgmt.commands.alias.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.alias.validate_operation_results") as mock_validate_operation_results,
     ):
         add_aliases(archiver_fqdn, aliases)
 
@@ -54,10 +55,10 @@ def test_alias_http_error(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.add_alias.side_effect = HTTPError(response=request_response)
 
     with (
-        patch("archiver_mgmt_operations.commands.alias.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.alias.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.alias.validate_not_same") as mock_validate_not_same,
-        patch("archiver_mgmt_operations.commands.alias.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.alias.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.alias.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.alias.validate_not_same") as mock_validate_not_same,
+        patch("archmgmt.commands.alias.validate_pvs_status") as mock_validate_pvs_status,
     ):
         with pytest.raises(RequestHTTPError):
             add_aliases(archiver_fqdn, aliases)

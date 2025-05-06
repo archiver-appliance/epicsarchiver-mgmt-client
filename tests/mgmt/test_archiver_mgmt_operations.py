@@ -7,6 +7,9 @@ import logging
 
 import pytest
 import responses
+from epicsarchiver.common import ArchDbrType
+from requests import HTTPError
+
 from archmgmt.mgmt.archiver import (
     ArchivePVRequest,
     ArchiverMgmt,
@@ -14,8 +17,6 @@ from archmgmt.mgmt.archiver import (
     SamplingMethod,
     Storage,
 )
-from epicsarchiver.common import ArchDbrType
-from requests import HTTPError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

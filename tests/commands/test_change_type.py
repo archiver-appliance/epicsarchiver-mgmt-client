@@ -3,6 +3,10 @@ from typing import cast
 from unittest.mock import MagicMock, call, patch
 
 import pytest
+from epicsarchiver.common import ArchDbrType
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
+from requests import HTTPError, Response
+
 from archmgmt.commands.change_type import (
     InvalidArchDbrTypeError,
     archdbrtype_from_str,
@@ -13,9 +17,6 @@ from archmgmt.mgmt.archiver import (
     ArchiverMgmt,
     OperationResult,
 )
-from epicsarchiver.common import ArchDbrType
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
-from requests import HTTPError, Response
 
 
 # --- Tests for archdbrtype_from_str ---
@@ -59,14 +60,12 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.change_type.side_effect = mock_change_results
 
     with (
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.pause") as mock_pause,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.resume") as mock_resume,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("archmgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.change_type.pause_resume.pause") as mock_pause,
+        patch("archmgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("archmgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         change_type(archiver_fqdn, pvs, new_type)
 
@@ -107,14 +106,12 @@ def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture) -> N
     mock_archiver.change_type.side_effect = http_error
 
     with (
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.pause") as mock_pause,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.resume") as mock_resume,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("archmgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.change_type.pause_resume.pause") as mock_pause,
+        patch("archmgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("archmgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)
@@ -154,16 +151,12 @@ def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture) -> None:
     pause_error = RequestHTTPError(http_error)  # Simulate error raised by pause
 
     with (
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.pause_resume.pause", side_effect=pause_error
-        ) as mock_pause,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.resume") as mock_resume,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("archmgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.change_type.pause_resume.pause", side_effect=pause_error) as mock_pause,
+        patch("archmgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("archmgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)
@@ -195,16 +188,12 @@ def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture) -> None:
     resume_error = RequestHTTPError(http_error)  # Simulate error raised by resume
 
     with (
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.pause") as mock_pause,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.pause_resume.resume", side_effect=resume_error
-        ) as mock_resume,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("archmgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("archmgmt.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
+        patch("archmgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
+        patch("archmgmt.commands.change_type.pause_resume.pause") as mock_pause,
+        patch("archmgmt.commands.change_type.pause_resume.resume", side_effect=resume_error) as mock_resume,
+        patch("archmgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 requires = [ "hatchling" ]
 
 [project]
-name = "archiver-mgmt-operations"
+name = "archmgmt"
 description = "Tool for doing archiver mgmt operations"
 readme = "README.md"
 keywords = [  ]
@@ -23,13 +23,13 @@ classifiers = [
 dynamic = [ "version" ]
 dependencies = [ "click>=8", "py-epicsarchiver>=0.16", "rich>=13" ]
 
-urls.Documentation = "https://github.com/skybrewer/archiver-mgmt-operations#readme"
-urls.Issues = "https://github.com/skybrewer/archiver-mgmt-operations/issues"
-urls.Source = "https://github.com/skybrewer/archiver-mgmt-operations"
-scripts.archapplmgmt = "archiver_mgmt_operations.command:cli"
+urls.Documentation = "https://github.com/skybrewer/archmgmt#readme"
+urls.Issues = "https://github.com/skybrewer/archmgmt/issues"
+urls.Source = "https://github.com/skybrewer/archmgmt"
+scripts.archapplmgmt = "archmgmt.command:cli"
 
 [tool.hatch.version]
-path = "src/archiver_mgmt_operations/__about__.py"
+path = "src/archmgmt/__about__.py"
 
 [tool.hatch.envs.default.env-vars]
 UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
@@ -43,7 +43,7 @@ PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-
 type-check = "hatch run types:check"
 
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/archiver_mgmt_operations tests}"
+check = "mypy --install-types --non-interactive {args:src/archmgmt tests}"
 
 [tool.hatch.envs.types]
 extra-dependencies = [
@@ -77,24 +77,24 @@ lint.per-file-ignores."tests/**/*" = [
 lint.flake8-pytest-style.fixture-parentheses = false
 lint.flake8-pytest-style.mark-parentheses = false
 lint.flake8-tidy-imports.ban-relative-imports = "all"
-lint.isort.known-first-party = [ "archiver_mgmt_operations" ]
+lint.isort.known-first-party = [ "archmgmt" ]
 # Use Google-style docstrings.
 lint.pydocstyle.convention = "google"
 lint.pylint.max-args = 10
 lint.pylint.max-positional-args = 10
 
 [tool.coverage.run]
-source_pkgs = [ "archiver_mgmt_operations", "tests" ]
+source_pkgs = [ "archmgmt", "tests" ]
 branch = true
 parallel = true
-omit = [ "src/archiver_mgmt_operations/__about__.py" ]
+omit = [ "src/archmgmt/__about__.py" ]
 
 [tool.coverage.paths]
-archiver_mgmt_operations = [
-  "src/archiver_mgmt_operations",
-  "*/archiver-mgmt-operations/src/archiver_mgmt_operations",
+archmgmt = [
+  "src/archmgmt",
+  "*/archmgmt/src/archmgmt",
 ]
-tests = [ "tests", "*/archiver-mgmt-operations/tests" ]
+tests = [ "tests", "*/archmgmt/tests" ]
 
 [tool.coverage.report]
 exclude_lines = [ "no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:" ]

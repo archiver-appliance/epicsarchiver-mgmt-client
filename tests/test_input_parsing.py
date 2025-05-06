@@ -1,6 +1,7 @@
 from io import StringIO
 
 import pytest
+
 from archmgmt.input_parsing import ParseCSVError, double_column_csv
 
 
