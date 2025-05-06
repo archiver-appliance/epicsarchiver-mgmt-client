@@ -348,32 +348,3 @@ class ArchiverMgmtOperations(ArchiverMgmtInfo):
         """
         r = self._get("/getPolicyList")
         return cast("dict[str, str]", r.json())
-
-
-def check_result(
-    result: OperationResult | OperationResultList,
-    default_message: str | None = None,
-) -> bool:
-    """Check a result returned by the Archiver Appliance.
-
-    Args:
-        result (OperationResult | OperationResultList): Input result type
-        default_message (str | None, optional): Message for the user. Defaults to None.
-
-    Returns:
-        bool: Return True if the status is ok
-            Return False otherwise and print the default_message or validation value
-
-    """
-    if isinstance(result, list):
-        LOG.error(
-            "Method check_result does not support multiple PVs from result %s",
-            result,
-        )
-        return False
-    status = result.get("status", "nok")
-    if status.lower() != "ok":
-        message = result.get("validation", default_message)
-        LOG.error(message)
-        return False
-    return True

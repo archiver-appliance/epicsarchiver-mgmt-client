@@ -16,7 +16,6 @@ from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
     PutInfoType,
     SamplingMethod,
     Storage,
-    check_result,
 )
 
 LOG: logging.Logger = logging.getLogger(__name__)
@@ -349,38 +348,6 @@ def test_change_type() -> None:
     r = archiver.change_type(pv, new_type)
     assert len(responses.calls) == 1
     assert r == {"status": "ok"}
-
-
-@pytest.mark.parametrize(
-    ("test_input", "expected"),
-    [({"status": "ok"}, True), ({"status": "foo"}, False), ({"hello": "world"}, False)],
-)
-def test_check_result(
-    test_input: dict[str, str],
-    expected: bool,  # noqa: FBT001
-) -> None:
-    output = check_result(test_input)
-    assert output is expected
-
-
-@pytest.mark.parametrize(
-    ("test_input", "default_message", "output"),
-    [
-        ({"status": "nok"}, "Not OK", "Not OK\n"),
-        ({"validation": "Hello"}, None, "Hello\n"),
-        ({"validation": "Hello"}, "foo", "Hello\n"),
-    ],
-)
-def test_check_result_message(
-    caplog: pytest.LogCaptureFixture,
-    test_input: dict[str, str],
-    default_message: str,
-    output: str,
-) -> None:
-    with caplog.at_level(logging.ERROR):
-        check_result(test_input, default_message)
-    captured_log = caplog.text
-    assert output in captured_log
 
 
 @responses.activate
