@@ -26,7 +26,7 @@ dependencies = [ "click>=8", "py-epicsarchiver>=0.16", "rich>=13" ]
 urls.Documentation = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/archmgmt#readme"
 urls.Issues = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/archmgmt/issues"
 urls.Source = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/archmgmt"
-scripts.archapplmgmt = "archmgmt.command:cli"
+scripts.archmgmt = "archmgmt.command:cli"
 
 [tool.hatch.version]
 path = "src/archmgmt/__about__.py"
@@ -92,9 +92,8 @@ omit = [ "src/archmgmt/__about__.py" ]
 [tool.coverage.paths]
 archmgmt = [
   "src/archmgmt",
-  "*/archmgmt/src/archmgmt",
 ]
-tests = [ "tests", "*/archmgmt/tests" ]
+tests = [ "tests" ]
 
 [tool.coverage.report]
 exclude_lines = [ "no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:" ]
