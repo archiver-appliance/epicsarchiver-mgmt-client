@@ -44,7 +44,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        archiver_mgmt -a archiver.example.com pause pvs.csv
+        archmgmt-a archiver.example.com pause pvs.csv
 
     """
     # Read input
@@ -95,7 +95,7 @@ def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, an
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
+        archmgmt-f archiver.example.com -f archiver.example.com rename pvs.csv
 
     """
     # Read input
@@ -132,7 +132,7 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        archiver_mgmt -a archiver.example.com resume pvs.csv
+        archmgmt-a archiver.example.com resume pvs.csv
 
     """
     # Read input
@@ -181,7 +181,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com archive pvs.csv
+        archmgmt-f archiver.example.com archive pvs.csv
 
     """
     # Read input
@@ -239,7 +239,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
+        archmgmt-f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
@@ -290,7 +290,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com alias add pvs.csv
+        archmgmt-f archiver.example.com alias add pvs.csv
 
     """
     # Read input
@@ -332,7 +332,7 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com alias remove pvs.csv
+        archmgmt-f archiver.example.com alias remove pvs.csv
 
     """
     # Read input

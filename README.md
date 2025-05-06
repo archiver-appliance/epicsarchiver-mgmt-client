@@ -10,6 +10,24 @@ pip install archmgmt -i https://artifactory.esss.lu.se/artifactory/api/pypi/pypi
 
 ## Usage
 
+```console
+Usage: archmgmt [OPTIONS] COMMAND [ARGS]...
+
+  Command line tool for doing mgmt operations with the archiver.
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  alias        Alias PVs in the archiver.
+  archive      Archive PVs in the archiver.
+  change-type  Change the type of PVs in the archiver.
+  pause        Pause PVs in the archiver.
+  rename       Rename PVs in the archiver.
+  resume       Resume Archiving PVs in the archiver.
+```
+
 ## Development
 
 The package is built and packaged with [Hatch](https://hatch.pypa.io/latest/).
