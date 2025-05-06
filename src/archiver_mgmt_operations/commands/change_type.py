@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from epicsarchiver.common import ArchDbrType
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
@@ -20,6 +20,9 @@ from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
     OperationResult,
 )
 from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -55,7 +58,7 @@ def archdbrtype_from_str(value: str) -> ArchDbrType:
     raise InvalidArchDbrTypeError(value)
 
 
-def change_type(archiver_fqdn: str, pvs: list[str], new_type: ArchDbrType) -> None:
+def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -> None:
     """Change the type of PVs in the archiver.
 
     Args:

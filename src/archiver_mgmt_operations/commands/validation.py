@@ -111,3 +111,30 @@ class RequestHTTPError(BaseMgmtError):
         """
         super().__init__(f"HTTP error: {http_error} occurred. {http_error.response.text}")
         self.http_error = http_error
+
+
+class NotSamePVError(BaseMgmtError):
+    """Exception for when the old and new PVs are the same."""
+
+    def __init__(self, pv: str) -> None:
+        """Error for when the old and new PVs are the same.
+
+        Args:
+            pv (str): The PV that is the same.
+        """
+        super().__init__(f"Old and new PVs are the same for PV {pv}.")
+        self.pv = pv
+
+
+def validate_not_same(pairs: list[tuple[str, str]]) -> None:
+    """Validate the rename operation.
+
+    Args:
+        pairs (list[tuple[str, str]]): The pairs of PVs.
+
+    Raises:
+        NotSamePVError: If the old and new PVs are the same.
+    """
+    for old_pv, new_pv in pairs:
+        if old_pv == new_pv:
+            raise NotSamePVError(old_pv)

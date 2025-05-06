@@ -4,8 +4,10 @@ import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
 from archiver_mgmt_operations.commands.validation import (
+    NotSamePVError,
     ValidOperationResultsError,
     ValidPVStatusError,
+    validate_not_same,
     validate_operation_results,
     validate_pvs_status,
 )
@@ -47,3 +49,17 @@ def test_validate_pvs_status_failure(mocker: MagicMock) -> None:
 
     with pytest.raises(ValidPVStatusError, match=r"PV pv2 archiving status is ArchivingStatus.NotBeingArchived"):
         validate_pvs_status(archiver_info, pvs, expected_statuses)
+
+
+def test_validate_not_same_success() -> None:
+    """Test validate_not_same with valid renames."""
+    renames = [("old_pv1", "new_pv1"), ("old_pv2", "new_pv2")]
+    validate_not_same(renames)  # Should not raise an exception
+
+
+def test_validate_not_same_failure() -> None:
+    """Test validate_not_same with invalid renames (same old and new PV)."""
+    renames = [("old_pv1", "new_pv1"), ("pv1", "pv1")]
+    with pytest.raises(NotSamePVError) as exc_info:
+        validate_not_same(renames)
+    assert str(exc_info.value) == "Old and new PVs are the same for PV pv1."
