@@ -171,3 +171,4 @@ cython_debug/
 
 *archiver_mgmt.log
 .vscode
+src/epicsarchiver_mgmt/_version.py
