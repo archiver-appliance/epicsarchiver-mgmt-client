@@ -5,13 +5,13 @@ Project for tracking changes to the archiver via the mgmt operations interface. 
 ## Installation
 
 ```console
-pip install archmgmt -i https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple
+pip install epicsarchiver-mgmt -i https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple
 ```
 
 ## Usage
 
 ```console
-Usage: archmgmt [OPTIONS] COMMAND [ARGS]...
+Usage: epicsarchiver-mgmt [OPTIONS] COMMAND [ARGS]...
 
   Command line tool for doing mgmt operations with the archiver.
 

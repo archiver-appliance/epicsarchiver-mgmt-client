@@ -10,7 +10,7 @@ import responses
 from epicsarchiver.common import ArchDbrType
 from requests import HTTPError
 
-from archmgmt.archiver.mgmt import (
+from epicsarchiver_mgmt.archiver.mgmt import (
     ArchivePVRequest,
     ArchiverMgmt,
     PutInfoType,

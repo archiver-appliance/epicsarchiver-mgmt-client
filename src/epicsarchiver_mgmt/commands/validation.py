@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from archmgmt.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
     from requests import HTTPError
 
-    from archmgmt.archiver.mgmt import (
+    from epicsarchiver_mgmt.archiver.mgmt import (
         OperationResult,
         OperationResultList,
     )

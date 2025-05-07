@@ -5,17 +5,17 @@ import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError, Response
 
-from archmgmt.archiver.mgmt import (
+from epicsarchiver_mgmt.archiver.mgmt import (
     ArchivePVRequest,
     ArchiverMgmt,
 )
-from archmgmt.commands.archive import (
+from epicsarchiver_mgmt.commands.archive import (
     ARCHIVE_OPERATION_RESULT_STATUS_OK,
     ArchivePolicyNotFoundError,
     archive,
     validate_policy_names,
 )
-from archmgmt.commands.validation import RequestHTTPError
+from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 
 
 def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:
@@ -29,11 +29,11 @@ def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.archive_pv_requests.return_value = {"PV1": ARCHIVE_OPERATION_RESULT_STATUS_OK}
 
     with (
-        patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
-        patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
-        patch("archmgmt.commands.archive.validate_operation_results") as mock_validate_operation_results,
+        patch("epicsarchiver_mgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
+        patch("epicsarchiver_mgmt.commands.archive.validate_operation_results") as mock_validate_operation_results,
     ):
         archive(archiver_fqdn, pv_requests)
 
@@ -62,10 +62,10 @@ def test_archive_dry_run(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.info = "Archiver Info"
 
     with (
-        patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
-        patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
+        patch("epicsarchiver_mgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
     ):
         archive(archiver_fqdn, pv_requests, dry_run=True)
 
@@ -92,10 +92,10 @@ def test_archive_http_error(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.archive_pv_requests.side_effect = HTTPError(response=request_response)
 
     with (
-        patch("archmgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
-        patch("archmgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archmgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
+        patch("epicsarchiver_mgmt.commands.archive.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.archive.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.archive.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.archive.validate_policy_names") as mock_validate_policy_names,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             archive(archiver_fqdn, pv_requests)

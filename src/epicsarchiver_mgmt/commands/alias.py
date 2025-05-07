@@ -8,10 +8,10 @@ from itertools import starmap
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
-from archmgmt.archiver.mgmt import (
+from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
-from archmgmt.commands.validation import (
+from epicsarchiver_mgmt.commands.validation import (
     RequestHTTPError,
     validate_not_same,
     validate_operation_results,

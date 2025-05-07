@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 requires = [ "hatchling" ]
 
 [project]
-name = "archmgmt"
+name = "epicsarchiver-mgmt"
 description = "Tool for doing archiver mgmt operations"
 readme = "README.md"
 keywords = [  ]
@@ -23,13 +23,13 @@ classifiers = [
 dynamic = [ "version" ]
 dependencies = [ "click>=8", "py-epicsarchiver>=0.16", "rich>=13" ]
 
-urls.Documentation = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/archmgmt#readme"
-urls.Issues = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/archmgmt/issues"
-urls.Source = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/archmgmt"
-scripts.archmgmt = "archmgmt.command:cli"
+urls.Documentation = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt#readme"
+urls.Issues = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt/issues"
+urls.Source = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt"
+scripts.arch-mgmt = "epicsarchiver_mgmt.command:cli"
 
 [tool.hatch.version]
-path = "src/archmgmt/__about__.py"
+path = "src/epicsarchiver_mgmt/__about__.py"
 
 [tool.hatch.envs.default.env-vars]
 UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
@@ -43,7 +43,7 @@ PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-
 type-check = "hatch run types:check"
 
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/archmgmt tests}"
+check = "mypy --install-types --non-interactive {args:src/epicsarchiver_mgmt tests}"
 
 [tool.hatch.envs.types]
 extra-dependencies = [
@@ -77,21 +77,21 @@ lint.per-file-ignores."tests/**/*" = [
 lint.flake8-pytest-style.fixture-parentheses = false
 lint.flake8-pytest-style.mark-parentheses = false
 lint.flake8-tidy-imports.ban-relative-imports = "all"
-lint.isort.known-first-party = [ "archmgmt" ]
+lint.isort.known-first-party = [ "epicsarchiver_mgmt" ]
 # Use Google-style docstrings.
 lint.pydocstyle.convention = "google"
 lint.pylint.max-args = 10
 lint.pylint.max-positional-args = 10
 
 [tool.coverage.run]
-source_pkgs = [ "archmgmt", "tests" ]
+source_pkgs = [ "epicsarchiver_mgmt", "tests" ]
 branch = true
 parallel = true
-omit = [ "src/archmgmt/__about__.py" ]
+omit = [ "src/epicsarchiver_mgmt/__about__.py" ]
 
 [tool.coverage.paths]
-archmgmt = [
-  "src/archmgmt",
+epicsarchiver-mgmt = [
+  "src/epicsarchiver_mgmt",
 ]
 tests = [ "tests" ]
 

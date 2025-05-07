@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
-from archmgmt.commands.validation import (
+from epicsarchiver_mgmt.commands.validation import (
     NotSamePVError,
     ValidOperationResultsError,
     ValidPVStatusError,

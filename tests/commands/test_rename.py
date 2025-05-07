@@ -5,16 +5,16 @@ import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 from requests import HTTPError, Response
 
-from archmgmt.archiver.mgmt import (
+from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
-from archmgmt.commands.rename import (
+from epicsarchiver_mgmt.commands.rename import (
     TooMuchStoredDataError,
     rename,
     rename_and_append,
     validate_size,
 )
-from archmgmt.commands.validation import RequestHTTPError
+from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 
 
 def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
@@ -31,16 +31,16 @@ def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver2.rename_pv.return_value = {"status": "ok", "desc": "Renamed"}
 
     with (
-        patch("archmgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch(
-            "archmgmt.commands.rename.ArchiverMgmt",
+            "epicsarchiver_mgmt.commands.rename.ArchiverMgmt",
             side_effect=[mock_archiver1, mock_archiver2],
         ),
-        patch("archmgmt.commands.rename.validate_not_same") as mock_validate_not_same,
-        patch("archmgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archmgmt.commands.rename._pause_pvs") as mock_pause_pvs,
-        patch("archmgmt.commands.rename.validate_operation_results") as mock_validate_operation_results,
-        patch("archmgmt.commands.rename._parallel_execute_rename") as mock_parallel_execute_rename,
+        patch("epicsarchiver_mgmt.commands.rename.validate_not_same") as mock_validate_not_same,
+        patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.rename._pause_pvs") as mock_pause_pvs,
+        patch("epicsarchiver_mgmt.commands.rename.validate_operation_results") as mock_validate_operation_results,
+        patch("epicsarchiver_mgmt.commands.rename._parallel_execute_rename") as mock_parallel_execute_rename,
     ):
         mock_parallel_execute_rename.return_value = [
             {"status": "ok", "desc": "Renamed"},
@@ -72,12 +72,12 @@ def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.rename_pv.side_effect = HTTPError(response=request_response)
 
     with (
-        patch("archmgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver),
-        patch("archmgmt.commands.rename.validate_not_same") as mock_validate_not_same,
-        patch("archmgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archmgmt.commands.rename._pause_pvs") as mock_pause_pvs,
-        patch("archmgmt.commands.rename._parallel_execute_rename") as mock_parallel_execute_rename,
+        patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.rename.validate_not_same") as mock_validate_not_same,
+        patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.rename._pause_pvs") as mock_pause_pvs,
+        patch("epicsarchiver_mgmt.commands.rename._parallel_execute_rename") as mock_parallel_execute_rename,
     ):
         mock_parallel_execute_rename.side_effect = HTTPError(response=request_response)
         with pytest.raises(RequestHTTPError):
@@ -106,17 +106,17 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver2.rename_and_append.return_value = {"status": "ok", "desc": "Renamed"}
 
     with (
-        patch("archmgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch(
-            "archmgmt.commands.rename.ArchiverMgmt",
+            "epicsarchiver_mgmt.commands.rename.ArchiverMgmt",
             side_effect=[mock_archiver1, mock_archiver2],
         ),
-        patch("archmgmt.commands.rename.validate_not_same") as mock_validate_not_same,
-        patch("archmgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archmgmt.commands.rename._pause_pvs") as mock_pause_pvs,
-        patch("archmgmt.commands.rename.validate_operation_results") as mock_validate_operation_results,
+        patch("epicsarchiver_mgmt.commands.rename.validate_not_same") as mock_validate_not_same,
+        patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.rename._pause_pvs") as mock_pause_pvs,
+        patch("epicsarchiver_mgmt.commands.rename.validate_operation_results") as mock_validate_operation_results,
         patch(
-            "archmgmt.commands.rename._parallel_execute_rename_and_append"
+            "epicsarchiver_mgmt.commands.rename._parallel_execute_rename_and_append"
         ) as mock_parallel_execute_rename_and_append,
     ):
         mock_parallel_execute_rename_and_append.return_value = [
@@ -149,13 +149,13 @@ def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.rename_and_append.side_effect = HTTPError(response=request_response)
 
     with (
-        patch("archmgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archmgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver),
-        patch("archmgmt.commands.rename.validate_not_same") as mock_validate_not_same,
-        patch("archmgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archmgmt.commands.rename._pause_pvs") as mock_pause_pvs,
+        patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.rename.validate_not_same") as mock_validate_not_same,
+        patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.rename._pause_pvs") as mock_pause_pvs,
         patch(
-            "archmgmt.commands.rename._parallel_execute_rename_and_append"
+            "epicsarchiver_mgmt.commands.rename._parallel_execute_rename_and_append"
         ) as mock_parallel_execute_rename_and_append,
     ):
         mock_parallel_execute_rename_and_append.side_effect = HTTPError(response=request_response)
@@ -178,7 +178,7 @@ def test_validate_not_large_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.get_pv_details.return_value = [{"name": "Estimated storage rate (MB/day)", "value": "500"}]
     old_pvs = ["old_pv1", "old_pv2"]
 
-    with patch("archmgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver):
+    with patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver):
         validate_size(mock_archiver, old_pvs)
 
     assert "Old PV" not in caplog.text
@@ -190,7 +190,7 @@ def test_validate_not_large_failure() -> None:
     mock_archiver.get_pv_details.return_value = [{"name": "Estimated storage rate (MB/day)", "value": "1500"}]
     old_pvs = ["old_pv1"]
 
-    with patch("archmgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver):
+    with patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver):
         with pytest.raises(TooMuchStoredDataError) as exc_info:
             validate_size(mock_archiver, old_pvs)
 
