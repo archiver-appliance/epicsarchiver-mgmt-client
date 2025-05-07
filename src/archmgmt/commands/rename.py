@@ -9,16 +9,16 @@ from typing import cast
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from archmgmt.archiver.mgmt import (
+    ArchiverMgmt,
+    OperationResult,
+    Storage,
+)
 from archmgmt.commands.validation import (
     RequestHTTPError,
     validate_not_same,
     validate_operation_results,
     validate_pvs_status,
-)
-from archmgmt.mgmt.archiver import (
-    ArchiverMgmt,
-    OperationResult,
-    Storage,
 )
 from archmgmt.mgmt_exception import BaseMgmtError
 

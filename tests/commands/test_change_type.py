@@ -7,16 +7,16 @@ from epicsarchiver.common import ArchDbrType
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError, Response
 
+from archmgmt.archiver.mgmt import (
+    ArchiverMgmt,
+    OperationResult,
+)
 from archmgmt.commands.change_type import (
     InvalidArchDbrTypeError,
     archdbrtype_from_str,
     change_type,
 )
 from archmgmt.commands.validation import RequestHTTPError
-from archmgmt.mgmt.archiver import (
-    ArchiverMgmt,
-    OperationResult,
-)
 
 
 # --- Tests for archdbrtype_from_str ---

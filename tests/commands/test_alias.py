@@ -5,13 +5,13 @@ import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 from requests import HTTPError, Response
 
+from archmgmt.archiver.mgmt import (
+    ArchiverMgmt,
+)
 from archmgmt.commands.alias import (
     add_aliases,
 )
 from archmgmt.commands.validation import RequestHTTPError
-from archmgmt.mgmt.archiver import (
-    ArchiverMgmt,
-)
 
 
 def test_alias_success(caplog: pytest.LogCaptureFixture) -> None:

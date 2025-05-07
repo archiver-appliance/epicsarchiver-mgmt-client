@@ -7,12 +7,12 @@ import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError, Response
 
-from archmgmt.commands.pause_resume import pause, resume
-from archmgmt.commands.validation import RequestHTTPError
-from archmgmt.mgmt.archiver import (
+from archmgmt.archiver.mgmt import (
     ArchiverMgmt,
     OperationResult,
 )
+from archmgmt.commands.pause_resume import pause, resume
+from archmgmt.commands.validation import RequestHTTPError
 
 
 def test_pause_success(caplog: pytest.LogCaptureFixture) -> None:

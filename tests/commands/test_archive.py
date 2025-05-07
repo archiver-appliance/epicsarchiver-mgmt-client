@@ -5,6 +5,10 @@ import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError, Response
 
+from archmgmt.archiver.mgmt import (
+    ArchivePVRequest,
+    ArchiverMgmt,
+)
 from archmgmt.commands.archive import (
     ARCHIVE_OPERATION_RESULT_STATUS_OK,
     ArchivePolicyNotFoundError,
@@ -12,10 +16,6 @@ from archmgmt.commands.archive import (
     validate_policy_names,
 )
 from archmgmt.commands.validation import RequestHTTPError
-from archmgmt.mgmt.archiver import (
-    ArchivePVRequest,
-    ArchiverMgmt,
-)
 
 
 def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:

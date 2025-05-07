@@ -5,6 +5,9 @@ import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 from requests import HTTPError, Response
 
+from archmgmt.archiver.mgmt import (
+    ArchiverMgmt,
+)
 from archmgmt.commands.rename import (
     TooMuchStoredDataError,
     rename,
@@ -12,9 +15,6 @@ from archmgmt.commands.rename import (
     validate_size,
 )
 from archmgmt.commands.validation import RequestHTTPError
-from archmgmt.mgmt.archiver import (
-    ArchiverMgmt,
-)
 
 
 def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:

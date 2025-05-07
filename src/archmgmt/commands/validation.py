@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
     from requests import HTTPError
 
-    from archmgmt.mgmt.archiver import (
+    from archmgmt.archiver.mgmt import (
         OperationResult,
         OperationResultList,
     )

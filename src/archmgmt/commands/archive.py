@@ -7,14 +7,14 @@ import logging
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from archmgmt.archiver.mgmt import (
+    ArchivePVRequest,
+    ArchiverMgmt,
+)
 from archmgmt.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
-)
-from archmgmt.mgmt.archiver import (
-    ArchivePVRequest,
-    ArchiverMgmt,
 )
 from archmgmt.mgmt_exception import BaseMgmtError
 

@@ -9,15 +9,15 @@ from epicsarchiver.common import ArchDbrType
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from archmgmt.archiver.mgmt import (
+    ArchiverMgmt,
+    OperationResult,
+)
 from archmgmt.commands import pause_resume
 from archmgmt.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
-)
-from archmgmt.mgmt.archiver import (
-    ArchiverMgmt,
-    OperationResult,
 )
 from archmgmt.mgmt_exception import BaseMgmtError
 
