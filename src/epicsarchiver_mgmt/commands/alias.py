@@ -8,14 +8,14 @@ from itertools import starmap
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
-from archiver_mgmt_operations.commands.validation import (
+from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchiverMgmt,
+)
+from epicsarchiver_mgmt.commands.validation import (
     RequestHTTPError,
     validate_not_same,
     validate_operation_results,
     validate_pvs_status,
-)
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
 )
 
 LOG: logging.Logger = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ def add_aliases(archiver_fqdn: str, alias_maps: list[tuple[str, str]]) -> None:
     # Action
     LOG.info("Adding aliases for PVs %s", alias_maps)
 
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
 
     LOG.info("Using archiver %s", archiver.info)
 
@@ -106,7 +106,7 @@ def remove_aliases(archiver_fqdn: str, alias_maps: list[tuple[str, str]]) -> Non
     # Action
     LOG.info("Removing aliases for PVs %s", alias_maps)
 
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
 
     LOG.info("Using archiver %s", archiver.info)
 

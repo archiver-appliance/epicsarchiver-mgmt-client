@@ -7,16 +7,16 @@ import logging
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
-from archiver_mgmt_operations.commands.validation import (
+from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchivePVRequest,
+    ArchiverMgmt,
+)
+from epicsarchiver_mgmt.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
 )
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
-    ArchivePVRequest,
-    ArchiverMgmtOperations,
-)
-from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -36,11 +36,11 @@ class ArchivePolicyNotFoundError(BaseMgmtError):
         self.policy_names = policy_names
 
 
-def validate_policy_names(archiver: ArchiverMgmtOperations, pv_requests: list[ArchivePVRequest]) -> None:
+def validate_policy_names(archiver: ArchiverMgmt, pv_requests: list[ArchivePVRequest]) -> None:
     """Validate the policy names.
 
     Args:
-        archiver (ArchiverMgmtOperations): The archiver information.
+        archiver (ArchiverMgmt): The archiver information.
         pv_requests (list[ArchivePVRequest]): The PVs to archive.
 
     Raises:
@@ -76,7 +76,7 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run:
             ArchivingStatus.NotBeingArchived,
         ],
     )
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
     validate_policy_names(archiver, pv_requests)
 
     # Action

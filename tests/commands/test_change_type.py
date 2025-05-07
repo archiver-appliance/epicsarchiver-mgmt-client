@@ -7,16 +7,16 @@ from epicsarchiver.common import ArchDbrType
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError, Response
 
-from archiver_mgmt_operations.commands.change_type import (
+from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchiverMgmt,
+    OperationResult,
+)
+from epicsarchiver_mgmt.commands.change_type import (
     InvalidArchDbrTypeError,
     archdbrtype_from_str,
     change_type,
 )
-from archiver_mgmt_operations.commands.validation import RequestHTTPError
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
-    OperationResult,
-)
+from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 
 
 # --- Tests for archdbrtype_from_str ---
@@ -49,7 +49,7 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture) -> None:
     pvs = ["PV1", "PV2"]
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     # Simulate the list comprehension result for change_type
     mock_change_results = [
@@ -60,14 +60,12 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.change_type.side_effect = mock_change_results
 
     with (
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.pause") as mock_pause,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.resume") as mock_resume,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.pause") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         change_type(archiver_fqdn, pvs, new_type)
 
@@ -98,7 +96,7 @@ def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture) -> N
     pvs = ["PV1"]
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     request_response = Response()
     request_response.status_code = 500
@@ -108,14 +106,12 @@ def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture) -> N
     mock_archiver.change_type.side_effect = http_error
 
     with (
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.pause") as mock_pause,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.resume") as mock_resume,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.pause") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)
@@ -146,7 +142,7 @@ def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture) -> None:
     pvs = ["PV1"]
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     request_response = Response()
     request_response.status_code = 400
@@ -155,16 +151,12 @@ def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture) -> None:
     pause_error = RequestHTTPError(http_error)  # Simulate error raised by pause
 
     with (
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.pause_resume.pause", side_effect=pause_error
-        ) as mock_pause,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.resume") as mock_resume,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.pause", side_effect=pause_error) as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)
@@ -184,7 +176,7 @@ def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture) -> None:
     pvs = ["PV1"]
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver = MagicMock(spec=ArchiverMgmtOperations)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
     mock_change_results = [OperationResult(pv="PV1", statusCode=200, statusMessage="OK")]
     mock_archiver.change_type.side_effect = mock_change_results
@@ -196,16 +188,12 @@ def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture) -> None:
     resume_error = RequestHTTPError(http_error)  # Simulate error raised by resume
 
     with (
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
-        patch("archiver_mgmt_operations.commands.change_type.ArchiverMgmtOperations", return_value=mock_archiver),
-        patch("archiver_mgmt_operations.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("archiver_mgmt_operations.commands.change_type.pause_resume.pause") as mock_pause,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.pause_resume.resume", side_effect=resume_error
-        ) as mock_resume,
-        patch(
-            "archiver_mgmt_operations.commands.change_type.validate_operation_results"
-        ) as mock_validate_operation_results,
+        patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.pause") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume", side_effect=resume_error) as mock_resume,
+        patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)

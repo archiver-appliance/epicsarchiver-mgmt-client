@@ -10,13 +10,12 @@ import responses
 from epicsarchiver.common import ArchDbrType
 from requests import HTTPError
 
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
+from epicsarchiver_mgmt.archiver.mgmt import (
     ArchivePVRequest,
-    ArchiverMgmtOperations,
+    ArchiverMgmt,
     PutInfoType,
     SamplingMethod,
     Storage,
-    check_result,
 )
 
 LOG: logging.Logger = logging.getLogger(__name__)
@@ -26,7 +25,7 @@ TEST_DOMAIN = "archiver.example.org"
 
 @responses.activate
 def test_archive_pv() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = [
         {"pvName": "ISrc-010:HVAC-HT:AmbHumR", "status": "Archive request submitted"},
     ]
@@ -44,7 +43,7 @@ def test_archive_pv() -> None:
 
 @responses.activate
 def test_archive_pv_with_extra_args() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = [
         {"pvName": "ISrc-010:HVAC-HT:AmbHumR", "status": "Archive request submitted"},
     ]
@@ -66,7 +65,7 @@ def test_archive_pv_with_extra_args() -> None:
 
 @responses.activate
 def test_archive_pvs() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = [{"pvName": "MY:PV", "status": "Already submitted"}]
     responses.add(
         responses.POST,
@@ -86,7 +85,7 @@ def test_archive_pvs() -> None:
 
 @responses.activate
 def test_pause_pv_single() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = [
         {
             "pvName": "MY:PV",
@@ -115,7 +114,7 @@ def test_pause_pv_single() -> None:
 
 @responses.activate
 def test_pause_pv_comma_separated_list() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = [{"validation": "Unable to pause PV MY:PV"}]
     pvs = "mypv1,mypv2"
     responses.add(
@@ -134,7 +133,7 @@ def test_pause_pv_comma_separated_list() -> None:
 
 @responses.activate
 def test_resume_pv_single() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = [{"validation": "Unable to resume PV MY:PV"}]
     pv = "KLYS*"
     responses.add(
@@ -151,7 +150,7 @@ def test_resume_pv_single() -> None:
 
 @responses.activate
 def test_resume_pv_comma_separated_list() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = [
         {"validation": "Unable to pause PV mypv1"},
         {"validation": "Unable to pause PV mypv2"},
@@ -173,7 +172,7 @@ def test_resume_pv_comma_separated_list() -> None:
 
 @responses.activate
 def test_abort_pv() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = ["1", "2", "3"]
     pv = "LEBT-010:PBI-NPM-001:HCAM-COM"
     responses.add(
@@ -190,7 +189,7 @@ def test_abort_pv() -> None:
 
 @responses.activate
 def test_delete_pv_data_false() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = ["1", "2", "3"]
     pv = "LEBT-010:PBI-NPM-001:HCAM-COM"
     responses.add(
@@ -207,7 +206,7 @@ def test_delete_pv_data_false() -> None:
 
 @responses.activate
 def test_delete_pv_data_true() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = ["1", "2", "3"]
     pv = "LEBT-010:PBI-NPM-001:HCAM-COM"
     responses.add(
@@ -224,7 +223,7 @@ def test_delete_pv_data_true() -> None:
 
 @responses.activate
 def test_update_pv() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = ["1", "2", "3"]
     pv = "mypv"
     responses.add(
@@ -241,7 +240,7 @@ def test_update_pv() -> None:
 
 @responses.activate
 def test_update_pv_samplingmethod() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     data = ["1", "2", "3"]
     pv = "mypv"
     responses.add(
@@ -258,7 +257,7 @@ def test_update_pv_samplingmethod() -> None:
 
 @responses.activate
 def test_add_alias_ok() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     pv = "MY:PV"
     newname = "NEW:PV"
     responses.add(
@@ -275,7 +274,7 @@ def test_add_alias_ok() -> None:
 
 @responses.activate
 def test_add_alias_pv_does_not_exist() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     pv = "MY:PV"
     newname = "NEW:PV"
     responses.add(
@@ -290,7 +289,7 @@ def test_add_alias_pv_does_not_exist() -> None:
 
 @responses.activate
 def test_rename_and_append_success(caplog: pytest.LogCaptureFixture) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     old = "MY:PV"
     new = "NEW:PV"
     responses.add(
@@ -316,7 +315,7 @@ def test_rename_and_append_success(caplog: pytest.LogCaptureFixture) -> None:
 def test_rename_and_append_fail_pv_error_response(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     old = "MY:PV"
     new = "NEW:PV"
     responses.add(
@@ -336,7 +335,7 @@ def test_rename_and_append_fail_pv_error_response(
 
 @responses.activate
 def test_change_type() -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     pv = "MY:PV"
     new_type = ArchDbrType.DBR_SCALAR_DOUBLE
     responses.add(
@@ -351,41 +350,9 @@ def test_change_type() -> None:
     assert r == {"status": "ok"}
 
 
-@pytest.mark.parametrize(
-    ("test_input", "expected"),
-    [({"status": "ok"}, True), ({"status": "foo"}, False), ({"hello": "world"}, False)],
-)
-def test_check_result(
-    test_input: dict[str, str],
-    expected: bool,  # noqa: FBT001
-) -> None:
-    output = check_result(test_input)
-    assert output is expected
-
-
-@pytest.mark.parametrize(
-    ("test_input", "default_message", "output"),
-    [
-        ({"status": "nok"}, "Not OK", "Not OK\n"),
-        ({"validation": "Hello"}, None, "Hello\n"),
-        ({"validation": "Hello"}, "foo", "Hello\n"),
-    ],
-)
-def test_check_result_message(
-    caplog: pytest.LogCaptureFixture,
-    test_input: dict[str, str],
-    default_message: str,
-    output: str,
-) -> None:
-    with caplog.at_level(logging.ERROR):
-        check_result(test_input, default_message)
-    captured_log = caplog.text
-    assert output in captured_log
-
-
 @responses.activate
 def test_put_pv_type_info_ok(caplog: pytest.LogCaptureFixture) -> None:
-    archiver = ArchiverMgmtOperations(TEST_DOMAIN)
+    archiver = ArchiverMgmt(TEST_DOMAIN)
     pv = "MY:PV"
     newtypeinfo = {
         "hostName": "idmz-ro-epics-gw-tn.esss.lu.se",

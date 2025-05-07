@@ -9,17 +9,17 @@ from epicsarchiver.common import ArchDbrType
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
-from archiver_mgmt_operations.commands import pause_resume
-from archiver_mgmt_operations.commands.validation import (
+from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchiverMgmt,
+    OperationResult,
+)
+from epicsarchiver_mgmt.commands import pause_resume
+from epicsarchiver_mgmt.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
 )
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
-    OperationResult,
-)
-from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -80,7 +80,7 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
         ],
     )
 
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
 
     pause_resume.pause(archiver_fqdn, pvs)
     # Action

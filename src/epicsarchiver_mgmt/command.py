@@ -8,15 +8,15 @@ from typing import TextIO
 import click
 from epicsarchiver.common import ArchDbrType
 
-from archiver_mgmt_operations.commands import alias as cmd_alias
-from archiver_mgmt_operations.commands import archive as cmd_archive
-from archiver_mgmt_operations.commands import change_type as ct
-from archiver_mgmt_operations.commands import pause_resume
-from archiver_mgmt_operations.commands import rename as cmd_rename
-from archiver_mgmt_operations.input_parsing import double_column_csv, single_column_csv
-from archiver_mgmt_operations.logging import CURRENT_COMMAND_LOG
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import ArchivePVRequest
-from archiver_mgmt_operations.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest
+from epicsarchiver_mgmt.commands import alias as cmd_alias
+from epicsarchiver_mgmt.commands import archive as cmd_archive
+from epicsarchiver_mgmt.commands import change_type as ct
+from epicsarchiver_mgmt.commands import pause_resume
+from epicsarchiver_mgmt.commands import rename as cmd_rename
+from epicsarchiver_mgmt.input_parsing import double_column_csv, single_column_csv
+from epicsarchiver_mgmt.logging import CURRENT_COMMAND_LOG
+from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        archiver_mgmt -a archiver.example.com pause pvs.csv
+        arch-mgmt -a archiver.example.com pause pvs.csv
 
     """
     # Read input
@@ -95,7 +95,7 @@ def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, an
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
+        arch-mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
 
     """
     # Read input
@@ -132,7 +132,7 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        archiver_mgmt -a archiver.example.com resume pvs.csv
+        arch-mgmt -a archiver.example.com resume pvs.csv
 
     """
     # Read input
@@ -181,7 +181,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com archive pvs.csv
+        arch-mgmt -f archiver.example.com archive pvs.csv
 
     """
     # Read input
@@ -239,7 +239,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
+        arch-mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
@@ -290,7 +290,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com alias add pvs.csv
+        arch-mgmt -f archiver.example.com alias add pvs.csv
 
     """
     # Read input
@@ -332,7 +332,7 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
 
     .. code-block:: console
 
-        archiver_mgmt -f archiver.example.com alias remove pvs.csv
+        arch-mgmt -f archiver.example.com alias remove pvs.csv
 
     """
     # Read input

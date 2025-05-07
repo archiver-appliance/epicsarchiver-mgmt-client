@@ -2,7 +2,7 @@ from io import StringIO
 
 import pytest
 
-from archiver_mgmt_operations.input_parsing import ParseCSVError, double_column_csv
+from epicsarchiver_mgmt.input_parsing import ParseCSVError, double_column_csv
 
 
 def test_parse_csv_success() -> None:

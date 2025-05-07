@@ -8,14 +8,14 @@ from typing import TYPE_CHECKING, cast
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
-from archiver_mgmt_operations.commands.validation import (
+from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchiverMgmt,
+    OperationResult,
+)
+from epicsarchiver_mgmt.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
-)
-from archiver_mgmt_operations.mgmt.archiver_mgmt_operations import (
-    ArchiverMgmtOperations,
-    OperationResult,
 )
 
 if TYPE_CHECKING:
@@ -49,7 +49,7 @@ def pause(archiver_fqdn: str, pvs: Sequence[str]) -> None:
     # Action
     LOG.info("Pausing PVs %s", pvs)
 
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
 
     LOG.info("Using archiver %s", archiver.info)
 
@@ -86,7 +86,7 @@ def resume(archiver_fqdn: str, pvs: Sequence[str]) -> None:
 
     # Action
     LOG.info("Resuming PVs %s", pvs)
-    archiver = ArchiverMgmtOperations(archiver_fqdn)
+    archiver = ArchiverMgmt(archiver_fqdn)
     LOG.info("Using archiver %s", archiver.info)
 
     try:

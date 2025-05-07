@@ -1,10 +1,10 @@
 [build-system]
 build-backend = "hatchling.build"
 
-requires = [ "hatchling" ]
+requires = [ "hatch-vcs>=0.3", "hatchling>=1.24.2" ]
 
 [project]
-name = "archiver-mgmt-operations"
+name = "epicsarchiver-mgmt"
 description = "Tool for doing archiver mgmt operations"
 readme = "README.md"
 keywords = [  ]
@@ -23,13 +23,19 @@ classifiers = [
 dynamic = [ "version" ]
 dependencies = [ "click>=8", "py-epicsarchiver>=0.16", "rich>=13" ]
 
-urls.Documentation = "https://github.com/skybrewer/archiver-mgmt-operations#readme"
-urls.Issues = "https://github.com/skybrewer/archiver-mgmt-operations/issues"
-urls.Source = "https://github.com/skybrewer/archiver-mgmt-operations"
-scripts.archiver_mgmt = "archiver_mgmt_operations.command:cli"
+urls.Documentation = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt#readme"
+urls.Issues = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt/issues"
+urls.Source = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt"
+scripts.arch-mgmt = "epicsarchiver_mgmt.command:cli"
 
 [tool.hatch.version]
-path = "src/archiver_mgmt_operations/__about__.py"
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+git_describe_command = [ "git", "describe", "--dirty", "--tags", "--long" ]
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/epicsarchiver_mgmt/_version.py"
 
 [tool.hatch.envs.default.env-vars]
 UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
@@ -43,7 +49,7 @@ PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-
 type-check = "hatch run types:check"
 
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/archiver_mgmt_operations tests}"
+check = "mypy --install-types --non-interactive {args:src/epicsarchiver_mgmt tests}"
 
 [tool.hatch.envs.types]
 extra-dependencies = [
@@ -77,24 +83,23 @@ lint.per-file-ignores."tests/**/*" = [
 lint.flake8-pytest-style.fixture-parentheses = false
 lint.flake8-pytest-style.mark-parentheses = false
 lint.flake8-tidy-imports.ban-relative-imports = "all"
-lint.isort.known-first-party = [ "archiver_mgmt_operations" ]
+lint.isort.known-first-party = [ "epicsarchiver_mgmt" ]
 # Use Google-style docstrings.
 lint.pydocstyle.convention = "google"
 lint.pylint.max-args = 10
 lint.pylint.max-positional-args = 10
 
 [tool.coverage.run]
-source_pkgs = [ "archiver_mgmt_operations", "tests" ]
+source_pkgs = [ "epicsarchiver_mgmt", "tests" ]
 branch = true
 parallel = true
-omit = [ "src/archiver_mgmt_operations/__about__.py" ]
+omit = [ "src/epicsarchiver_mgmt/__about__.py" ]
 
 [tool.coverage.paths]
-archiver_mgmt_operations = [
-  "src/archiver_mgmt_operations",
-  "*/archiver-mgmt-operations/src/archiver_mgmt_operations",
+epicsarchiver-mgmt = [
+  "src/epicsarchiver_mgmt",
 ]
-tests = [ "tests", "*/archiver-mgmt-operations/tests" ]
+tests = [ "tests" ]
 
 [tool.coverage.report]
 exclude_lines = [ "no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:" ]
