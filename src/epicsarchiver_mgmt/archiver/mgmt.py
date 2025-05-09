@@ -44,6 +44,17 @@ class EpicsProto(enum.StrEnum):
     CA = "CA"
     PVA = "PVA"
 
+    def pv_name(self, pv: str) -> str:
+        """Return the PV name with the protocol.
+
+        Args:
+            pv (str): The PV name.
+
+        Returns:
+            str: The PV name with the protocol.
+        """
+        return f"pva://{pv}" if self is EpicsProto.PVA else pv
+
 
 class SamplingMethod(enum.StrEnum):
     """Represents the different sampling methods of the archiver appliance."""
@@ -124,7 +135,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         """
         return self.archive_pv_requests([
             ArchivePVRequest(
-                pv=f"pva://{pv}" if protocol is EpicsProto.PVA else pv,
+                pv=protocol.pv_name(pv),
                 samplingmethod=sampling_method,
                 samplingperiod=str(sampling_period),
                 controllingPV=controlling_pv,

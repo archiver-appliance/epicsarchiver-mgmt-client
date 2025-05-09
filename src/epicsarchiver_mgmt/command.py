@@ -8,9 +8,10 @@ from typing import TextIO
 import click
 from epicsarchiver.common import ArchDbrType
 
-from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest
+from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest, EpicsProto
 from epicsarchiver_mgmt.commands import alias as cmd_alias
 from epicsarchiver_mgmt.commands import archive as cmd_archive
+from epicsarchiver_mgmt.commands import change_protocol as cp
 from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import pause_resume
 from epicsarchiver_mgmt.commands import rename as cmd_rename
@@ -255,6 +256,70 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     except BaseMgmtError as e:
         LOG.error("Error changing type of PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error changing type of PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+def epicsproto_from_param(value: str) -> EpicsProto | None:
+    """Convert a string to a EpicsProto.
+
+    Args:
+        value (str): The value to convert.
+
+    Returns:
+        EpicsProto: The EpicsProto.
+    """
+    try:
+        return cp.epicsproto_from_str(value)
+    except cp.InvalidEpicsProtoError as e:
+        LOG.error("Invalid EpicsProto: %s", str(e))  # noqa: TRY400
+        LOG.debug("Invalid EpicsProto.", exc_info=True)
+    return None
+
+
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option(
+    "--new-protocol",
+    type=str,
+    default=None,
+    help="Protocol to change PVs to.",
+    callback=lambda _c, _p, v: epicsproto_from_param(v),
+)
+@click.argument(
+    "file",
+    type=click.File(),
+    default=sys.stdin,
+)
+@click.pass_context
+def change_protocol(
+    ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new_protocol: EpicsProto | None
+) -> None:
+    """Change the protocol of PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to change protocol.
+
+    Example usage:
+
+    .. code-block:: console
+
+        arch-mgmt -f archiver.example.com change_protocol --new-protocol ca pvs.csv
+
+    """
+    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
+    if new_protocol is None:
+        LOG.error("Invalid epics protocol. Please provide a valid type.")
+        ctx.exit(1)
+
+    # Read input
+    pvs = single_column_csv(file)
+
+    try:
+        cp.change_protocol(archiver_fqdn, pvs, new_protocol)
+    except BaseMgmtError as e:
+        LOG.error("Error changing new_protocol of PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error changing new_protocol of PVs.", exc_info=True)
         ctx.exit(1)
 
     ctx.exit(0)
