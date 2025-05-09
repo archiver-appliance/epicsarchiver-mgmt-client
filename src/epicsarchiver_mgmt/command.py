@@ -281,7 +281,7 @@ def epicsproto_from_param(value: str) -> EpicsProto | None:
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
 @click.option(
-    "--new-protocol",
+    "--protocol",
     type=str,
     default=None,
     help="Protocol to change PVs to.",
@@ -293,9 +293,7 @@ def epicsproto_from_param(value: str) -> EpicsProto | None:
     default=sys.stdin,
 )
 @click.pass_context
-def change_protocol(
-    ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new_protocol: EpicsProto | None
-) -> None:
+def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, protocol: EpicsProto | None) -> None:
     """Change the protocol of PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to change protocol.
@@ -308,7 +306,7 @@ def change_protocol(
 
     """
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    if new_protocol is None:
+    if protocol is None:
         LOG.error("Invalid epics protocol. Please provide a valid type.")
         ctx.exit(1)
 
@@ -316,10 +314,10 @@ def change_protocol(
     pvs = single_column_csv(file)
 
     try:
-        cp.change_protocol(archiver_fqdn, pvs, new_protocol)
+        cp.change_protocol(archiver_fqdn, pvs, protocol)
     except BaseMgmtError as e:
-        LOG.error("Error changing new_protocol of PVs: %s", str(e))  # noqa: TRY400
-        LOG.debug("Error changing new_protocol of PVs.", exc_info=True)
+        LOG.error("Error changing protocol of PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error changing protocol of PVs.", exc_info=True)
         ctx.exit(1)
 
     ctx.exit(0)

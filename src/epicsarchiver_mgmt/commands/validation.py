@@ -85,7 +85,7 @@ def validate_pvs_status(
     archiver_info: ArchiverMgmtInfo,
     pvs: Sequence[str],
     expected_statuses: list[ArchivingStatus],
-    existing_statuses: InfoResultList | None = None,
+    existing_status_infos: InfoResultList | None = None,
 ) -> None:
     """Validate the status of PVs.
 
@@ -93,24 +93,46 @@ def validate_pvs_status(
         archiver_info (ArchiverMgmtInfo): The archiver management server.
         pvs (Sequence[str]): The PVs to validate.
         expected_statuses (list[ArchivingStatus]): The allowed statuses for the PVs.
-        existing_statuses (InfoResultList | None, optional): The existing statuses of the PVs. Defaults to None.
+        existing_status_infos (InfoResultList | None, optional): The existing statuses of the PVs. Defaults to None.
 
     Raises:
         ValidPVStatusError: If a PV is not in the expected status.
     """
-    if existing_statuses is not None:
-        for pv_status_info in existing_statuses:
-            if pv_status_info["pvName"] in pvs:
-                archiving_status = ArchivingStatus.from_str(pv_status_info["status"])
-                LOG.debug("PV %s has status %s", pv_status_info["pvName"], archiving_status)
-                if archiving_status not in expected_statuses:
-                    raise ValidPVStatusError(pv_status_info["pvName"], archiving_status)
+    if existing_status_infos is not None:
+        validate_pvs_status_from_existing_info(pvs, expected_statuses, existing_status_infos)
         return
     for pv in pvs:
         archiving_status = archiver_info.get_archiving_status(pv)
         LOG.debug("PV %s has status %s", pv, archiving_status)
         if archiving_status not in expected_statuses:
             raise ValidPVStatusError(pv, archiving_status)
+
+
+def validate_pvs_status_from_existing_info(
+    pvs: Sequence[str],
+    expected_statuses: list[ArchivingStatus],
+    existing_status_infos: InfoResultList,
+) -> None:
+    """Validate the status of PVs from existing information.
+
+    This is used when the status information is already available and
+    does not need to be fetched from the archiver.
+    This is used to avoid making multiple requests to the archiver.
+
+    Args:.
+        pvs (Sequence[str]): The PVs to validate.
+        expected_statuses (list[ArchivingStatus]): The allowed statuses for the PVs.
+        existing_status_infos (InfoResultList): The existing statuses of the PVs.
+
+    Raises:
+        ValidPVStatusError: If a PV is not in the expected status.
+    """
+    for pv_status_info in existing_status_infos:
+        if pv_status_info["pvName"] in pvs:
+            archiving_status = ArchivingStatus.from_str(pv_status_info["status"])
+            LOG.debug("PV %s has status %s", pv_status_info["pvName"], archiving_status)
+            if archiving_status not in expected_statuses:
+                raise ValidPVStatusError(pv_status_info["pvName"], archiving_status)
 
 
 class RequestHTTPError(BaseMgmtError):
@@ -156,31 +178,31 @@ def validate_not_same(pairs: list[tuple[str, str]]) -> None:
 class ValidPVProtocolError(BaseMgmtError):
     """Exception for when a PV is not in the expected protocol."""
 
-    def __init__(self, pv: str, archiving_protocol: EpicsProto, new_protocol: EpicsProto) -> None:
+    def __init__(self, pv: str, archiving_protocol: EpicsProto, protocol: EpicsProto) -> None:
         """Initialize the exception.
 
         Args:
             pv (str): The PV that is not in the expected protocol.
             archiving_protocol (EpicsProto): The current protocol of the PV.
-            new_protocol (EpicsProto): The new protocol.
+            protocol (EpicsProto): The new protocol.
         """
         super().__init__(f"PV {pv} archiving protocol is {archiving_protocol}.")
         self.pv = pv
         self.archiving_protocol = archiving_protocol
-        self.new_protocol = new_protocol
+        self.protocol = protocol
 
 
 def validate_current_protocol(
     archiver_info: ArchiverMgmtInfo,
     pvs: Sequence[str],
-    new_protocol: EpicsProto,
+    protocol: EpicsProto,
 ) -> None:
     """Validate the current protocol of the PVs.
 
     Args:
         archiver_info (ArchiverMgmtInfo): The archiver management server.
         pvs (Sequence[str]): The PVs to validate.
-        new_protocol (EpicsProto): The new protocol.
+        protocol (EpicsProto): The new protocol.
 
     Raises:
         ValidPVProtocolError: If a PV is not in the expected protocol.
@@ -193,5 +215,5 @@ def validate_current_protocol(
                 archiving_protocol = EpicsProto.PVA if archiving_detail["value"] == "Yes" else EpicsProto.CA
                 break
         LOG.debug("PV %s has proto %s", pv, archiving_protocol)
-        if archiving_protocol == new_protocol:
-            raise ValidPVProtocolError(pv, archiving_protocol, new_protocol)
+        if archiving_protocol == protocol:
+            raise ValidPVProtocolError(pv, archiving_protocol, protocol)

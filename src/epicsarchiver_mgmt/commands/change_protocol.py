@@ -28,14 +28,14 @@ LOG: logging.Logger = logging.getLogger(__name__)
 class InvalidEpicsProtoError(BaseMgmtError):
     """Exception for when the epics protocol is invalid."""
 
-    def __init__(self, new_protocol: str) -> None:
+    def __init__(self, protocol: str) -> None:
         """Error for when the rename type is invalid.
 
         Args:
-            new_protocol (str): The invalid epics protocol.
+            protocol (str): The invalid epics protocol.
         """
-        super().__init__(f"Invalid epics protocol {new_protocol}.")
-        self.new_protocol = new_protocol
+        super().__init__(f"Invalid epics protocol {protocol}.")
+        self.protocol = protocol
 
 
 def epicsproto_from_str(value: str) -> EpicsProto:
@@ -56,19 +56,19 @@ def epicsproto_from_str(value: str) -> EpicsProto:
     raise InvalidEpicsProtoError(value)
 
 
-def statuses_archive_requests(pv_statuses: InfoResultList, new_protocol: EpicsProto) -> list[ArchivePVRequest]:
+def statuses_archive_requests(pv_statuses: InfoResultList, protocol: EpicsProto) -> list[ArchivePVRequest]:
     """Copy the archive requests from the PV statuses.
 
     Args:
         pv_statuses (InfoResultList): The statuses of the PVs.
-        new_protocol (EpicsProto): The new protocol to change to.
+        protocol (EpicsProto): The new protocol to change to.
 
     Returns:
         list[ArchivePVRequest]: The archive requests of the PVs.
     """
     return [
         ArchivePVRequest(
-            new_protocol.pv_name(pv_status["pvName"]),
+            protocol.pv_name(pv_status["pvName"]),
             appliance=pv_status["appliance"],
             samplingperiod=pv_status["samplingPeriod"],
         )
@@ -76,44 +76,34 @@ def statuses_archive_requests(pv_statuses: InfoResultList, new_protocol: EpicsPr
     ]
 
 
-def change_protocol(archiver_fqdn: str, pvs: Sequence[str], new_protocol: EpicsProto) -> None:
+def change_protocol(archiver_fqdn: str, pvs: Sequence[str], protocol: EpicsProto) -> None:
     """Change the protocol of PVs in the archiver.
 
     Args:
         archiver_fqdn (str): The url of the archiver.
         pvs (list[str]): The PVs to change type.
-        new_protocol (EpicsProto): The new protocol to change to.
+        protocol (EpicsProto): The new protocol to change to.
     """
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdn)
     pv_statuses: InfoResultList = archiver_info.get_pv_status(list(pvs))
     validate_pvs_status(
-        archiver_info,
-        pvs,
-        [
+        archiver_info=archiver_info,
+        pvs=pvs,
+        expected_statuses=[
             ArchivingStatus.BeingArchived,
             ArchivingStatus.Paused,
         ],
-        pv_statuses,
+        existing_status_infos=pv_statuses,
     )
-    validate_current_protocol(archiver_info, pvs, new_protocol)
+    validate_current_protocol(archiver_info, pvs, protocol)
 
-    pv_requests = statuses_archive_requests(pv_statuses, new_protocol)
+    pv_requests = statuses_archive_requests(pv_statuses, protocol)
     archiver = ArchiverMgmt(archiver_fqdn)
 
     # Action
-    LOG.info("Changing protocol of the PVs %s to %s", pvs, new_protocol)
+    LOG.info("Using archiver %s", archiver.info)
+    LOG.info("Changing protocol of the PVs %s to %s", pvs, protocol)
     pause_resume.pause(archiver_fqdn, pvs)
     delete.delete(archiver_fqdn, pvs)
     archive.archive(archiver_fqdn, pv_requests, dry_run=False)
-
-    LOG.info("Using archiver %s", archiver.info)
-
-    # Validate output
-    validate_pvs_status(
-        archiver_info,
-        pvs,
-        [
-            ArchivingStatus.BeingArchived,
-        ],
-    )
