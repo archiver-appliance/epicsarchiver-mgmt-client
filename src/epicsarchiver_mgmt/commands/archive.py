@@ -84,6 +84,7 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run:
     LOG.info("Using archiver %s", archiver.info)
 
     if dry_run:
+        LOG.info("Dry run, not executing.")
         return
 
     try:

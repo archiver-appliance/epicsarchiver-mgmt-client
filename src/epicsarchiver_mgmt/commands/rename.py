@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from concurrent.futures import ThreadPoolExecutor
+from re import L
 from typing import cast
 
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
@@ -45,12 +46,13 @@ def _pause_pvs(archivers: list[ArchiverMgmt], pvs: list[str]) -> None:
         raise RequestHTTPError(e) from e
 
 
-def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]]) -> None:
+def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]], *, dry_run: bool = False) -> None:
     """Rename PVs in the archiver, runs in parallel on multiple archivers.
 
     Args:
         archiver_fqdns (list[str]): The urls of the archivers.
         renames (list[tuple[str, str]]): The PVs to rename.
+        dry_run (bool): Whether to do a dry run or not.
 
     Raises:
         RequestHTTPError: If there is an error renaming the PVs.
@@ -85,7 +87,12 @@ def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]]) -> None:
 
     LOG.info("Using archivers %s", [archiver.info for archiver in archivers])
 
+    if dry_run:
+        LOG.info("Dry run, not executing.")
+        return
+
     _pause_pvs(archivers, [old_pv for old_pv, _new_pv in renames])
+
     try:
         # rename all the pvs, this can take a long time so we do it in parallel
         rename_results = _parallel_execute_rename(archivers, renames)
@@ -146,7 +153,7 @@ def validate_size(archiver: ArchiverMgmtInfo, old_pvs: list[str], max_storage: f
 
 
 def rename_and_append(
-    archiver_fqdns: list[str], renames: list[tuple[str, str]], storage: Storage = Storage.MTS
+    archiver_fqdns: list[str], renames: list[tuple[str, str]], storage: Storage = Storage.MTS, *, dry_run: bool = False
 ) -> None:
     """Rename and append PVs in the archiver, runs in parallel on multiple archivers.
 
@@ -154,6 +161,7 @@ def rename_and_append(
         archiver_fqdns (list[str]): The urls of the archivers.
         renames (list[tuple[str, str]]): The PVs to rename.
         storage (Storage): The storage to consolidate the data first.
+        dry_run (bool): Whether to do a dry run or not.
 
     Raises:
         RequestHTTPError: If there is an error renaming the PVs.
@@ -192,6 +200,10 @@ def rename_and_append(
     archivers = [ArchiverMgmt(archiver_fqdn) for archiver_fqdn in archiver_fqdns]
 
     LOG.info("Using archivers %s", [archiver.info for archiver in archivers])
+
+    if dry_run:
+        LOG.info("Dry run, not executing.")
+        return
 
     _pause_pvs(archivers, [old_pv for old_pv, _new_pv in renames] + [new_pv for _old_pv, new_pv in renames])
 
