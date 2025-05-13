@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from re import L
 from typing import cast
 
+import click
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
@@ -16,6 +16,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     Storage,
 )
 from epicsarchiver_mgmt.commands.validation import (
+    CONFIRMATION_PROMPT,
     RequestHTTPError,
     validate_not_same,
     validate_operation_results,
@@ -90,6 +91,8 @@ def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]], *, dry_run
     if dry_run:
         LOG.info("Dry run, not executing.")
         return
+
+    click.confirm(CONFIRMATION_PROMPT, abort=True)
 
     _pause_pvs(archivers, [old_pv for old_pv, _new_pv in renames])
 
@@ -204,6 +207,8 @@ def rename_and_append(
     if dry_run:
         LOG.info("Dry run, not executing.")
         return
+
+    click.confirm(CONFIRMATION_PROMPT, abort=True)
 
     _pause_pvs(archivers, [old_pv for old_pv, _new_pv in renames] + [new_pv for _old_pv, new_pv in renames])
 
