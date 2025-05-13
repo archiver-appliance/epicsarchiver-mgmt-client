@@ -282,6 +282,7 @@ def epicsproto_from_param(value: str) -> EpicsProto | None:
 @click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
 @click.option(
     "--protocol",
+    "-p",
     type=str,
     default=None,
     help="Protocol to change PVs to.",
@@ -416,6 +417,7 @@ alias.add_command(add_alias)
 alias.add_command(remove_alias)
 
 cli.add_command(change_type)
+cli.add_command(change_protocol)
 cli.add_command(pause)
 cli.add_command(resume)
 cli.add_command(archive)
