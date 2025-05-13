@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, cast
 
+import click
 from epicsarchiver.common import ArchDbrType
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
@@ -15,6 +16,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
 )
 from epicsarchiver_mgmt.commands import pause_resume
 from epicsarchiver_mgmt.commands.validation import (
+    CONFIRMATION_PROMPT,
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
@@ -87,6 +89,8 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
     LOG.info("Changing type of the PVs %s to %s", pvs, new_type)
 
     LOG.info("Using archiver %s", archiver.info)
+
+    click.confirm(CONFIRMATION_PROMPT, abort=True)
 
     try:
         change_type_results = [archiver.change_type(pv, new_type) for pv in pvs]
