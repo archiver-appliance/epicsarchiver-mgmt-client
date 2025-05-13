@@ -44,7 +44,7 @@ class EpicsProto(enum.StrEnum):
     CA = "CA"
     PVA = "PVA"
 
-    def pv_name(self, pv: str) -> str:
+    def create_archive_request_pv_name(self, pv: str) -> str:
         """Return the PV name with the protocol.
 
         Args:
@@ -135,7 +135,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         """
         return self.archive_pv_requests([
             ArchivePVRequest(
-                pv=protocol.pv_name(pv),
+                pv=protocol.create_archive_request_pv_name(pv),
                 samplingmethod=sampling_method,
                 samplingperiod=str(sampling_period),
                 controllingPV=controlling_pv,

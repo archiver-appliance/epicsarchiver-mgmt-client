@@ -56,8 +56,8 @@ def epicsproto_from_str(value: str) -> EpicsProto:
     raise InvalidEpicsProtoError(value)
 
 
-def statuses_archive_requests(pv_statuses: InfoResultList, protocol: EpicsProto) -> list[ArchivePVRequest]:
-    """Copy the archive requests from the PV statuses.
+def create_new_protocol_archive_requests(pv_statuses: InfoResultList, protocol: EpicsProto) -> list[ArchivePVRequest]:
+    """Create the archive requests from the appliance names in the pv statuses and new protocol.
 
     Args:
         pv_statuses (InfoResultList): The statuses of the PVs.
@@ -68,7 +68,7 @@ def statuses_archive_requests(pv_statuses: InfoResultList, protocol: EpicsProto)
     """
     return [
         ArchivePVRequest(
-            protocol.pv_name(pv_status["pvName"]),
+            protocol.create_archive_request_pv_name(pv_status["pvName"]),
             appliance=pv_status["appliance"],
             samplingperiod=pv_status["samplingPeriod"],
         )
@@ -98,7 +98,7 @@ def change_protocol(archiver_fqdn: str, pvs: Sequence[str], protocol: EpicsProto
     )
     validate_current_protocol(archiver_info, pvs, protocol)
 
-    pv_requests = statuses_archive_requests(pv_statuses, protocol)
+    pv_requests = create_new_protocol_archive_requests(pv_statuses, protocol)
     archiver = ArchiverMgmt(archiver_fqdn)
 
     # Action
