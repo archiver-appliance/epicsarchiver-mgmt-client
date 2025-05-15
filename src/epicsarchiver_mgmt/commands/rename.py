@@ -73,6 +73,10 @@ def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]]) -> None:
             ArchivingStatus.NotBeingArchived,
         ],
     )
+    validate_size(
+        archiver_info,
+        [old_pv for old_pv, _new_pv in renames],
+    )
 
     # Action
     LOG.info("Renaming PVs %s", renames)
@@ -123,7 +127,7 @@ class TooMuchStoredDataError(BaseMgmtError):
         self.storage = storage
 
 
-def validate_size(archiver: ArchiverMgmt, old_pvs: list[str], max_storage: float = MAX_STORAGE_MB) -> None:
+def validate_size(archiver: ArchiverMgmtInfo, old_pvs: list[str], max_storage: float = MAX_STORAGE_MB) -> None:
     """Validate the old PVs are not too large.
 
     Args:
@@ -172,6 +176,14 @@ def rename_and_append(
             ArchivingStatus.BeingArchived,
             ArchivingStatus.Paused,
         ],
+    )
+    validate_size(
+        archiver_info,
+        [old_pv for old_pv, _new_pv in renames],
+    )
+    validate_size(
+        archiver_info,
+        [new_pv for _old_pv, new_pv in renames],
     )
 
     # Action
