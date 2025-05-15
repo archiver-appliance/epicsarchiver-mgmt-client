@@ -11,9 +11,9 @@ from epicsarchiver.common import ArchDbrType
 from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest, EpicsProto
 from epicsarchiver_mgmt.commands import alias as cmd_alias
 from epicsarchiver_mgmt.commands import archive as cmd_archive
+from epicsarchiver_mgmt.commands import basic_commands
 from epicsarchiver_mgmt.commands import change_protocol as cp
 from epicsarchiver_mgmt.commands import change_type as ct
-from epicsarchiver_mgmt.commands import pause_resume
 from epicsarchiver_mgmt.commands import rename as cmd_rename
 from epicsarchiver_mgmt.input_parsing import double_column_csv, single_column_csv
 from epicsarchiver_mgmt.logging import CURRENT_COMMAND_LOG
@@ -53,7 +53,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     pvs = single_column_csv(file)
 
     try:
-        pause_resume.pause(archiver_fqdn, pvs)
+        basic_commands.pause(archiver_fqdn, pvs)
     except BaseMgmtError as e:
         LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error pausing PVs.", exc_info=True)
@@ -141,7 +141,7 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     pvs = single_column_csv(file)
 
     try:
-        pause_resume.resume(archiver_fqdn, pvs)
+        basic_commands.resume(archiver_fqdn, pvs)
     except BaseMgmtError as e:
         LOG.error("Error resuming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error resuming PVs.", exc_info=True)

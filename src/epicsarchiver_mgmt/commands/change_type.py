@@ -13,7 +13,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
     OperationResult,
 )
-from epicsarchiver_mgmt.commands import pause_resume
+from epicsarchiver_mgmt.commands import basic_commands
 from epicsarchiver_mgmt.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
@@ -82,7 +82,7 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
 
     archiver = ArchiverMgmt(archiver_fqdn)
 
-    pause_resume.pause(archiver_fqdn, pvs)
+    basic_commands.pause(archiver_fqdn, pvs)
     # Action
     LOG.info("Changing type of the PVs %s to %s", pvs, new_type)
 
@@ -97,4 +97,4 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
 
     # Validate output
     validate_operation_results(pvs, [cast("OperationResult", result) for result in change_type_results], "change type")
-    pause_resume.resume(archiver_fqdn, pvs)
+    basic_commands.resume(archiver_fqdn, pvs)

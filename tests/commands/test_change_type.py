@@ -63,8 +63,8 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.pause") as mock_pause,
-        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("epicsarchiver_mgmt.commands.change_type.basic_commands.pause") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_type.basic_commands.resume") as mock_resume,
         patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         change_type(archiver_fqdn, pvs, new_type)
@@ -109,8 +109,8 @@ def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture) -> N
         patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.pause") as mock_pause,
-        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("epicsarchiver_mgmt.commands.change_type.basic_commands.pause") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_type.basic_commands.resume") as mock_resume,
         patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
@@ -154,8 +154,8 @@ def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.pause", side_effect=pause_error) as mock_pause,
-        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
+        patch("epicsarchiver_mgmt.commands.change_type.basic_commands.pause", side_effect=pause_error) as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_type.basic_commands.resume") as mock_resume,
         patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
@@ -191,8 +191,8 @@ def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch("epicsarchiver_mgmt.commands.change_type.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.change_type.validate_pvs_status") as mock_validate_pvs_status,
-        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.pause") as mock_pause,
-        patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume", side_effect=resume_error) as mock_resume,
+        patch("epicsarchiver_mgmt.commands.change_type.basic_commands.pause") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_type.basic_commands.resume", side_effect=resume_error) as mock_resume,
         patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
