@@ -98,3 +98,41 @@ def resume(archiver_fqdn: str, pvs: Sequence[str]) -> None:
 
     # Validate output
     validate_operation_results(pvs, [cast("OperationResult", result) for result in resume_results], "resumed")
+
+
+def delete(archiver_fqdn: str, pvs: Sequence[str]) -> None:
+    """Delete PVs in the archiver.
+
+    Args:
+        archiver_fqdn (str): The url of the archiver.
+        pvs (list[str]): The PVs to delete.
+
+    Raises:
+        RequestHTTPError: If there is an error deleting the PVs.
+    """
+    # Validate input
+    archiver_info = ArchiverMgmtInfo(archiver_fqdn)
+    validate_pvs_status(
+        archiver_info,
+        pvs,
+        [
+            ArchivingStatus.Paused,
+        ],
+    )
+
+    # Action
+    LOG.info("Deleting PVs %s", pvs)
+
+    archiver = ArchiverMgmt(archiver_fqdn)
+
+    LOG.info("Using archiver %s", archiver.info)
+
+    try:
+        delete_results = [archiver.delete_pv(pv) for pv in pvs]
+    except HTTPError as e:
+        LOG.error("Error deleting PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error deleting PVs.", exc_info=True)
+        raise RequestHTTPError(e) from e
+
+    # Validate output
+    validate_operation_results(pvs, [cast("OperationResult", result) for result in delete_results], "deleted")

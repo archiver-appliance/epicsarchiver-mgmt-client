@@ -12,7 +12,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
     EpicsProto,
 )
-from epicsarchiver_mgmt.commands import archive, basic_commands, delete
+from epicsarchiver_mgmt.commands import archive, basic_commands
 from epicsarchiver_mgmt.commands.validation import (
     validate_current_protocol,
     validate_pvs_status,
@@ -105,5 +105,5 @@ def change_protocol(archiver_fqdn: str, pvs: Sequence[str], protocol: EpicsProto
     LOG.info("Using archiver %s", archiver.info)
     LOG.info("Changing protocol of the PVs %s to %s", pvs, protocol)
     basic_commands.pause(archiver_fqdn, pvs)
-    delete.delete(archiver_fqdn, pvs)
+    basic_commands.delete(archiver_fqdn, pvs)
     archive.archive(archiver_fqdn, pv_requests, dry_run=False)

@@ -11,7 +11,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
     OperationResult,
 )
-from epicsarchiver_mgmt.commands.basic_commands import pause, resume
+from epicsarchiver_mgmt.commands.basic_commands import delete, pause, resume
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 
 
@@ -103,6 +103,49 @@ def test_resume_success(caplog: pytest.LogCaptureFixture) -> None:
         assert f"Using archiver {mock_archiver.info}" in caplog.text
 
 
+def test_delete_success(caplog: pytest.LogCaptureFixture) -> None:
+    """Test successful delete operation."""
+    caplog.set_level(logging.INFO)
+    archiver_fqdn = "archiver.example.com"
+    pvs = ["PV1", "PV2"]
+    mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
+    mock_archiver = MagicMock(spec=ArchiverMgmt)
+    mock_archiver.info = "Archiver Info"
+    # Simulate the list comprehension result
+    mock_delete_results = [
+        OperationResult(pv="PV1", statusCode=200, statusMessage="OK"),
+        OperationResult(pv="PV2", statusCode=200, statusMessage="OK"),
+    ]
+    # Make the mock iterable and return specific results for each call
+    mock_archiver.delete_pv.side_effect = mock_delete_results
+
+    with (
+        patch("epicsarchiver_mgmt.commands.basic_commands.ArchiverMgmtInfo", return_value=mock_archiver_info),
+        patch("epicsarchiver_mgmt.commands.basic_commands.ArchiverMgmt", return_value=mock_archiver),
+        patch("epicsarchiver_mgmt.commands.basic_commands.validate_pvs_status") as mock_validate_pvs_status,
+        patch(
+            "epicsarchiver_mgmt.commands.basic_commands.validate_operation_results"
+        ) as mock_validate_operation_results,
+    ):
+        delete(archiver_fqdn, pvs)
+
+        mock_validate_pvs_status.assert_called_once_with(
+            mock_archiver_info,
+            pvs,
+            [
+                ArchivingStatus.Paused,
+            ],
+        )
+        # Check that resume_pv was called for each PV
+        mock_archiver.delete_pv.assert_has_calls([call("PV1"), call("PV2")], any_order=False)
+        # Check the validation call with the cast results
+        mock_validate_operation_results.assert_called_once_with(
+            pvs, [cast("OperationResult", result) for result in mock_delete_results], "deleted"
+        )
+        assert f"Deleting PVs {pvs}" in caplog.text
+        assert f"Using archiver {mock_archiver.info}" in caplog.text
+
+
 @pytest.mark.parametrize(
     ("func_to_test", "api_method_name", "expected_statuses", "operation_name"),
     [
@@ -123,6 +166,14 @@ def test_resume_success(caplog: pytest.LogCaptureFixture) -> None:
                 ArchivingStatus.Paused,
             ],
             "resuming",
+        ),
+        (
+            delete,
+            "delete_pv",
+            [
+                ArchivingStatus.Paused,
+            ],
+            "deleting",
         ),
     ],
 )
