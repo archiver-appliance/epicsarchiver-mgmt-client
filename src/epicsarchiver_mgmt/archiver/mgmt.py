@@ -232,7 +232,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         self,
         pv: str,
         delete_data: bool = False,  # noqa: FBT002, FBT001
-    ) -> list[str]:
+    ) -> OperationResultList | OperationResult:
         """Stop archiving the specified PV.
 
         The PV needs to be paused first.
@@ -245,8 +245,10 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         Returns:
             list of submitted PVs
         """
-        r = self._get("/deletePV", params={"pv": pv, "delete_data": delete_data})
-        return cast("list[str]", r.json())
+        response = self._get("/deletePV", params={"pv": pv, "delete_data": delete_data})
+        if "," not in pv:
+            return cast("OperationResult", response.json())
+        return cast("OperationResultList", response.json())
 
     def rename_pv(self, pv: str, newname: str) -> OperationResult:
         """Rename this pv to a new name.

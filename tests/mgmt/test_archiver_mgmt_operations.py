@@ -190,7 +190,7 @@ def test_abort_pv() -> None:
 @responses.activate
 def test_delete_pv_data_false() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = ["1", "2", "3"]
+    data = {"validation": "", "status": "ok"}
     pv = "LEBT-010:PBI-NPM-001:HCAM-COM"
     responses.add(
         responses.GET,
@@ -207,7 +207,7 @@ def test_delete_pv_data_false() -> None:
 @responses.activate
 def test_delete_pv_data_true() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = ["1", "2", "3"]
+    data = {"validation": "", "status": "ok"}
     pv = "LEBT-010:PBI-NPM-001:HCAM-COM"
     responses.add(
         responses.GET,
