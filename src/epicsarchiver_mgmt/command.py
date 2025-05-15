@@ -78,8 +78,15 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     required=True,
     help="Append the data of the new PV to the old PV and rename them.",
 )
+@click.option("--dry-run", "-d", is_flag=True, help="Do a dry run.", default=False)
 @click.pass_context
-def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, and_append: bool = False) -> None:  # noqa: FBT001, FBT002
+def rename(
+    ctx: click.Context,
+    archiver_fqdn: list[str],
+    file: TextIOWrapper,
+    and_append: bool = False,  # noqa: FBT001, FBT002
+    dry_run: bool = False,  # noqa: FBT001, FBT002
+) -> None:
     """Rename PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to rename.
@@ -105,9 +112,9 @@ def rename(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper, an
 
     try:
         if and_append:
-            cmd_rename.rename_and_append(archiver_fqdn, pvs)
+            cmd_rename.rename_and_append(archiver_fqdn, pvs, dry_run=dry_run)
         else:
-            cmd_rename.rename(archiver_fqdn, pvs)
+            cmd_rename.rename(archiver_fqdn, pvs, dry_run=dry_run)
     except BaseMgmtError as e:
         LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error renaming PVs.", exc_info=True)

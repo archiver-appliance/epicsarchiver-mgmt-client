@@ -25,6 +25,8 @@ LOG: logging.Logger = logging.getLogger(__name__)
 OPERATION_RESULT_STATUS = "status"
 OPERATION_RESULT_OK = "ok"
 
+CONFIRMATION_PROMPT = "Are you sure you want to proceed?"
+
 
 class ValidOperationResultsError(BaseMgmtError):
     """Exception for when the operation results are not valid."""
@@ -61,7 +63,7 @@ def validate_operation_results(
     invalid_pvs: dict[str, OperationResult | OperationResultList] = {}
     for pv, result in zip(pvs, action_results, strict=False):
         LOG.debug("PV %s result %s for operation %s", pv, result, operation_name)
-        if isinstance(result, dict) and result.get(OPERATION_RESULT_STATUS, "false") != expected_status:
+        if result.get(OPERATION_RESULT_STATUS, "false") != expected_status:
             invalid_pvs[pv] = result
     if invalid_pvs != {}:
         raise ValidOperationResultsError(invalid_pvs, operation_name)

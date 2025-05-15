@@ -15,9 +15,10 @@ from epicsarchiver_mgmt.commands.rename import (
     validate_size,
 )
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
+from tests.commands.test_validation import accept_confirmation
 
 
-def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
+def test_rename_success(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test successful rename operation."""
     caplog.set_level(logging.INFO)
     archiver_fqdns = ["archiver1.example.com", "archiver2.example.com"]
@@ -38,6 +39,7 @@ def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
         ),
         patch("epicsarchiver_mgmt.commands.rename.validate_not_same") as mock_validate_not_same,
         patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.rename.validate_size") as mock_validate_size,
         patch("epicsarchiver_mgmt.commands.rename._pause_pvs") as mock_pause_pvs,
         patch("epicsarchiver_mgmt.commands.rename.validate_operation_results") as mock_validate_operation_results,
         patch("epicsarchiver_mgmt.commands.rename._parallel_execute_rename") as mock_parallel_execute_rename,
@@ -46,11 +48,13 @@ def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
             {"status": "ok", "desc": "Renamed"},
             {"status": "ok", "desc": "Renamed"},
         ]
+        accept_confirmation(monkeypatch)
         rename(archiver_fqdns, renames)
 
         mock_validate_not_same.assert_called_once_with(renames)
         mock_validate_pvs_status.assert_called()
         assert mock_validate_pvs_status.call_count == 2
+        mock_validate_size.assert_called()
         mock_pause_pvs.assert_called_once()
         mock_validate_operation_results.assert_called_once()
         mock_parallel_execute_rename.assert_called_once()
@@ -58,7 +62,7 @@ def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
         assert "Using archivers" in caplog.text
 
 
-def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
+def test_rename_http_error(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test rename operation with HTTP error."""
     caplog.set_level(logging.DEBUG)
     archiver_fqdns = ["archiver.example.com"]
@@ -76,15 +80,18 @@ def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.rename.validate_not_same") as mock_validate_not_same,
         patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.rename.validate_size") as mock_validate_size,
         patch("epicsarchiver_mgmt.commands.rename._pause_pvs") as mock_pause_pvs,
         patch("epicsarchiver_mgmt.commands.rename._parallel_execute_rename") as mock_parallel_execute_rename,
     ):
         mock_parallel_execute_rename.side_effect = HTTPError(response=request_response)
+        accept_confirmation(monkeypatch)
         with pytest.raises(RequestHTTPError):
             rename(archiver_fqdns, renames)
 
         mock_validate_not_same.assert_called_once_with(renames)
         mock_validate_pvs_status.assert_called()
+        mock_validate_size.assert_called()
         assert mock_validate_pvs_status.call_count == 2
         mock_pause_pvs.assert_called_once()
         mock_parallel_execute_rename.assert_called_once()
@@ -92,7 +99,7 @@ def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
         assert "HTTPError" in caplog.text
 
 
-def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
+def test_append_rename_success(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test successful append_rename operation."""
     caplog.set_level(logging.INFO)
     archiver_fqdns = ["archiver1.example.com", "archiver2.example.com"]
@@ -113,6 +120,7 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
         ),
         patch("epicsarchiver_mgmt.commands.rename.validate_not_same") as mock_validate_not_same,
         patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.rename.validate_size") as mock_validate_size,
         patch("epicsarchiver_mgmt.commands.rename._pause_pvs") as mock_pause_pvs,
         patch("epicsarchiver_mgmt.commands.rename.validate_operation_results") as mock_validate_operation_results,
         patch(
@@ -123,10 +131,12 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
             {"status": "ok", "desc": "Renamed"},
             {"status": "ok", "desc": "Renamed"},
         ]
+        accept_confirmation(monkeypatch)
         rename_and_append(archiver_fqdns, renames)
 
         mock_validate_not_same.assert_called_once_with(renames)
         mock_validate_pvs_status.assert_called()
+        mock_validate_size.assert_called()
         assert mock_validate_pvs_status.call_count == 2
         mock_pause_pvs.assert_called_once()
         mock_validate_operation_results.assert_called_once()
@@ -135,7 +145,7 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
         assert "Using archivers" in caplog.text
 
 
-def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
+def test_append_rename_http_error(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test append_rename operation with HTTP error."""
     caplog.set_level(logging.DEBUG)
     archiver_fqdns = ["archiver.example.com"]
@@ -153,17 +163,21 @@ def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.rename.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.rename.validate_not_same") as mock_validate_not_same,
         patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status") as mock_validate_pvs_status,
+        patch("epicsarchiver_mgmt.commands.rename.validate_size") as mock_validate_size,
         patch("epicsarchiver_mgmt.commands.rename._pause_pvs") as mock_pause_pvs,
         patch(
             "epicsarchiver_mgmt.commands.rename._parallel_execute_rename_and_append"
         ) as mock_parallel_execute_rename_and_append,
     ):
         mock_parallel_execute_rename_and_append.side_effect = HTTPError(response=request_response)
+
+        accept_confirmation(monkeypatch)
         with pytest.raises(RequestHTTPError):
             rename_and_append(archiver_fqdns, renames)
 
         mock_validate_not_same.assert_called_once_with(renames)
         mock_validate_pvs_status.assert_called()
+        mock_validate_size.assert_called()
         assert mock_validate_pvs_status.call_count == 2
         mock_pause_pvs.assert_called_once()
         mock_parallel_execute_rename_and_append.assert_called_once()

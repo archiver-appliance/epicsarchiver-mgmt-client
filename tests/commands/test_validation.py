@@ -1,3 +1,4 @@
+import io
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,6 +12,10 @@ from epicsarchiver_mgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
+
+
+def accept_confirmation(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("sys.stdin", io.StringIO("y\n"))
 
 
 def test_validate_operation_results_success() -> None:
