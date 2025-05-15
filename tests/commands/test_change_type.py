@@ -17,6 +17,7 @@ from epicsarchiver_mgmt.commands.change_type import (
     change_type,
 )
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
+from tests.commands.test_validation import accept_confirmation
 
 
 # --- Tests for archdbrtype_from_str ---
@@ -42,7 +43,7 @@ def test_archdbrtype_from_str_invalid() -> None:
 
 
 # --- Tests for change_type ---
-def test_change_type_success(caplog: pytest.LogCaptureFixture) -> None:
+def test_change_type_success(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test successful change_type operation."""
     caplog.set_level(logging.INFO)
     archiver_fqdn = "archiver.example.com"
@@ -67,6 +68,7 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
         patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
+        accept_confirmation(monkeypatch)
         change_type(archiver_fqdn, pvs, new_type)
 
         mock_validate_pvs_status.assert_called_once_with(
@@ -89,7 +91,7 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture) -> None:
         assert f"Using archiver {mock_archiver.info}" in caplog.text
 
 
-def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture) -> None:
+def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test change_type operation with HTTP error during the change_type API call."""
     caplog.set_level(logging.DEBUG)
     archiver_fqdn = "archiver.example.com"
@@ -113,6 +115,7 @@ def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture) -> N
         patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
         patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
+        accept_confirmation(monkeypatch)
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)
 
@@ -135,7 +138,7 @@ def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture) -> N
         assert exc_info.value.__cause__ is http_error
 
 
-def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture) -> None:
+def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test change_type operation when pause fails."""
     caplog.set_level(logging.DEBUG)
     archiver_fqdn = "archiver.example.com"
@@ -158,6 +161,7 @@ def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume") as mock_resume,
         patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
+        accept_confirmation(monkeypatch)
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)
 
@@ -169,7 +173,7 @@ def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture) -> None:
         assert exc_info.value is pause_error  # Check it's the exact exception from pause
 
 
-def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture) -> None:
+def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test change_type operation when resume fails."""
     caplog.set_level(logging.DEBUG)
     archiver_fqdn = "archiver.example.com"
@@ -195,6 +199,7 @@ def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.change_type.pause_resume.resume", side_effect=resume_error) as mock_resume,
         patch("epicsarchiver_mgmt.commands.change_type.validate_operation_results") as mock_validate_operation_results,
     ):
+        accept_confirmation(monkeypatch)
         with pytest.raises(RequestHTTPError) as exc_info:
             change_type(archiver_fqdn, pvs, new_type)
 

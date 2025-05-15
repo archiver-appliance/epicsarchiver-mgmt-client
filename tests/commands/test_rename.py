@@ -15,9 +15,10 @@ from epicsarchiver_mgmt.commands.rename import (
     validate_size,
 )
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
+from tests.commands.test_validation import accept_confirmation
 
 
-def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
+def test_rename_success(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test successful rename operation."""
     caplog.set_level(logging.INFO)
     archiver_fqdns = ["archiver1.example.com", "archiver2.example.com"]
@@ -47,6 +48,7 @@ def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
             {"status": "ok", "desc": "Renamed"},
             {"status": "ok", "desc": "Renamed"},
         ]
+        accept_confirmation(monkeypatch)
         rename(archiver_fqdns, renames)
 
         mock_validate_not_same.assert_called_once_with(renames)
@@ -60,7 +62,7 @@ def test_rename_success(caplog: pytest.LogCaptureFixture) -> None:
         assert "Using archivers" in caplog.text
 
 
-def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
+def test_rename_http_error(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test rename operation with HTTP error."""
     caplog.set_level(logging.DEBUG)
     archiver_fqdns = ["archiver.example.com"]
@@ -83,6 +85,7 @@ def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.rename._parallel_execute_rename") as mock_parallel_execute_rename,
     ):
         mock_parallel_execute_rename.side_effect = HTTPError(response=request_response)
+        accept_confirmation(monkeypatch)
         with pytest.raises(RequestHTTPError):
             rename(archiver_fqdns, renames)
 
@@ -96,7 +99,7 @@ def test_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
         assert "HTTPError" in caplog.text
 
 
-def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
+def test_append_rename_success(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test successful append_rename operation."""
     caplog.set_level(logging.INFO)
     archiver_fqdns = ["archiver1.example.com", "archiver2.example.com"]
@@ -128,6 +131,7 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
             {"status": "ok", "desc": "Renamed"},
             {"status": "ok", "desc": "Renamed"},
         ]
+        accept_confirmation(monkeypatch)
         rename_and_append(archiver_fqdns, renames)
 
         mock_validate_not_same.assert_called_once_with(renames)
@@ -141,7 +145,7 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture) -> None:
         assert "Using archivers" in caplog.text
 
 
-def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
+def test_append_rename_http_error(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test append_rename operation with HTTP error."""
     caplog.set_level(logging.DEBUG)
     archiver_fqdns = ["archiver.example.com"]
@@ -166,6 +170,8 @@ def test_append_rename_http_error(caplog: pytest.LogCaptureFixture) -> None:
         ) as mock_parallel_execute_rename_and_append,
     ):
         mock_parallel_execute_rename_and_append.side_effect = HTTPError(response=request_response)
+
+        accept_confirmation(monkeypatch)
         with pytest.raises(RequestHTTPError):
             rename_and_append(archiver_fqdns, renames)
 
