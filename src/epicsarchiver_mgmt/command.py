@@ -3,7 +3,7 @@
 import logging
 import sys
 from io import TextIOWrapper
-from typing import TextIO
+from typing import Any, TextIO
 
 import click
 from epicsarchiver.common import ArchDbrType
@@ -22,6 +22,19 @@ from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
+def check_command_input(ctx: click.Context, command_input: Any | None, input_name: str) -> None:  # noqa: ANN401
+    """Check if the command input is provided.
+
+    Args:
+        ctx (click.Context): The click context.
+        command_input (Any | None): input to check.
+        input_name (str): The name of the command.
+    """
+    if not command_input:
+        LOG.error("No %s provided.", input_name)
+        ctx.exit(1)
+
+
 @click.group()
 @click.version_option()
 def cli() -> None:
@@ -29,7 +42,7 @@ def cli() -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archiver where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
@@ -48,9 +61,12 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
         arch-mgmt -a archiver.example.com pause pvs.csv
 
     """
+    check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = single_column_csv(file)
+    check_command_input(ctx, pvs, "pvs")
 
     try:
         basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
@@ -63,7 +79,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.", multiple=True)
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.", multiple=True)
 @click.argument(
     "file",
     type=click.File(),
@@ -106,9 +122,12 @@ def rename(
         arch-mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
 
     """
+    # Check input
+    check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = double_column_csv(file)
+    check_command_input(ctx, pvs, "pvs")
 
     try:
         if and_append:
@@ -124,7 +143,7 @@ def rename(
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archiver where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
@@ -143,9 +162,11 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
         arch-mgmt -a archiver.example.com resume pvs.csv
 
     """
+    check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = single_column_csv(file)
+    check_command_input(ctx, pvs, "pvs")
 
     try:
         basic_commands.ResumeCommand().run_command(archiver_fqdn, pvs)
@@ -163,7 +184,7 @@ def _parse_archive_requests(file: TextIO) -> list[ArchivePVRequest]:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archiver where PVs reside.")
 @click.option("--dry-run", "-d", is_flag=True, help="Do a dry run.", default=False)
 @click.argument(
     "file",
@@ -192,9 +213,12 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
         arch-mgmt -f archiver.example.com archive pvs.csv
 
     """
+    check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pv_requests = _parse_archive_requests(file)
+    check_command_input(ctx, pv_requests, "pv_requests")
 
     try:
         cmd_archive.archive(archiver_fqdn, pv_requests, dry_run=dry_run)
@@ -224,7 +248,7 @@ def archdbrtype_from_param(value: str) -> ArchDbrType | None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archiver where PVs reside.")
 @click.option(
     "--new-type",
     type=str,
@@ -251,15 +275,15 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 
     """
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    if new_type is None:
-        LOG.error("Invalid arch dbr type. Please provide a valid type.")
-        ctx.exit(1)
+    check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+    check_command_input(ctx, new_type, "new type")
 
     # Read input
     pvs = single_column_csv(file)
+    check_command_input(ctx, pvs, "pvs")
 
     try:
-        ct.change_type(archiver_fqdn, pvs, new_type)
+        ct.change_type(archiver_fqdn, pvs, new_type)  # type: ignore[arg-type] # Ignoring because of the check in the function
     except BaseMgmtError as e:
         LOG.error("Error changing type of PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error changing type of PVs.", exc_info=True)
@@ -286,7 +310,7 @@ def epicsproto_from_param(value: str) -> EpicsProto | None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archiver where PVs reside.")
 @click.option(
     "--protocol",
     "-p",
@@ -314,15 +338,15 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
 
     """
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    if protocol is None:
-        LOG.error("Invalid epics protocol. Please provide a valid type.")
-        ctx.exit(1)
+    check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+    check_command_input(ctx, protocol, "new protocol")
 
     # Read input
     pvs = single_column_csv(file)
+    check_command_input(ctx, pvs, "pvs")
 
     try:
-        cp.change_protocol(archiver_fqdn, pvs, protocol)
+        cp.change_protocol(archiver_fqdn, pvs, protocol)  # type: ignore[arg-type] # Ignoring because of the check in the function
     except BaseMgmtError as e:
         LOG.error("Error changing protocol of PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error changing protocol of PVs.", exc_info=True)
@@ -337,7 +361,7 @@ def alias() -> None:
 
 
 @click.command("add", context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
@@ -364,9 +388,11 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
         arch-mgmt -f archiver.example.com alias add pvs.csv
 
     """
+    check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = double_column_csv(file)
+    check_command_input(ctx, pvs, "pvs")
 
     try:
         cmd_alias.add_aliases(archiver_fqdn, pvs)
@@ -379,7 +405,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
 
 @click.command("remove", context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
@@ -406,9 +432,11 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
         arch-mgmt -f archiver.example.com alias remove pvs.csv
 
     """
+    check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     # Read input
     LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = double_column_csv(file)
+    check_command_input(ctx, pvs, "pvs")
 
     try:
         cmd_alias.remove_aliases(archiver_fqdn, pvs)
