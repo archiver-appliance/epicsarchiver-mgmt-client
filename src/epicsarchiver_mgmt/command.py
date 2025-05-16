@@ -17,7 +17,6 @@ from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import rename as cmd_rename
 from epicsarchiver_mgmt.input_parsing import double_column_csv, single_column_csv
 from epicsarchiver_mgmt.logging import setup_file_handler
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -70,7 +69,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     setup_file_handler(ctx.command_path)
     try:
         basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error pausing PVs.", exc_info=True)
         ctx.exit(1)
@@ -134,7 +133,7 @@ def rename(
             cmd_rename.rename_and_append(archiver_fqdn, pvs, dry_run=dry_run)
         else:
             cmd_rename.rename(archiver_fqdn, pvs, dry_run=dry_run)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error renaming PVs.", exc_info=True)
         ctx.exit(1)
@@ -170,7 +169,7 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     setup_file_handler(ctx.command_path)
     try:
         basic_commands.ResumeCommand().run_command(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error resuming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error resuming PVs.", exc_info=True)
         ctx.exit(1)
@@ -223,7 +222,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     try:
         cmd_archive.archive(archiver_fqdn, pv_requests, dry_run=dry_run)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error archiving PVs.", exc_info=True)
         ctx.exit(1)
@@ -285,7 +284,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     setup_file_handler(ctx.command_path)
     try:
         ct.change_type(archiver_fqdn, pvs, new_type)  # type: ignore[arg-type] # Ignoring because of the check in the function
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error changing type of PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error changing type of PVs.", exc_info=True)
         ctx.exit(1)
@@ -348,7 +347,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     setup_file_handler(ctx.command_path)
     try:
         cp.change_protocol(archiver_fqdn, pvs, protocol)  # type: ignore[arg-type] # Ignoring because of the check in the function
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error changing protocol of PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error changing protocol of PVs.", exc_info=True)
         ctx.exit(1)
@@ -397,7 +396,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
     setup_file_handler(ctx.command_path)
     try:
         cmd_alias.add_aliases(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error adding alias PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error adding alias PVs.", exc_info=True)
         ctx.exit(1)
@@ -441,7 +440,7 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
     setup_file_handler(ctx.command_path)
     try:
         cmd_alias.remove_aliases(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error removing alias PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error removing alias PVs.", exc_info=True)
         ctx.exit(1)

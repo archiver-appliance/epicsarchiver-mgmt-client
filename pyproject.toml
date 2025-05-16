@@ -75,6 +75,9 @@ lint.ignore = [
   "CPY001", # ignore copyright header checking (not needed for internal projects)
   "ISC001", # Conflicts with the formatter
 ]
+lint.per-file-ignores."src/epicsarchiver_mgmt/command.py" = [
+  "BLE001", # ignore "bare except" in command.py as it is a command line tool
+]
 lint.per-file-ignores."tests/**/*" = [
   "D",       # Don't enforce docstrings in tests
   "PLR2004", # allow magic constants in tests
