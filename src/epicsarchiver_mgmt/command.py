@@ -16,7 +16,7 @@ from epicsarchiver_mgmt.commands import change_protocol as cp
 from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import rename as cmd_rename
 from epicsarchiver_mgmt.input_parsing import double_column_csv, single_column_csv
-from epicsarchiver_mgmt.logging import CURRENT_COMMAND_LOG
+from epicsarchiver_mgmt.logging import setup_file_handler
 from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
@@ -64,10 +64,10 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
 
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = single_column_csv(file)
     check_command_input(ctx, pvs, "pvs")
 
+    setup_file_handler(ctx.command_path)
     try:
         basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
     except BaseMgmtError as e:
@@ -125,10 +125,10 @@ def rename(
     # Check input
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = double_column_csv(file)
     check_command_input(ctx, pvs, "pvs")
 
+    setup_file_handler(ctx.command_path)
     try:
         if and_append:
             cmd_rename.rename_and_append(archiver_fqdn, pvs, dry_run=dry_run)
@@ -164,10 +164,10 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = single_column_csv(file)
     check_command_input(ctx, pvs, "pvs")
 
+    setup_file_handler(ctx.command_path)
     try:
         basic_commands.ResumeCommand().run_command(archiver_fqdn, pvs)
     except BaseMgmtError as e:
@@ -216,9 +216,10 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
 
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pv_requests = _parse_archive_requests(file)
     check_command_input(ctx, pv_requests, "pv_requests")
+
+    setup_file_handler(ctx.command_path)
 
     try:
         cmd_archive.archive(archiver_fqdn, pv_requests, dry_run=dry_run)
@@ -274,7 +275,6 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
         arch-mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     check_command_input(ctx, new_type, "new type")
 
@@ -282,6 +282,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     pvs = single_column_csv(file)
     check_command_input(ctx, pvs, "pvs")
 
+    setup_file_handler(ctx.command_path)
     try:
         ct.change_type(archiver_fqdn, pvs, new_type)  # type: ignore[arg-type] # Ignoring because of the check in the function
     except BaseMgmtError as e:
@@ -337,7 +338,6 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
         arch-mgmt -f archiver.example.com change_protocol --new-protocol ca pvs.csv
 
     """
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     check_command_input(ctx, protocol, "new protocol")
 
@@ -345,6 +345,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     pvs = single_column_csv(file)
     check_command_input(ctx, pvs, "pvs")
 
+    setup_file_handler(ctx.command_path)
     try:
         cp.change_protocol(archiver_fqdn, pvs, protocol)  # type: ignore[arg-type] # Ignoring because of the check in the function
     except BaseMgmtError as e:
@@ -390,10 +391,10 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = double_column_csv(file)
     check_command_input(ctx, pvs, "pvs")
 
+    setup_file_handler(ctx.command_path)
     try:
         cmd_alias.add_aliases(archiver_fqdn, pvs)
     except BaseMgmtError as e:
@@ -434,10 +435,10 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pvs = double_column_csv(file)
     check_command_input(ctx, pvs, "pvs")
 
+    setup_file_handler(ctx.command_path)
     try:
         cmd_alias.remove_aliases(archiver_fqdn, pvs)
     except BaseMgmtError as e:
