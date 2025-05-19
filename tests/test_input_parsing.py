@@ -2,7 +2,7 @@ from io import StringIO
 
 import pytest
 
-from epicsarchiver_mgmt.input_parsing import ParseCSVError, double_column_csv
+from epicsarchiver_mgmt.input_parsing import ParseCSVRowError, double_column_csv
 
 
 def test_parse_csv_success() -> None:
@@ -17,7 +17,7 @@ def test_parse_csv_failure() -> None:
     """Test parse_csv with an invalid file (incorrect number of PVs)."""
     file_content = "old_pv1,new_pv1\nold_pv2"
     file_obj = StringIO(file_content)
-    with pytest.raises(ParseCSVError, match="Invalid row \\['old_pv2'\\] in csv file"):
+    with pytest.raises(ParseCSVRowError, match="Invalid row \\['old_pv2'\\] in csv file"):
         double_column_csv(file_obj)
 
 

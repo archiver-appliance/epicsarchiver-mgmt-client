@@ -2,6 +2,7 @@
 
 import logging
 import sys
+from collections.abc import Sequence
 from io import TextIOWrapper
 from typing import Any, TextIO
 
@@ -15,7 +16,7 @@ from epicsarchiver_mgmt.commands import basic_commands
 from epicsarchiver_mgmt.commands import change_protocol as cp
 from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import rename as cmd_rename
-from epicsarchiver_mgmt.input_parsing import double_column_csv, single_column_csv
+from epicsarchiver_mgmt.input_parsing import ParseCSVRowError, double_column_csv, single_column_csv
 from epicsarchiver_mgmt.logging import setup_file_handler
 
 LOG: logging.Logger = logging.getLogger(__name__)
@@ -32,6 +33,40 @@ def check_command_input(ctx: click.Context, command_input: Any | None, input_nam
     if not command_input:
         LOG.error("No %s provided.", input_name)
         ctx.exit(1)
+
+
+def try_read_pvs(ctx: click.Context, file: TextIOWrapper) -> Sequence[str]:
+    """Try to read the PVs from the file.
+
+    Args:
+        ctx (click.Context): The click context.
+        file (TextIOWrapper): The file to read.
+
+    Returns:
+        list[str]: The list of PVs.
+    """
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
+    return pvs
+
+
+def try_read_pv_pairs(ctx: click.Context, file: TextIOWrapper) -> list[tuple[str, str]]:
+    """Try to read the PV pairs from the file.
+
+    Args:
+        ctx (click.Context): The click context.
+        file (TextIOWrapper): The file to read.
+
+    Returns:
+        list[tuple[str, str]]: The list of PV pairs.
+    """
+    try:
+        pv_pairs = double_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
+    return pv_pairs
 
 
 @click.group()
@@ -61,10 +96,10 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+    check_command_input(ctx, file, "file")
 
     # Read input
-    pvs = single_column_csv(file)
-    check_command_input(ctx, pvs, "pvs")
+    pvs = try_read_pvs(ctx, file)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -123,16 +158,16 @@ def rename(
     """
     # Check input
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+    check_command_input(ctx, file, "file")
     # Read input
-    pvs = double_column_csv(file)
-    check_command_input(ctx, pvs, "pvs")
+    pv_pairs = try_read_pv_pairs(ctx, file)
 
     setup_file_handler(ctx.command_path)
     try:
         if and_append:
-            cmd_rename.rename_and_append(archiver_fqdn, pvs, dry_run=dry_run)
+            cmd_rename.rename_and_append(archiver_fqdn, pv_pairs, dry_run=dry_run)
         else:
-            cmd_rename.rename(archiver_fqdn, pvs, dry_run=dry_run)
+            cmd_rename.rename(archiver_fqdn, pv_pairs, dry_run=dry_run)
     except Exception as e:
         LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error renaming PVs.", exc_info=True)
@@ -162,9 +197,9 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+    check_command_input(ctx, file, "file")
     # Read input
-    pvs = single_column_csv(file)
-    check_command_input(ctx, pvs, "pvs")
+    pvs = try_read_pvs(ctx, file)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -213,6 +248,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+    check_command_input(ctx, file, "file")
 
     # Read input
     pv_requests = _parse_archive_requests(file)
@@ -276,10 +312,10 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     check_command_input(ctx, new_type, "new type")
+    check_command_input(ctx, file, "file")
 
     # Read input
-    pvs = single_column_csv(file)
-    check_command_input(ctx, pvs, "pvs")
+    pvs = try_read_pvs(ctx, file)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -339,10 +375,10 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     check_command_input(ctx, protocol, "new protocol")
+    check_command_input(ctx, file, "file")
 
     # Read input
-    pvs = single_column_csv(file)
-    check_command_input(ctx, pvs, "pvs")
+    pvs = try_read_pvs(ctx, file)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -389,13 +425,13 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+    check_command_input(ctx, file, "file")
     # Read input
-    pvs = double_column_csv(file)
-    check_command_input(ctx, pvs, "pvs")
+    pv_pairs = try_read_pv_pairs(ctx, file)
 
     setup_file_handler(ctx.command_path)
     try:
-        cmd_alias.add_aliases(archiver_fqdn, pvs)
+        cmd_alias.add_aliases(archiver_fqdn, pv_pairs)
     except Exception as e:
         LOG.error("Error adding alias PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error adding alias PVs.", exc_info=True)
@@ -433,13 +469,13 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
 
     """
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
+    check_command_input(ctx, file, "file")
     # Read input
-    pvs = double_column_csv(file)
-    check_command_input(ctx, pvs, "pvs")
+    pv_pairs = try_read_pv_pairs(ctx, file)
 
     setup_file_handler(ctx.command_path)
     try:
-        cmd_alias.remove_aliases(archiver_fqdn, pvs)
+        cmd_alias.remove_aliases(archiver_fqdn, pv_pairs)
     except Exception as e:
         LOG.error("Error removing alias PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error removing alias PVs.", exc_info=True)
