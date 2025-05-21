@@ -263,9 +263,9 @@ class ArchiverMgmt(ArchiverMgmtInfo):
     def update_pv(
         self,
         pv: str,
-        samplingperiod: float,
+        samplingperiod: float | None = None,
         samplingmethod: str | None = None,
-    ) -> list[str]:
+    ) -> OperationResult:
         """Change the archival parameters for a PV.
 
         Args:
@@ -276,11 +276,13 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         Returns:
             list of submitted PV
         """
-        params = {"pv": pv, "samplingperiod": samplingperiod}
+        params: dict[str, str] = {"pv": pv}
+        if samplingperiod:
+            params["samplingperiod"] = str(samplingperiod)
         if samplingmethod:
             params["samplingmethod"] = samplingmethod
         r = self._get("/changeArchivalParameters", params=params)
-        return cast("list[str]", r.json())
+        return cast("OperationResult", r.json())
 
     def rename_and_append(self, old: str, new: str, storage: Storage) -> OperationResult:
         """Appends the data for an older PV into a newer PV.

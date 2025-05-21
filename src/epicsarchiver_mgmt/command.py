@@ -8,10 +8,11 @@ from typing import TextIO
 import click
 from epicsarchiver.common import ArchDbrType
 
-from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest, EpicsProto
+from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest, EpicsProto, SamplingMethod
 from epicsarchiver_mgmt.commands import alias as cmd_alias
 from epicsarchiver_mgmt.commands import archive as cmd_archive
 from epicsarchiver_mgmt.commands import basic_commands
+from epicsarchiver_mgmt.commands import change_parameter as c_param
 from epicsarchiver_mgmt.commands import change_protocol as cp
 from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import rename as cmd_rename
@@ -402,6 +403,85 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     ctx.exit(0)
 
 
+def samplingmethod_from_param(value: str) -> SamplingMethod:
+    """Convert a string to a SamplingMethod.
+
+    Args:
+        value (str): The value to convert.
+
+    Returns:
+        SamplingMethod: The SamplingMethod.
+
+    Raises:
+        click.BadParameter: If the value is not a valid SamplingMethod.
+    """
+    try:
+        return c_param.samplingmethod_from_str(value)
+    except c_param.InvalidSamplingMethodError as e:
+        msg = f"Invalid Sampling Method: {value}. Error: {e!s}"
+        raise click.BadParameter(
+            msg,
+            param_hint="sampling-method",
+        ) from e
+
+
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
+@click.option(
+    "--method",
+    "-m",
+    type=str,
+    help="Sampling method swap to.",
+    callback=lambda _c, _p, v: samplingmethod_from_param(v),
+)
+@click.option(
+    "--period",
+    "-p",
+    type=float,
+    help="Sampling period swap to.",
+)
+@click.argument(
+    "file",
+    type=click.File(),
+    callback=validate_file_input,
+    default=sys.stdin,
+)
+@click.pass_context
+def change_parameter(
+    ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, method: SamplingMethod | None, period: float | None
+) -> None:
+    """Change the archiving parameters of PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to change archiving parameters.
+
+    Example usage:
+
+    .. code-block:: console
+
+        arch-mgmt change_parameter -a archiver.example.com --method SCAN --period 10.0 pvs.csv
+
+    """
+    if method is None and period is None:
+        param = method or period
+        msg = "At least one of method or period must be defined"
+        raise click.BadParameter(msg, ctx=ctx, param=param)
+
+    # Read input
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    try:
+        c_param.change_parameter(archiver_fqdn, pvs, method, period)
+    except Exception as e:
+        LOG.error("Error changing parameter of PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error changing parameter of PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
 @click.group()
 def alias() -> None:
     """Alias PVs in the archiver."""
@@ -521,6 +601,7 @@ alias.add_command(remove_alias)
 
 cli.add_command(change_type)
 cli.add_command(change_protocol)
+cli.add_command(change_parameter)
 cli.add_command(pause)
 cli.add_command(resume)
 cli.add_command(archive)

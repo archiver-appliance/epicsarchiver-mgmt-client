@@ -180,7 +180,7 @@ def test_delete_pv_data_true() -> None:
 @responses.activate
 def test_update_pv() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = ["1", "2", "3"]
+    data = {"validation": "", "status": "ok"}
     pv = "mypv"
     responses.add(
         responses.GET,
@@ -197,7 +197,7 @@ def test_update_pv() -> None:
 @responses.activate
 def test_update_pv_samplingmethod() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = ["1", "2", "3"]
+    data = {"validation": "", "status": "ok"}
     pv = "mypv"
     responses.add(
         responses.GET,
