@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
@@ -11,7 +11,6 @@ from requests import HTTPError
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
     OperationResult,
-    OperationResultList,
 )
 from epicsarchiver_mgmt.commands.validation import (
     RequestHTTPError,
@@ -27,7 +26,7 @@ LOG: logging.Logger = logging.getLogger(__name__)
 
 def _basic_command(
     command_name: str,
-    command: Callable[[ArchiverMgmt, str], OperationResult | OperationResultList],
+    command: Callable[[ArchiverMgmt, str], OperationResult],
     expected_statuses: list[ArchivingStatus],
     archiver_fqdn: str,
     pvs: Sequence[str],
@@ -63,9 +62,7 @@ def _basic_command(
         raise RequestHTTPError(e) from e
 
     # Validate output
-    validate_operation_results(
-        pvs, [cast("OperationResult", result) for result in command_results], f"{command_name} done"
-    )
+    validate_operation_results(pvs, command_results, f"{command_name} done")
 
 
 def pause(archiver_fqdn: str, pvs: Sequence[str]) -> None:

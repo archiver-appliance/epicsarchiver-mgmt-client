@@ -158,7 +158,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         r = self._post("/archivePV", json=request_data)
         return cast("OperationResultList", r.json())
 
-    def pause_pv(self, pv: str) -> OperationResultList | OperationResult:
+    def pause_pv(self, pv: str) -> OperationResult:
         """Pause the archiving of a PV(s).
 
         Args:
@@ -169,11 +169,9 @@ class ArchiverMgmt(ArchiverMgmtInfo):
             list of submitted PVs
         """
         response = self._get_or_post("/pauseArchivingPV", pv)
-        if "," not in pv:
-            return cast("OperationResult", response)
-        return cast("OperationResultList", response)
+        return cast("OperationResult", response)
 
-    def resume_pv(self, pv: str) -> OperationResultList | OperationResult:
+    def resume_pv(self, pv: str) -> OperationResult:
         """Resume the archiving of a PV(s).
 
         Args:
@@ -184,9 +182,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
             list of submitted PVs
         """
         response = self._get_or_post("/resumeArchivingPV", pv)
-        if "," not in pv:
-            return cast("OperationResult", response)
-        return cast("OperationResultList", response)
+        return cast("OperationResult", response)
 
     def abort_pv(self, pv: str) -> list[str]:
         """Abort any pending requests for archiving this PV.
@@ -232,7 +228,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         self,
         pv: str,
         delete_data: bool = False,  # noqa: FBT002, FBT001
-    ) -> OperationResultList | OperationResult:
+    ) -> OperationResult:
         """Stop archiving the specified PV.
 
         The PV needs to be paused first.
@@ -246,9 +242,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
             list of submitted PVs
         """
         response = self._get("/deletePV", params={"pv": pv, "delete_data": delete_data})
-        if "," not in pv:
-            return cast("OperationResult", response.json())
-        return cast("OperationResultList", response.json())
+        return cast("OperationResult", response.json())
 
     def rename_pv(self, pv: str, newname: str) -> OperationResult:
         """Rename this pv to a new name.
