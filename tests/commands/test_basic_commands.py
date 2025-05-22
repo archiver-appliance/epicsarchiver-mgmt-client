@@ -1,5 +1,4 @@
 import logging
-from collections.abc import Callable
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -10,17 +9,17 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
     OperationResult,
 )
-from epicsarchiver_mgmt.commands.basic_commands import delete, pause, resume
+from epicsarchiver_mgmt.commands.basic_commands import BasicCommand, DeleteCommand, PauseCommand, ResumeCommand
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 
 
 @pytest.mark.parametrize(
-    ("command_name", "archiver_command", "func_to_test", "expected_statuses"),
+    ("command_name", "archiver_command", "basic_command", "expected_statuses"),
     [
         (
             "Pausing",
             "pause_pv",
-            pause,
+            PauseCommand(),
             [
                 ArchivingStatus.BeingArchived,
                 ArchivingStatus.NotBeingArchived,
@@ -30,7 +29,7 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
         (
             "Resuming",
             "resume_pv",
-            resume,
+            ResumeCommand(),
             [
                 ArchivingStatus.Paused,
             ],
@@ -38,7 +37,7 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
         (
             "Deleting",
             "delete_pv",
-            delete,
+            DeleteCommand(),
             [
                 ArchivingStatus.Paused,
             ],
@@ -48,7 +47,7 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 def test_basic_command_success(
     command_name: str,
     archiver_command: str,
-    func_to_test: Callable[[str, list[str]], None],
+    basic_command: BasicCommand,
     expected_statuses: list[ArchivingStatus],
     caplog: pytest.LogCaptureFixture,
 ) -> None:
@@ -75,7 +74,7 @@ def test_basic_command_success(
             "epicsarchiver_mgmt.commands.basic_commands.validate_operation_results"
         ) as mock_validate_operation_results,
     ):
-        func_to_test(archiver_fqdn, pvs)
+        basic_command.run_command(archiver_fqdn, pvs)
         mock_validate_pvs_status.assert_called_once_with(
             mock_archiver_info,
             pvs,
@@ -90,12 +89,12 @@ def test_basic_command_success(
 
 
 @pytest.mark.parametrize(
-    ("command_name", "archiver_command", "func_to_test", "expected_statuses"),
+    ("command_name", "archiver_command", "basic_command", "expected_statuses"),
     [
         (
             "Pausing",
             "pause_pv",
-            pause,
+            PauseCommand(),
             [
                 ArchivingStatus.BeingArchived,
                 ArchivingStatus.NotBeingArchived,
@@ -105,7 +104,7 @@ def test_basic_command_success(
         (
             "Resuming",
             "resume_pv",
-            resume,
+            ResumeCommand(),
             [
                 ArchivingStatus.Paused,
             ],
@@ -113,7 +112,7 @@ def test_basic_command_success(
         (
             "Deleting",
             "delete_pv",
-            delete,
+            DeleteCommand(),
             [
                 ArchivingStatus.Paused,
             ],
@@ -123,7 +122,7 @@ def test_basic_command_success(
 def test_raise_http_error(
     command_name: str,
     archiver_command: str,
-    func_to_test: Callable[[str, list[str]], None],
+    basic_command: BasicCommand,
     expected_statuses: list[ArchivingStatus],
     caplog: pytest.LogCaptureFixture,
 ) -> None:
@@ -150,7 +149,7 @@ def test_raise_http_error(
         ) as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
-            func_to_test(archiver_fqdn, pvs)
+            basic_command.run_command(archiver_fqdn, pvs)
 
         mock_validate_pvs_status.assert_called_once_with(
             mock_archiver_info,

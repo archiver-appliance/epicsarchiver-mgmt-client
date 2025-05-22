@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from typing import cast
 
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
@@ -35,7 +34,7 @@ def _pause_pvs(archivers: list[ArchiverMgmt], pvs: list[str]) -> None:
 
         validate_operation_results(
             pvs,
-            [cast("OperationResult", result) for result in pause_results],
+            pause_results,
             "paused",
         )
 

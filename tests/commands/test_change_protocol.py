@@ -64,8 +64,8 @@ def test_change_protocol_success(caplog: pytest.LogCaptureFixture) -> None:
         patch("epicsarchiver_mgmt.commands.change_protocol.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch("epicsarchiver_mgmt.commands.change_protocol.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.change_protocol.validate_pvs_status") as mock_validate_pvs_status,
-        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.pause") as mock_pause,
-        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.delete") as mock_delete,
+        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.PauseCommand.run_command") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.DeleteCommand.run_command") as mock_delete,
         patch("epicsarchiver_mgmt.commands.change_protocol.archive.archive") as mock_archive,
     ):
         change_protocol(archiver_fqdn, pvs, protocol)
@@ -112,8 +112,8 @@ def test_change_protocol_http_error_on_archive(caplog: pytest.LogCaptureFixture)
         patch("epicsarchiver_mgmt.commands.change_protocol.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch("epicsarchiver_mgmt.commands.change_protocol.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.change_protocol.validate_pvs_status") as mock_validate_pvs_status,
-        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.pause") as mock_pause,
-        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.delete") as mock_delete,
+        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.PauseCommand.run_command") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.DeleteCommand.run_command") as mock_delete,
         patch("epicsarchiver_mgmt.commands.change_protocol.archive.archive", side_effect=archive_error) as mock_archive,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
@@ -158,9 +158,10 @@ def test_change_protocol_error_on_pause(caplog: pytest.LogCaptureFixture) -> Non
         patch("epicsarchiver_mgmt.commands.change_protocol.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.change_protocol.validate_pvs_status") as mock_validate_pvs_status,
         patch(
-            "epicsarchiver_mgmt.commands.change_protocol.basic_commands.pause", side_effect=pause_error
+            "epicsarchiver_mgmt.commands.change_protocol.basic_commands.PauseCommand.run_command",
+            side_effect=pause_error,
         ) as mock_pause,
-        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.delete") as mock_delete,
+        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.DeleteCommand.run_command") as mock_delete,
         patch("epicsarchiver_mgmt.commands.change_protocol.archive.archive") as mock_archive,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
@@ -197,9 +198,10 @@ def test_change_protocol_error_on_delete(caplog: pytest.LogCaptureFixture) -> No
         patch("epicsarchiver_mgmt.commands.change_protocol.ArchiverMgmtInfo", return_value=mock_archiver_info),
         patch("epicsarchiver_mgmt.commands.change_protocol.ArchiverMgmt", return_value=mock_archiver),
         patch("epicsarchiver_mgmt.commands.change_protocol.validate_pvs_status") as mock_validate_pvs_status,
-        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.pause") as mock_pause,
+        patch("epicsarchiver_mgmt.commands.change_protocol.basic_commands.PauseCommand.run_command") as mock_pause,
         patch(
-            "epicsarchiver_mgmt.commands.change_protocol.basic_commands.delete", side_effect=delete_error
+            "epicsarchiver_mgmt.commands.change_protocol.basic_commands.DeleteCommand.run_command",
+            side_effect=delete_error,
         ) as mock_delete,
         patch("epicsarchiver_mgmt.commands.change_protocol.archive.archive") as mock_archive,
     ):
