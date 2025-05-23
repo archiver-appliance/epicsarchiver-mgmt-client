@@ -86,20 +86,17 @@ def test_archive_pvs() -> None:
 @responses.activate
 def test_pause_pv_single() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = [
-        {
-            "pvName": "MY:PV",
-            "engine_desc": "Successfully paused the archiving of PV MY:PV",
-            "engine_pvName": "MY:PV",
-            "engine_status": "ok",
-            "etl_status": "ok",
-            "etl_desc": "Successfully removed PV MY:PV from the cluster",
-            "etl_pvName": "MY:PV",
-            "status": "ok",
-        },
-    ]
-
-    pv = "KLYS*"
+    data = {
+        "pvName": "MY:PV",
+        "engine_desc": "Successfully paused the archiving of PV MY:PV",
+        "engine_pvName": "MY:PV",
+        "engine_status": "ok",
+        "etl_status": "ok",
+        "etl_desc": "Successfully removed PV MY:PV from the cluster",
+        "etl_pvName": "MY:PV",
+        "status": "ok",
+    }
+    pv = "KLYS"
     responses.add(
         responses.GET,
         f"http://{TEST_DOMAIN}:17665/mgmt/bpl/pauseArchivingPV?pv={pv}",
@@ -113,29 +110,10 @@ def test_pause_pv_single() -> None:
 
 
 @responses.activate
-def test_pause_pv_comma_separated_list() -> None:
-    archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = [{"validation": "Unable to pause PV MY:PV"}]
-    pvs = "mypv1,mypv2"
-    responses.add(
-        responses.POST,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/pauseArchivingPV",
-        json=data,
-        status=200,
-        match_querystring=True,
-    )
-    r = archiver.pause_pv(pvs)
-    assert len(responses.calls) == 1  # ignore for https://github.com/getsentry/responses/pull/690
-
-    assert responses.calls[0].request.body == pvs
-    assert r == data
-
-
-@responses.activate
 def test_resume_pv_single() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = [{"validation": "Unable to resume PV MY:PV"}]
-    pv = "KLYS*"
+    data = {"validation": "Unable to resume PV MY:PV"}
+    pv = "KLYS"
     responses.add(
         responses.GET,
         f"http://{TEST_DOMAIN}:17665/mgmt/bpl/resumeArchivingPV?pv={pv}",
@@ -145,28 +123,6 @@ def test_resume_pv_single() -> None:
     )
     r = archiver.resume_pv(pv)
     assert len(responses.calls) == 1
-    assert r == data
-
-
-@responses.activate
-def test_resume_pv_comma_separated_list() -> None:
-    archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = [
-        {"validation": "Unable to pause PV mypv1"},
-        {"validation": "Unable to pause PV mypv2"},
-    ]
-    pvs = "mypv1,mypv2"
-    responses.add(
-        responses.POST,
-        f"http://{TEST_DOMAIN}:17665/mgmt/bpl/resumeArchivingPV",
-        json=data,
-        status=200,
-        match_querystring=True,
-    )
-    r = archiver.resume_pv(pvs)
-    assert len(responses.calls) == 1  # ignore for https://github.com/getsentry/responses/pull/690
-
-    assert responses.calls[0].request.body == pvs
     assert r == data
 
 
@@ -190,7 +146,7 @@ def test_abort_pv() -> None:
 @responses.activate
 def test_delete_pv_data_false() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = ["1", "2", "3"]
+    data = {"validation": "", "status": "ok"}
     pv = "LEBT-010:PBI-NPM-001:HCAM-COM"
     responses.add(
         responses.GET,
@@ -207,7 +163,7 @@ def test_delete_pv_data_false() -> None:
 @responses.activate
 def test_delete_pv_data_true() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = ["1", "2", "3"]
+    data = {"validation": "", "status": "ok"}
     pv = "LEBT-010:PBI-NPM-001:HCAM-COM"
     responses.add(
         responses.GET,
