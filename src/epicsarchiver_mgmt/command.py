@@ -2,7 +2,6 @@
 
 import logging
 import sys
-from collections.abc import Sequence
 from io import TextIOWrapper
 from typing import Any, TextIO
 
@@ -35,40 +34,6 @@ def check_command_input(ctx: click.Context, command_input: Any | None, input_nam
         ctx.exit(1)
 
 
-def try_read_pvs(ctx: click.Context, file: TextIOWrapper) -> Sequence[str]:
-    """Try to read the PVs from the file.
-
-    Args:
-        ctx (click.Context): The click context.
-        file (TextIOWrapper): The file to read.
-
-    Returns:
-        list[str]: The list of PVs.
-    """
-    try:
-        pvs = single_column_csv(file)
-    except ParseCSVRowError:
-        ctx.exit(1)
-    return pvs
-
-
-def try_read_pv_pairs(ctx: click.Context, file: TextIOWrapper) -> Sequence[tuple[str, str]]:
-    """Try to read the PV pairs from the file.
-
-    Args:
-        ctx (click.Context): The click context.
-        file (TextIOWrapper): The file to read.
-
-    Returns:
-        list[tuple[str, str]]: The list of PV pairs.
-    """
-    try:
-        pv_pairs = double_column_csv(file)
-    except ParseCSVRowError:
-        ctx.exit(1)
-    return pv_pairs
-
-
 @click.group()
 @click.version_option()
 def cli() -> None:
@@ -99,7 +64,10 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     check_command_input(ctx, file, "file")
 
     # Read input
-    pvs = try_read_pvs(ctx, file)
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -160,7 +128,10 @@ def rename(
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     check_command_input(ctx, file, "file")
     # Read input
-    pv_pairs = try_read_pv_pairs(ctx, file)
+    try:
+        pv_pairs = double_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -199,7 +170,10 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     check_command_input(ctx, file, "file")
     # Read input
-    pvs = try_read_pvs(ctx, file)
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -315,7 +289,10 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     check_command_input(ctx, file, "file")
 
     # Read input
-    pvs = try_read_pvs(ctx, file)
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -378,7 +355,10 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     check_command_input(ctx, file, "file")
 
     # Read input
-    pvs = try_read_pvs(ctx, file)
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -427,7 +407,10 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     check_command_input(ctx, file, "file")
     # Read input
-    pv_pairs = try_read_pv_pairs(ctx, file)
+    try:
+        pv_pairs = double_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
 
     setup_file_handler(ctx.command_path)
     try:
@@ -471,7 +454,10 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
     check_command_input(ctx, archiver_fqdn, "archiver fqdn")
     check_command_input(ctx, file, "file")
     # Read input
-    pv_pairs = try_read_pv_pairs(ctx, file)
+    try:
+        pv_pairs = double_column_csv(file)
+    except ParseCSVRowError:
+        ctx.exit(1)
 
     setup_file_handler(ctx.command_path)
     try:
