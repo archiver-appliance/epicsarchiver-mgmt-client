@@ -52,7 +52,7 @@ def try_read_pvs(ctx: click.Context, file: TextIOWrapper) -> Sequence[str]:
     return pvs
 
 
-def try_read_pv_pairs(ctx: click.Context, file: TextIOWrapper) -> list[tuple[str, str]]:
+def try_read_pv_pairs(ctx: click.Context, file: TextIOWrapper) -> Sequence[tuple[str, str]]:
     """Try to read the PV pairs from the file.
 
     Args:

@@ -62,7 +62,7 @@ def single_column_csv(file: TextIO) -> Sequence[str]:
     return tuple(parse_csv(file, 1).keys())
 
 
-def double_column_csv(file: TextIO) -> list[tuple[str, str]]:
+def double_column_csv(file: TextIO) -> Sequence[tuple[str, str]]:
     """Parse the csv file with two columns.
 
     Args:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from concurrent.futures import ThreadPoolExecutor
+from typing import TYPE_CHECKING
 
 import click
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
@@ -22,6 +23,9 @@ from epicsarchiver_mgmt.commands.validation import (
     validate_pvs_status,
 )
 from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -46,12 +50,12 @@ def _pause_pvs(archivers: list[ArchiverMgmt], pvs: list[str]) -> None:
         raise RequestHTTPError(e) from e
 
 
-def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]], *, dry_run: bool = False) -> None:
+def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry_run: bool = False) -> None:
     """Rename PVs in the archiver, runs in parallel on multiple archivers.
 
     Args:
         archiver_fqdns (list[str]): The urls of the archivers.
-        renames (list[tuple[str, str]]): The PVs to rename.
+        renames (Sequence[tuple[str, str]]): The PVs to rename.
         dry_run (bool): Whether to do a dry run or not.
 
     Raises:
@@ -111,7 +115,9 @@ def rename(archiver_fqdns: list[str], renames: list[tuple[str, str]], *, dry_run
     )
 
 
-def _parallel_execute_rename(archivers: list[ArchiverMgmt], renames: list[tuple[str, str]]) -> list[OperationResult]:
+def _parallel_execute_rename(
+    archivers: list[ArchiverMgmt], renames: Sequence[tuple[str, str]]
+) -> list[OperationResult]:
     def rename_pv_task(task_input: tuple[ArchiverMgmt, str, str]) -> OperationResult:
         archiver, old_pv, new_pv = task_input
         return archiver.rename_pv(old_pv, new_pv)
@@ -155,13 +161,17 @@ def validate_size(archiver: ArchiverMgmtInfo, old_pvs: list[str], max_storage: f
 
 
 def rename_and_append(
-    archiver_fqdns: list[str], renames: list[tuple[str, str]], storage: Storage = Storage.MTS, *, dry_run: bool = False
+    archiver_fqdns: list[str],
+    renames: Sequence[tuple[str, str]],
+    storage: Storage = Storage.MTS,
+    *,
+    dry_run: bool = False,
 ) -> None:
     """Rename and append PVs in the archiver, runs in parallel on multiple archivers.
 
     Args:
         archiver_fqdns (list[str]): The urls of the archivers.
-        renames (list[tuple[str, str]]): The PVs to rename.
+        renames (Sequence[tuple[str, str]]): The PVs to rename.
         storage (Storage): The storage to consolidate the data first.
         dry_run (bool): Whether to do a dry run or not.
 
@@ -228,7 +238,7 @@ def rename_and_append(
 
 
 def _parallel_execute_rename_and_append(
-    archivers: list[ArchiverMgmt], renames: list[tuple[str, str]], storage: Storage
+    archivers: list[ArchiverMgmt], renames: Sequence[tuple[str, str]], storage: Storage
 ) -> list[OperationResult]:
     def rename_pv_task(task_input: tuple[ArchiverMgmt, str, str]) -> OperationResult:
         archiver, old_pv, new_pv = task_input
