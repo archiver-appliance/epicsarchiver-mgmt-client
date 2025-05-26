@@ -13,7 +13,7 @@ LOG: logging.Logger = logging.getLogger(__name__)
 class ParseCSVRowError(BaseMgmtError):
     """Exception for when the csv file is invalid."""
 
-    def __init__(self, row: list[str]) -> None:
+    def __init__(self, row: list[str] | None = None) -> None:
         """Error for when the csv file is invalid.
 
         Args:
@@ -39,7 +39,7 @@ def parse_csv(file: TextIO, expected_columns: int) -> dict[str, list[str]]:
     csv_rows = csv.reader(file)
     if not csv_rows:
         LOG.error("Empty csv file")
-        raise ParseCSVRowError([])
+        raise ParseCSVRowError
     result: dict[str, list[str]] = {}
     for row in csv_rows:
         pvs = row
