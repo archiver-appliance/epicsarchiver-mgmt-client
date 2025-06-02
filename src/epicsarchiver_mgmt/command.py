@@ -21,7 +21,7 @@ from epicsarchiver_mgmt.logging import setup_file_handler
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
-def validate_str_input(ctx: click.Context, param: click.Parameter, value: str | None) -> str | None:
+def validate_str_input(ctx: click.Context, param: click.Parameter, value: str | None) -> str:
     """Check if the command input is provided.
 
     Args:
@@ -41,9 +41,7 @@ def validate_str_input(ctx: click.Context, param: click.Parameter, value: str | 
     return value
 
 
-def validate_file_input(
-    ctx: click.Context, param: click.Parameter, value: TextIOWrapper | None
-) -> TextIOWrapper | None:
+def validate_file_input(ctx: click.Context, param: click.Parameter, value: TextIOWrapper) -> TextIOWrapper:
     """Check if the command input is provided.
 
     Args:
@@ -269,7 +267,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
     ctx.exit(0)
 
 
-def archdbrtype_from_param(value: str) -> ArchDbrType | None:
+def archdbrtype_from_param(value: str) -> ArchDbrType:
     """Convert a string to a ArchDbrType.
 
     Args:
@@ -336,7 +334,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     ctx.exit(0)
 
 
-def epicsproto_from_param(value: str) -> EpicsProto | None:
+def epicsproto_from_param(value: str) -> EpicsProto:
     """Convert a string to a EpicsProto.
 
     Args:
