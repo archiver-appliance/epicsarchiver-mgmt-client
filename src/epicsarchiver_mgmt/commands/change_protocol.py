@@ -70,7 +70,7 @@ def create_new_protocol_archive_requests(pv_statuses: InfoResultList, protocol: 
         ArchivePVRequest(
             protocol.create_archive_request_pv_name(pv_status["pvName"]),
             appliance=pv_status["appliance"],
-            samplingperiod=pv_status["samplingPeriod"],
+            samplingperiod=float(pv_status["samplingPeriod"]),
         )
         for pv_status in pv_statuses
     ]

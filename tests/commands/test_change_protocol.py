@@ -47,8 +47,8 @@ def test_change_protocol_success(caplog: pytest.LogCaptureFixture) -> None:
     archiver_fqdn = "archiver.example.com"
     pvs = ["PV1", "PV2"]
     pv_requests = [
-        ArchivePVRequest(pv="pva://PV1", samplingperiod="1", appliance="appliance1"),
-        ArchivePVRequest(pv="pva://PV2", samplingperiod="1", appliance="appliance1"),
+        ArchivePVRequest(pv="pva://PV1", samplingperiod=1.0, appliance="appliance1"),
+        ArchivePVRequest(pv="pva://PV2", samplingperiod=1.0, appliance="appliance1"),
     ]
     protocol = EpicsProto.PVA
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
@@ -92,7 +92,7 @@ def test_change_protocol_http_error_on_archive(caplog: pytest.LogCaptureFixture)
     archiver_fqdn = "archiver.example.com"
     pvs = ["PV1"]
     pv_requests = [
-        ArchivePVRequest(pv="pva://PV1", samplingperiod="1", appliance="appliance1"),
+        ArchivePVRequest(pv="pva://PV1", samplingperiod=1.0, appliance="appliance1"),
     ]
     protocol = EpicsProto.PVA
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
