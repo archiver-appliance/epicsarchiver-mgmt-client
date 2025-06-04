@@ -15,11 +15,50 @@ from epicsarchiver_mgmt.commands import basic_commands
 from epicsarchiver_mgmt.commands import change_protocol as cp
 from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import rename as cmd_rename
-from epicsarchiver_mgmt.input_parsing import double_column_csv, single_column_csv
-from epicsarchiver_mgmt.logging import CURRENT_COMMAND_LOG
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.input_parsing import ParseCSVRowError, double_column_csv, single_column_csv
+from epicsarchiver_mgmt.logging import setup_file_handler
 
 LOG: logging.Logger = logging.getLogger(__name__)
+
+
+def validate_str_input(ctx: click.Context, param: click.Parameter, value: str | None) -> str:
+    """Check if the command input is provided.
+
+    Args:
+        ctx (click.Context): The click context.
+        param (click.Parameter): The click parameter.
+        value (str | None): The value of the parameter.
+
+    Returns:
+        str | None: The value if it is valid, otherwise raises click.BadParameter.
+
+    Raises:
+        click.BadParameter: If the value is None or empty.
+    """
+    if not value:
+        msg = f"{param.name} is required."
+        raise click.BadParameter(msg, ctx=ctx, param=param)
+    return value
+
+
+def validate_file_input(ctx: click.Context, param: click.Parameter, value: TextIOWrapper) -> TextIOWrapper:
+    """Check if the command input is provided.
+
+    Args:
+        ctx (click.Context): The click context.
+        param (click.Parameter): The click parameter.
+        value (str | None): The value of the parameter.
+
+    Returns:
+        str | None: The value if it is valid, otherwise raises click.BadParameter.
+
+    Raises:
+        click.BadParameter: If the value is None or empty.
+    """
+    if not value:
+        msg = f"{param.name} is required."
+        raise click.BadParameter(msg, ctx=ctx, param=param)
+    return value
 
 
 @click.group()
@@ -29,10 +68,11 @@ def cli() -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
+    callback=validate_file_input,
     default=sys.stdin,
 )
 @click.pass_context
@@ -49,12 +89,15 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     """
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = single_column_csv(file)
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
 
+    setup_file_handler(ctx.command_path)
     try:
         basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error pausing PVs.", exc_info=True)
         ctx.exit(1)
@@ -63,10 +106,11 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.", multiple=True)
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.", multiple=True)
 @click.argument(
     "file",
     type=click.File(),
+    callback=validate_file_input,
     default=sys.stdin,
 )
 @click.option(
@@ -106,16 +150,21 @@ def rename(
         arch-mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
 
     """
-    # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = double_column_csv(file)
+    # Check input
 
+    # Read input
+    try:
+        pv_pairs = double_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
     try:
         if and_append:
-            cmd_rename.rename_and_append(archiver_fqdn, pvs, dry_run=dry_run)
+            cmd_rename.rename_and_append(archiver_fqdn, pv_pairs, dry_run=dry_run)
         else:
-            cmd_rename.rename(archiver_fqdn, pvs, dry_run=dry_run)
-    except BaseMgmtError as e:
+            cmd_rename.rename(archiver_fqdn, pv_pairs, dry_run=dry_run)
+    except Exception as e:
         LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error renaming PVs.", exc_info=True)
         ctx.exit(1)
@@ -124,10 +173,11 @@ def rename(
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
+    callback=validate_file_input,
     default=sys.stdin,
 )
 @click.pass_context
@@ -144,12 +194,15 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     """
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = single_column_csv(file)
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
 
+    setup_file_handler(ctx.command_path)
     try:
         basic_commands.ResumeCommand().run_command(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error resuming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error resuming PVs.", exc_info=True)
         ctx.exit(1)
@@ -163,11 +216,12 @@ def _parse_archive_requests(file: TextIO) -> list[ArchivePVRequest]:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option("--dry-run", "-d", is_flag=True, help="Do a dry run.", default=False)
 @click.argument(
     "file",
     type=click.File(),
+    callback=validate_file_input,
     default=sys.stdin,
 )
 @click.pass_context
@@ -193,12 +247,19 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     """
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
     pv_requests = _parse_archive_requests(file)
+    if not pv_requests:
+        msg = "No PVs found in the input file. Please provide a valid CSV file with PVs to archive."
+        raise click.BadParameter(
+            msg,
+            ctx=ctx,
+            param_hint="file",
+        )
+    setup_file_handler(ctx.command_path)
 
     try:
         cmd_archive.archive(archiver_fqdn, pv_requests, dry_run=dry_run)
-    except BaseMgmtError as e:
+    except Exception as e:
         LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error archiving PVs.", exc_info=True)
         ctx.exit(1)
@@ -206,7 +267,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
     ctx.exit(0)
 
 
-def archdbrtype_from_param(value: str) -> ArchDbrType | None:
+def archdbrtype_from_param(value: str) -> ArchDbrType:
     """Convert a string to a ArchDbrType.
 
     Args:
@@ -214,17 +275,22 @@ def archdbrtype_from_param(value: str) -> ArchDbrType | None:
 
     Returns:
         ArchDbrType: The ArchDbrType.
+
+    Raises:
+        click.BadParameter: If the value is not a valid ArchDbrType.
     """
     try:
         return ct.archdbrtype_from_str(value)
     except ct.InvalidArchDbrTypeError as e:
-        LOG.error("Invalid ArchDbrType: %s", str(e))  # noqa: TRY400
-        LOG.debug("Invalid ArchDbrType.", exc_info=True)
-    return None
+        msg = f"Invalid ArchDbrType: {value}. Error: {e!s}"
+        raise click.BadParameter(
+            msg,
+            param_hint="new-type",
+        ) from e
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option(
     "--new-type",
     type=str,
@@ -235,6 +301,7 @@ def archdbrtype_from_param(value: str) -> ArchDbrType | None:
 @click.argument(
     "file",
     type=click.File(),
+    callback=validate_file_input,
     default=sys.stdin,
 )
 @click.pass_context
@@ -250,17 +317,16 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
         arch-mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    if new_type is None:
-        LOG.error("Invalid arch dbr type. Please provide a valid type.")
-        ctx.exit(1)
-
     # Read input
-    pvs = single_column_csv(file)
-
     try:
-        ct.change_type(archiver_fqdn, pvs, new_type)
-    except BaseMgmtError as e:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        ct.change_type(archiver_fqdn, pvs, new_type)  # type: ignore[arg-type] # Ignoring because of the check in the function
+    except Exception as e:
         LOG.error("Error changing type of PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error changing type of PVs.", exc_info=True)
         ctx.exit(1)
@@ -268,7 +334,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     ctx.exit(0)
 
 
-def epicsproto_from_param(value: str) -> EpicsProto | None:
+def epicsproto_from_param(value: str) -> EpicsProto:
     """Convert a string to a EpicsProto.
 
     Args:
@@ -276,17 +342,22 @@ def epicsproto_from_param(value: str) -> EpicsProto | None:
 
     Returns:
         EpicsProto: The EpicsProto.
+
+    Raises:
+        click.BadParameter: If the value is not a valid EpicsProto.
     """
     try:
         return cp.epicsproto_from_str(value)
     except cp.InvalidEpicsProtoError as e:
-        LOG.error("Invalid EpicsProto: %s", str(e))  # noqa: TRY400
-        LOG.debug("Invalid EpicsProto.", exc_info=True)
-    return None
+        msg = f"Invalid EpicsProto: {value}. Error: {e!s}"
+        raise click.BadParameter(
+            msg,
+            param_hint="new-protocol",
+        ) from e
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archiver where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option(
     "--protocol",
     "-p",
@@ -298,6 +369,7 @@ def epicsproto_from_param(value: str) -> EpicsProto | None:
 @click.argument(
     "file",
     type=click.File(),
+    callback=validate_file_input,
     default=sys.stdin,
 )
 @click.pass_context
@@ -313,17 +385,16 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
         arch-mgmt -f archiver.example.com change_protocol --new-protocol ca pvs.csv
 
     """
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    if protocol is None:
-        LOG.error("Invalid epics protocol. Please provide a valid type.")
-        ctx.exit(1)
-
     # Read input
-    pvs = single_column_csv(file)
-
     try:
-        cp.change_protocol(archiver_fqdn, pvs, protocol)
-    except BaseMgmtError as e:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        cp.change_protocol(archiver_fqdn, pvs, protocol)  # type: ignore[arg-type] # Ignoring because of the check in the function
+    except Exception as e:
         LOG.error("Error changing protocol of PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error changing protocol of PVs.", exc_info=True)
         ctx.exit(1)
@@ -337,10 +408,11 @@ def alias() -> None:
 
 
 @click.command("add", context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
+    callback=validate_file_input,
     default=sys.stdin,
 )
 @click.pass_context
@@ -365,12 +437,15 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
     """
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = double_column_csv(file)
-
     try:
-        cmd_alias.add_aliases(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
+        pv_pairs = double_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        cmd_alias.add_aliases(archiver_fqdn, pv_pairs)
+    except Exception as e:
         LOG.error("Error adding alias PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error adding alias PVs.", exc_info=True)
         ctx.exit(1)
@@ -379,10 +454,11 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
 
 @click.command("remove", context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, default=None, help="Archivers where PVs reside.")
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
 @click.argument(
     "file",
     type=click.File(),
+    callback=validate_file_input,
     default=sys.stdin,
 )
 @click.pass_context
@@ -404,20 +480,40 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
     .. code-block:: console
 
         arch-mgmt -f archiver.example.com alias remove pvs.csv
-
     """
     # Read input
-    LOG.info("Creating LOG file at %s", CURRENT_COMMAND_LOG)
-    pvs = double_column_csv(file)
-
     try:
-        cmd_alias.remove_aliases(archiver_fqdn, pvs)
-    except BaseMgmtError as e:
+        pv_pairs = double_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        cmd_alias.remove_aliases(archiver_fqdn, pv_pairs)
+    except Exception as e:
         LOG.error("Error removing alias PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error removing alias PVs.", exc_info=True)
         ctx.exit(1)
 
     ctx.exit(0)
+
+
+def _parse_error_to_bad_param(ctx: click.Context, err: ParseCSVRowError) -> None:
+    """Convert a ParseCSVRowError to a click.BadParameter.
+
+    Args:
+        ctx (click.Context): The click context.
+        err (ParseCSVRowError): The error to convert.
+
+    Raises:
+        click.BadParameter: If the error is a ParseCSVRowError.
+    """
+    msg = "Invalid CSV format. Expected two columns: original PV and alias PV name."
+    raise click.BadParameter(
+        msg,
+        ctx=ctx,
+        param_hint="file",
+    ) from err
 
 
 alias.add_command(add_alias)

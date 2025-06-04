@@ -10,10 +10,10 @@ from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
-class ParseCSVError(BaseMgmtError):
+class ParseCSVRowError(BaseMgmtError):
     """Exception for when the csv file is invalid."""
 
-    def __init__(self, row: list[str]) -> None:
+    def __init__(self, row: list[str] | None = None) -> None:
         """Error for when the csv file is invalid.
 
         Args:
@@ -34,15 +34,18 @@ def parse_csv(file: TextIO, expected_columns: int) -> dict[str, list[str]]:
         list[tuple[str, ...]]: The list of tuples of PVs.
 
     Raises:
-        ParseCSVError: If the file is invalid.
+        ParseCSVRowError: If the file is invalid.
     """
     csv_rows = csv.reader(file)
+    if not csv_rows:
+        LOG.error("Empty csv file")
+        raise ParseCSVRowError
     result: dict[str, list[str]] = {}
     for row in csv_rows:
         pvs = row
         if len(pvs) != expected_columns:
             LOG.error("Invalid row in csv file: %s", row)
-            raise ParseCSVError(row)
+            raise ParseCSVRowError(row)
         result[pvs[0]] = pvs[1:]
     return result
 
@@ -59,7 +62,7 @@ def single_column_csv(file: TextIO) -> Sequence[str]:
     return tuple(parse_csv(file, 1).keys())
 
 
-def double_column_csv(file: TextIO) -> list[tuple[str, str]]:
+def double_column_csv(file: TextIO) -> Sequence[tuple[str, str]]:
     """Parse the csv file with two columns.
 
     Args:

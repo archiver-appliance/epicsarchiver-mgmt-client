@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from itertools import starmap
+from typing import TYPE_CHECKING
 
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
@@ -18,10 +19,13 @@ from epicsarchiver_mgmt.commands.validation import (
     validate_pvs_status,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
-def add_aliases(archiver_fqdn: str, alias_maps: list[tuple[str, str]]) -> None:
+def add_aliases(archiver_fqdn: str, alias_maps: Sequence[tuple[str, str]]) -> None:
     """Add aliases to PVs in the archiver.
 
     Args:
@@ -73,7 +77,7 @@ def add_aliases(archiver_fqdn: str, alias_maps: list[tuple[str, str]]) -> None:
     )
 
 
-def remove_aliases(archiver_fqdn: str, alias_maps: list[tuple[str, str]]) -> None:
+def remove_aliases(archiver_fqdn: str, alias_maps: Sequence[tuple[str, str]]) -> None:
     """Remove aliases from PVs in the archiver.
 
     Args:

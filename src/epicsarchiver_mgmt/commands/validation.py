@@ -163,11 +163,11 @@ class NotSamePVError(BaseMgmtError):
         self.pv = pv
 
 
-def validate_not_same(pairs: list[tuple[str, str]]) -> None:
+def validate_not_same(pairs: Sequence[tuple[str, str]]) -> None:
     """Validate the rename operation.
 
     Args:
-        pairs (list[tuple[str, str]]): The pairs of PVs.
+        pairs (Sequence[tuple[str, str]]): The pairs of PVs.
 
     Raises:
         NotSamePVError: If the old and new PVs are the same.
