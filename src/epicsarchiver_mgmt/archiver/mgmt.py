@@ -137,7 +137,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
             ArchivePVRequest(
                 pv=protocol.create_archive_request_pv_name(pv),
                 samplingmethod=sampling_method,
-                samplingperiod=str(sampling_period),
+                samplingperiod=str(sampling_period) if sampling_period is not None else None,
                 controllingPV=controlling_pv,
                 policy=policy,
                 appliance=appliance,
