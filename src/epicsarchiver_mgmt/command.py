@@ -106,6 +106,44 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
 
 @click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
+@click.argument(
+    "file",
+    type=click.File(),
+    callback=validate_file_input,
+    default=sys.stdin,
+)
+@click.pass_context
+def delete(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
+    """Delete PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to delete.
+
+    Example usage:
+
+    .. code-block:: console
+
+        arch-mgmt delete -a archiver.example.com pvs.csv
+
+    """
+    # Read input
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        basic_commands.DeleteCommand().run_command(archiver_fqdn, pvs)
+    except Exception as e:
+        LOG.error("Error deleting PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error deleting PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+@click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.", multiple=True)
 @click.argument(
     "file",
