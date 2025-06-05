@@ -73,14 +73,17 @@ def validate_operation_results(
 class ValidPVStatusError(BaseMgmtError):
     """Exception for when a PV is not in the expected status."""
 
-    def __init__(self, pv: str, archiving_status: ArchivingStatus | None) -> None:
+    def __init__(
+        self, pv: str, archiving_status: ArchivingStatus | None, expected_statuses: list[ArchivingStatus]
+    ) -> None:
         """Initialize the exception.
 
         Args:
             pv (str): The PV that is not in the expected status.
             archiving_status (ArchivingStatus | None): The status of the PV.
+            expected_statuses (list[ArchivingStatus]): The expected statuses of the PV.
         """
-        super().__init__(f"PV {pv} archiving status is {archiving_status}.")
+        super().__init__(f"PV {pv} archiving status is {archiving_status}, needs to be in {expected_statuses}.")
 
 
 def validate_pvs_status(
@@ -105,9 +108,9 @@ def validate_pvs_status(
         return
     for pv in pvs:
         archiving_status = archiver_info.get_archiving_status(pv)
-        LOG.debug("PV %s has status %s", pv, archiving_status)
+        LOG.debug("PV %s has status %s must be one of %s", pv, archiving_status, expected_statuses)
         if archiving_status not in expected_statuses:
-            raise ValidPVStatusError(pv, archiving_status)
+            raise ValidPVStatusError(pv, archiving_status, expected_statuses)
 
 
 def validate_pvs_status_from_existing_info(
@@ -134,7 +137,7 @@ def validate_pvs_status_from_existing_info(
             archiving_status = ArchivingStatus.from_str(pv_status_info["status"])
             LOG.debug("PV %s has status %s", pv_status_info["pvName"], archiving_status)
             if archiving_status not in expected_statuses:
-                raise ValidPVStatusError(pv_status_info["pvName"], archiving_status)
+                raise ValidPVStatusError(pv_status_info["pvName"], archiving_status, expected_statuses)
 
 
 class RequestHTTPError(BaseMgmtError):
