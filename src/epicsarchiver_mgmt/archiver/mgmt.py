@@ -69,7 +69,7 @@ class ArchivePVRequest:
 
     pv: str
     samplingmethod: SamplingMethod | None = None
-    samplingperiod: str | None = None
+    samplingperiod: float | None = None
     controllingPV: str | None = None  # noqa: N815
     policy: str | None = None
     appliance: str | None = None
@@ -80,7 +80,7 @@ class ArchivePVRequest:
         if self.samplingmethod:
             output["samplingmethod"] = self.samplingmethod.value
         if self.samplingperiod:
-            output["samplingperiod"] = self.samplingperiod
+            output["samplingperiod"] = None if self.samplingperiod is None else str(self.samplingperiod)
         if self.controllingPV:
             output["controllingPV"] = self.controllingPV
         if self.policy:
@@ -137,7 +137,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
             ArchivePVRequest(
                 pv=protocol.create_archive_request_pv_name(pv),
                 samplingmethod=sampling_method,
-                samplingperiod=str(sampling_period),
+                samplingperiod=sampling_period,
                 controllingPV=controlling_pv,
                 policy=policy,
                 appliance=appliance,
