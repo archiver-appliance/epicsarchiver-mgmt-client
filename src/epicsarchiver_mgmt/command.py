@@ -331,7 +331,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 
     .. code-block:: console
 
-        arch-mgmt change_type -a archiver.example.com --new-type DBR_SCALAR_DOUBLE pvs.csv
+        arch-mgmt change-type -a archiver.example.com --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
     # Read input
@@ -376,7 +376,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
 
     .. code-block:: console
 
-        arch-mgmt change_protocol -a archiver.example.com --new-protocol ca pvs.csv
+        arch-mgmt change-protocol -a archiver.example.com --new-protocol ca pvs.csv
 
     """
     # Read input
@@ -428,7 +428,7 @@ def change_parameter(
 
     .. code-block:: console
 
-        arch-mgmt change_parameter -a archiver.example.com --method SCAN --period 10.0 pvs.csv
+        arch-mgmt change-parameter -a archiver.example.com --method SCAN --period 10.0 pvs.csv
 
     """
     if method is None and period is None:
