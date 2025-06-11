@@ -332,10 +332,11 @@ def archdbrtype_from_param(value: str) -> ArchDbrType:
 @click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option(
     "--new-type",
+    "-t",
     type=str,
-    default=None,
     help="Type to change PVs to.",
     callback=lambda _c, _p, v: archdbrtype_from_param(v),
+    required=True,
 )
 @click.argument(
     "file",
@@ -391,7 +392,7 @@ def epicsproto_from_param(value: str) -> EpicsProto:
         msg = f"Invalid EpicsProto: {value}. Error: {e!s}"
         raise click.BadParameter(
             msg,
-            param_hint="new-protocol",
+            param_hint="protocol",
         ) from e
 
 
@@ -401,9 +402,9 @@ def epicsproto_from_param(value: str) -> EpicsProto:
     "--protocol",
     "-p",
     type=str,
-    default=None,
     help="Protocol to change PVs to.",
     callback=lambda _c, _p, v: epicsproto_from_param(v),
+    required=True,
 )
 @click.argument(
     "file",
@@ -441,7 +442,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     ctx.exit(0)
 
 
-def samplingmethod_from_param(value: str) -> SamplingMethod:
+def samplingmethod_from_param(value: str | None) -> SamplingMethod | None:
     """Convert a string to a SamplingMethod.
 
     Args:
@@ -453,6 +454,8 @@ def samplingmethod_from_param(value: str) -> SamplingMethod:
     Raises:
         click.BadParameter: If the value is not a valid SamplingMethod.
     """
+    if value is None:
+        return None
     try:
         return c_param.samplingmethod_from_str(value)
     except c_param.InvalidSamplingMethodError as e:
