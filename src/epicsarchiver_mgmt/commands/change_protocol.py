@@ -17,43 +17,11 @@ from epicsarchiver_mgmt.commands.validation import (
     validate_current_protocol,
     validate_pvs_status,
 )
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 LOG: logging.Logger = logging.getLogger(__name__)
-
-
-class InvalidEpicsProtoError(BaseMgmtError):
-    """Exception for when the epics protocol is invalid."""
-
-    def __init__(self, protocol: str) -> None:
-        """Error for when the rename type is invalid.
-
-        Args:
-            protocol (str): The invalid epics protocol.
-        """
-        super().__init__(f"Invalid epics protocol {protocol}.")
-        self.protocol = protocol
-
-
-def epicsproto_from_str(value: str) -> EpicsProto:
-    """Convert a string to a EpicsProto.
-
-    Args:
-        value (str): The value to convert.
-
-    Returns:
-        EpicsProto: The EpicsProto.
-
-    Raises:
-        InvalidEpicsProtoError: If the value is invalid.
-    """
-    for t in EpicsProto:
-        if t.name.lower() == value.lower():
-            return t
-    raise InvalidEpicsProtoError(value)
 
 
 def create_new_protocol_archive_requests(pv_statuses: InfoResultList, protocol: EpicsProto) -> list[ArchivePVRequest]:

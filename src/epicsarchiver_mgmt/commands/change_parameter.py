@@ -17,43 +17,11 @@ from epicsarchiver_mgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 LOG: logging.Logger = logging.getLogger(__name__)
-
-
-class InvalidSamplingMethodError(BaseMgmtError):
-    """Exception for when the sampling method is invalid."""
-
-    def __init__(self, parameter: str) -> None:
-        """Error for when the rename type is invalid.
-
-        Args:
-            parameter (str): The invalid sampling method.
-        """
-        super().__init__(f"Invalid sampling method {parameter}.")
-        self.parameter = parameter
-
-
-def samplingmethod_from_str(value: str) -> SamplingMethod:
-    """Convert a string to a SamplingMethod.
-
-    Args:
-        value (str): The value to convert.
-
-    Returns:
-        SamplingMethod: The SamplingMethod.
-
-    Raises:
-        InvalidSamplingMethodError: If the value is invalid.
-    """
-    for t in SamplingMethod:
-        if t.name.lower() == value.lower():
-            return t
-    raise InvalidSamplingMethodError(value)
 
 
 def change_parameter(

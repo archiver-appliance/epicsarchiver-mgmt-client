@@ -11,34 +11,10 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     OperationResult,
 )
 from epicsarchiver_mgmt.commands.change_type import (
-    InvalidArchDbrTypeError,
-    archdbrtype_from_str,
     change_type,
 )
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 from tests.commands.test_validation import accept_confirmation
-
-
-# --- Tests for archdbrtype_from_str ---
-@pytest.mark.parametrize(
-    ("input_str", "expected_type"),
-    [
-        ("DBR_SCALAR_SHORT", ArchDbrType.DBR_SCALAR_SHORT),
-        ("dbr_scalar_double", ArchDbrType.DBR_SCALAR_DOUBLE),
-    ],
-)
-def test_archdbrtype_from_str_success(input_str: str, expected_type: ArchDbrType) -> None:
-    """Test successful conversion from string to ArchDbrType."""
-    assert archdbrtype_from_str(input_str) == expected_type
-
-
-def test_archdbrtype_from_str_invalid() -> None:
-    """Test conversion with an invalid type string."""
-    invalid_type = "INVALID_TYPE"
-    with pytest.raises(InvalidArchDbrTypeError) as exc_info:
-        archdbrtype_from_str(invalid_type)
-    assert exc_info.value.new_type == invalid_type
-    assert f"Invalid arch dbr type {invalid_type}" in str(exc_info.value)
 
 
 # --- Tests for change_type ---

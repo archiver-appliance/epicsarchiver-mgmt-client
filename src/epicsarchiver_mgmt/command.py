@@ -306,36 +306,13 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
     ctx.exit(0)
 
 
-def archdbrtype_from_param(value: str) -> ArchDbrType:
-    """Convert a string to a ArchDbrType.
-
-    Args:
-        value (str): The value to convert.
-
-    Returns:
-        ArchDbrType: The ArchDbrType.
-
-    Raises:
-        click.BadParameter: If the value is not a valid ArchDbrType.
-    """
-    try:
-        return ct.archdbrtype_from_str(value)
-    except ct.InvalidArchDbrTypeError as e:
-        msg = f"Invalid ArchDbrType: {value}. Error: {e!s}"
-        raise click.BadParameter(
-            msg,
-            param_hint="new-type",
-        ) from e
-
-
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option(
     "--new-type",
     "-t",
-    type=str,
+    type=click.Choice(ArchDbrType, case_sensitive=False),  # type: ignore[arg-type]
     help="Type to change PVs to.",
-    callback=lambda _c, _p, v: archdbrtype_from_param(v),
     required=True,
 )
 @click.argument(
@@ -374,36 +351,13 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     ctx.exit(0)
 
 
-def epicsproto_from_param(value: str) -> EpicsProto:
-    """Convert a string to a EpicsProto.
-
-    Args:
-        value (str): The value to convert.
-
-    Returns:
-        EpicsProto: The EpicsProto.
-
-    Raises:
-        click.BadParameter: If the value is not a valid EpicsProto.
-    """
-    try:
-        return cp.epicsproto_from_str(value)
-    except cp.InvalidEpicsProtoError as e:
-        msg = f"Invalid EpicsProto: {value}. Error: {e!s}"
-        raise click.BadParameter(
-            msg,
-            param_hint="protocol",
-        ) from e
-
-
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option(
     "--protocol",
     "-p",
-    type=str,
+    type=click.Choice(EpicsProto, case_sensitive=False),  # type: ignore[arg-type]
     help="Protocol to change PVs to.",
-    callback=lambda _c, _p, v: epicsproto_from_param(v),
     required=True,
 )
 @click.argument(
@@ -442,38 +396,13 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     ctx.exit(0)
 
 
-def samplingmethod_from_param(value: str | None) -> SamplingMethod | None:
-    """Convert a string to a SamplingMethod.
-
-    Args:
-        value (str): The value to convert.
-
-    Returns:
-        SamplingMethod: The SamplingMethod.
-
-    Raises:
-        click.BadParameter: If the value is not a valid SamplingMethod.
-    """
-    if value is None:
-        return None
-    try:
-        return c_param.samplingmethod_from_str(value)
-    except c_param.InvalidSamplingMethodError as e:
-        msg = f"Invalid Sampling Method: {value}. Error: {e!s}"
-        raise click.BadParameter(
-            msg,
-            param_hint="sampling-method",
-        ) from e
-
-
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
 @click.option(
     "--method",
     "-m",
-    type=str,
+    type=click.Choice(SamplingMethod, case_sensitive=False),  # type: ignore[arg-type]
     help="Sampling method swap to.",
-    callback=lambda _c, _p, v: samplingmethod_from_param(v),
 )
 @click.option(
     "--period",
@@ -629,7 +558,7 @@ def _parse_error_to_bad_param(ctx: click.Context, err: ParseCSVRowError) -> None
     Raises:
         click.BadParameter: If the error is a ParseCSVRowError.
     """
-    msg = "Invalid CSV format. Expected two columns: original PV and alias PV name."
+    msg = "Invalid CSV format."
     raise click.BadParameter(
         msg,
         ctx=ctx,

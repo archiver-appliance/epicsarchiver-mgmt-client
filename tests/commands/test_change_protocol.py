@@ -11,33 +11,9 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     EpicsProto,
 )
 from epicsarchiver_mgmt.commands.change_protocol import (
-    InvalidEpicsProtoError,
     change_protocol,
-    epicsproto_from_str,
 )
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
-
-
-# --- Tests for epicsproto_from_str ---
-@pytest.mark.parametrize(
-    ("input_str", "expected_type"),
-    [
-        ("PVA", EpicsProto.PVA),
-        ("ca", EpicsProto.CA),
-    ],
-)
-def test_epicsproto_from_str_success(input_str: str, expected_type: EpicsProto) -> None:
-    """Test successful conversion from string to epicsproto."""
-    assert epicsproto_from_str(input_str) == expected_type
-
-
-def test_epicsproto_from_str_invalid() -> None:
-    """Test conversion with an invalid type string."""
-    invalid_type = "INVALID_TYPE"
-    with pytest.raises(InvalidEpicsProtoError) as exc_info:
-        epicsproto_from_str(invalid_type)
-    assert exc_info.value.protocol == invalid_type
-    assert f"Invalid epics protocol {invalid_type}" in str(exc_info.value)
 
 
 # --- Tests for change_protocol ---
