@@ -11,7 +11,7 @@ pip install epicsarchiver-mgmt -i https://artifactory.esss.lu.se/artifactory/api
 ## Usage
 
 ```console
-Usage: epicsarchiver-mgmt [OPTIONS] COMMAND [ARGS]...
+Usage: arch-mgmt [OPTIONS] COMMAND [ARGS]...
 
   Command line tool for doing mgmt operations with the archiver.
 
@@ -20,12 +20,15 @@ Options:
   --help     Show this message and exit.
 
 Commands:
-  alias        Alias PVs in the archiver.
-  archive      Archive PVs in the archiver.
-  change-type  Change the type of PVs in the archiver.
-  pause        Pause PVs in the archiver.
-  rename       Rename PVs in the archiver.
-  resume       Resume Archiving PVs in the archiver.
+  alias             Alias PVs in the archiver.
+  archive           Archive PVs in the archiver.
+  change-parameter  Change the archiving parameters of PVs in the archiver.
+  change-protocol   Change the protocol of PVs in the archiver.
+  change-type       Change the type of PVs in the archiver.
+  delete            Delete PVs in the archiver.
+  pause             Pause PVs in the archiver.
+  rename            Rename PVs in the archiver.
+  resume            Resume Archiving PVs in the archiver.
 ```
 
 ## Development

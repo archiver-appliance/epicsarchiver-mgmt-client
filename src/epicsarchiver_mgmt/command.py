@@ -86,7 +86,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        arch-mgmt -a archiver.example.com pause pvs.csv
+        arch-mgmt pause -a archiver.example.com pvs.csv
 
     """
     # Read input
@@ -186,7 +186,7 @@ def rename(
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
+        arch-mgmt rename -a archiver.example.com -a archiver.example.com pvs.csv
 
     """
     # Check input
@@ -229,7 +229,7 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        arch-mgmt -a archiver.example.com resume pvs.csv
+        arch-mgmt resume -a archiver.example.com pvs.csv
 
     """
     # Read input
@@ -282,7 +282,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com archive pvs.csv
+        arch-mgmt archive -a archiver.example.com pvs.csv
 
     """
     # Read input
@@ -306,36 +306,14 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
     ctx.exit(0)
 
 
-def archdbrtype_from_param(value: str) -> ArchDbrType:
-    """Convert a string to a ArchDbrType.
-
-    Args:
-        value (str): The value to convert.
-
-    Returns:
-        ArchDbrType: The ArchDbrType.
-
-    Raises:
-        click.BadParameter: If the value is not a valid ArchDbrType.
-    """
-    try:
-        return ct.archdbrtype_from_str(value)
-    except ct.InvalidArchDbrTypeError as e:
-        msg = f"Invalid ArchDbrType: {value}. Error: {e!s}"
-        raise click.BadParameter(
-            msg,
-            param_hint="new-type",
-        ) from e
-
-
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option(
     "--new-type",
-    type=str,
-    default=None,
+    "-t",
+    type=click.Choice(ArchDbrType, case_sensitive=False),
     help="Type to change PVs to.",
-    callback=lambda _c, _p, v: archdbrtype_from_param(v),
+    required=True,
 )
 @click.argument(
     "file",
@@ -353,7 +331,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
+        arch-mgmt change-type -a archiver.example.com --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
     # Read input
@@ -373,37 +351,14 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     ctx.exit(0)
 
 
-def epicsproto_from_param(value: str) -> EpicsProto:
-    """Convert a string to a EpicsProto.
-
-    Args:
-        value (str): The value to convert.
-
-    Returns:
-        EpicsProto: The EpicsProto.
-
-    Raises:
-        click.BadParameter: If the value is not a valid EpicsProto.
-    """
-    try:
-        return cp.epicsproto_from_str(value)
-    except cp.InvalidEpicsProtoError as e:
-        msg = f"Invalid EpicsProto: {value}. Error: {e!s}"
-        raise click.BadParameter(
-            msg,
-            param_hint="new-protocol",
-        ) from e
-
-
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option(
     "--protocol",
     "-p",
-    type=str,
-    default=None,
+    type=click.Choice(EpicsProto, case_sensitive=False),
     help="Protocol to change PVs to.",
-    callback=lambda _c, _p, v: epicsproto_from_param(v),
+    required=True,
 )
 @click.argument(
     "file",
@@ -421,7 +376,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com change_protocol --new-protocol ca pvs.csv
+        arch-mgmt change-protocol -a archiver.example.com --new-protocol ca pvs.csv
 
     """
     # Read input
@@ -441,36 +396,13 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     ctx.exit(0)
 
 
-def samplingmethod_from_param(value: str) -> SamplingMethod:
-    """Convert a string to a SamplingMethod.
-
-    Args:
-        value (str): The value to convert.
-
-    Returns:
-        SamplingMethod: The SamplingMethod.
-
-    Raises:
-        click.BadParameter: If the value is not a valid SamplingMethod.
-    """
-    try:
-        return c_param.samplingmethod_from_str(value)
-    except c_param.InvalidSamplingMethodError as e:
-        msg = f"Invalid Sampling Method: {value}. Error: {e!s}"
-        raise click.BadParameter(
-            msg,
-            param_hint="sampling-method",
-        ) from e
-
-
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
 @click.option(
     "--method",
     "-m",
-    type=str,
+    type=click.Choice(SamplingMethod, case_sensitive=False),
     help="Sampling method swap to.",
-    callback=lambda _c, _p, v: samplingmethod_from_param(v),
 )
 @click.option(
     "--period",
@@ -496,7 +428,7 @@ def change_parameter(
 
     .. code-block:: console
 
-        arch-mgmt change_parameter -a archiver.example.com --method SCAN --period 10.0 pvs.csv
+        arch-mgmt change-parameter -a archiver.example.com --method SCAN --period 10.0 pvs.csv
 
     """
     if method is None and period is None:
@@ -551,7 +483,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com alias add pvs.csv
+        arch-mgmt alias add -a archiver.example.com pvs.csv
 
     """
     # Read input
@@ -597,7 +529,7 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com alias remove pvs.csv
+        arch-mgmt alias remove -a archiver.example.com pvs.csv
     """
     # Read input
     try:
@@ -626,7 +558,7 @@ def _parse_error_to_bad_param(ctx: click.Context, err: ParseCSVRowError) -> None
     Raises:
         click.BadParameter: If the error is a ParseCSVRowError.
     """
-    msg = "Invalid CSV format. Expected two columns: original PV and alias PV name."
+    msg = "Invalid CSV format."
     raise click.BadParameter(
         msg,
         ctx=ctx,
