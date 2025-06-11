@@ -5,10 +5,11 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus, InfoResultList
 from requests import HTTPError
 
 from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchivePVRequest,
     ArchiverMgmt,
     SamplingMethod,
 )
@@ -22,6 +23,26 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 LOG: logging.Logger = logging.getLogger(__name__)
+
+
+def sampling_period_from_statuses(pv: str, pv_statuses: InfoResultList) -> float:
+    """Get the sampling period from the PV status.
+
+    Args:
+        pv (str): The PV name.
+        pv_statuses (InfoResultList): The statuses of the PVs.
+
+    Returns:
+        float: The sampling period of the PV.
+
+    Raises:
+        ValueError: If the PV is not found in the provided statuses.
+    """
+    for pv_status in pv_statuses:
+        if pv_status["pvName"] == pv:
+            return float(pv_status["samplingPeriod"])
+    msg = f"PV {pv} not found in the provided statuses."
+    raise ValueError(msg)
 
 
 def change_parameter(
@@ -43,13 +64,25 @@ def change_parameter(
     """
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdn)
+    pv_statuses: InfoResultList = archiver_info.get_pv_status(list(pvs))
     validate_pvs_status(
         archiver_info=archiver_info,
         pvs=pvs,
         expected_statuses=[
             ArchivingStatus.BeingArchived,
         ],
+        existing_status_infos=pv_statuses,
     )
+    archive_pv_requests = [
+        ArchivePVRequest(
+            pv,
+            samplingmethod=sampling_method,
+            samplingperiod=sampling_period
+            if sampling_period is not None
+            else sampling_period_from_statuses(pv, pv_statuses),
+        )
+        for pv in pvs
+    ]
 
     archiver = ArchiverMgmt(archiver_fqdn)
 
@@ -59,11 +92,11 @@ def change_parameter(
     try:
         results = [
             archiver.update_pv(
-                pv,
-                samplingmethod=sampling_method,
-                samplingperiod=sampling_period,
+                request.pv,
+                samplingmethod=request.samplingmethod,
+                samplingperiod=request.samplingperiod,
             )
-            for pv in pvs
+            for request in archive_pv_requests
         ]
     except HTTPError as e:
         LOG.error("Error changing sampling method and period of PVs: %s", str(e))  # noqa: TRY400
