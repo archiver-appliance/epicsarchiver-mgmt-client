@@ -311,7 +311,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 @click.option(
     "--new-type",
     "-t",
-    type=click.Choice(ArchDbrType, case_sensitive=False),  # type: ignore[arg-type]
+    type=click.Choice(ArchDbrType, case_sensitive=False),
     help="Type to change PVs to.",
     required=True,
 )
@@ -356,7 +356,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 @click.option(
     "--protocol",
     "-p",
-    type=click.Choice(EpicsProto, case_sensitive=False),  # type: ignore[arg-type]
+    type=click.Choice(EpicsProto, case_sensitive=False),
     help="Protocol to change PVs to.",
     required=True,
 )
@@ -401,7 +401,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
 @click.option(
     "--method",
     "-m",
-    type=click.Choice(SamplingMethod, case_sensitive=False),  # type: ignore[arg-type]
+    type=click.Choice(SamplingMethod, case_sensitive=False),
     help="Sampling method swap to.",
 )
 @click.option(
