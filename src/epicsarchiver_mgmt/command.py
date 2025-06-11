@@ -86,7 +86,7 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        arch-mgmt -a archiver.example.com pause pvs.csv
+        arch-mgmt pause -a archiver.example.com pvs.csv
 
     """
     # Read input
@@ -186,7 +186,7 @@ def rename(
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com -f archiver.example.com rename pvs.csv
+        arch-mgmt rename -a archiver.example.com -a archiver.example.com pvs.csv
 
     """
     # Check input
@@ -229,7 +229,7 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
     .. code-block:: console
 
-        arch-mgmt -a archiver.example.com resume pvs.csv
+        arch-mgmt resume -a archiver.example.com pvs.csv
 
     """
     # Read input
@@ -282,7 +282,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com archive pvs.csv
+        arch-mgmt archive -a archiver.example.com pvs.csv
 
     """
     # Read input
@@ -353,7 +353,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com change_type --new-type DBR_SCALAR_DOUBLE pvs.csv
+        arch-mgmt change_type -a archiver.example.com --new-type DBR_SCALAR_DOUBLE pvs.csv
 
     """
     # Read input
@@ -421,7 +421,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com change_protocol --new-protocol ca pvs.csv
+        arch-mgmt change_protocol -a archiver.example.com --new-protocol ca pvs.csv
 
     """
     # Read input
@@ -551,7 +551,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com alias add pvs.csv
+        arch-mgmt alias add -a archiver.example.com pvs.csv
 
     """
     # Read input
@@ -597,7 +597,7 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
 
     .. code-block:: console
 
-        arch-mgmt -f archiver.example.com alias remove pvs.csv
+        arch-mgmt alias remove -a archiver.example.com pvs.csv
     """
     # Read input
     try:
