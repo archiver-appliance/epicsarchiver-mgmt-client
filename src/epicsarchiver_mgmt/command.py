@@ -16,6 +16,7 @@ from epicsarchiver_mgmt.commands import change_parameter as c_param
 from epicsarchiver_mgmt.commands import change_protocol as cp
 from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import rename as cmd_rename
+from epicsarchiver_mgmt.commands import repolicy as repol
 from epicsarchiver_mgmt.input_parsing import ParseCSVRowError, double_column_csv, single_column_csv
 from epicsarchiver_mgmt.logging import setup_file_handler
 
@@ -397,6 +398,44 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
 
 
 @click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
+@click.argument(
+    "file",
+    type=click.File(),
+    callback=validate_file_input,
+    default=sys.stdin,
+)
+@click.pass_context
+def repolicy(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
+    """Re check policy of PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to change protocol.
+
+    Example usage:
+
+    .. code-block:: console
+
+        arch-mgmt repolicy -a archiver.example.com pvs.csv
+
+    """
+    # Read input
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        repol.repolicy(archiver_fqdn, pvs)
+    except Exception as e:
+        LOG.error("Error repolicy of PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error repolicy of PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+@click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
 @click.option(
     "--method",
@@ -578,3 +617,4 @@ cli.add_command(resume)
 cli.add_command(archive)
 cli.add_command(rename)
 cli.add_command(alias)
+cli.add_command(repolicy)

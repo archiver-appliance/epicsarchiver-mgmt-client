@@ -132,12 +132,20 @@ def validate_pvs_status_from_existing_info(
     Raises:
         ValidPVStatusError: If a PV is not in the expected status.
     """
+    unchecked_pvs = set(pvs)
     for pv_status_info in existing_status_infos:
         if pv_status_info["pvName"] in pvs:
+            unchecked_pvs.discard(pv_status_info["pvName"])
             archiving_status = ArchivingStatus.from_str(pv_status_info["status"])
             LOG.debug("PV %s has status %s", pv_status_info["pvName"], archiving_status)
             if archiving_status not in expected_statuses:
                 raise ValidPVStatusError(pv_status_info["pvName"], archiving_status, expected_statuses)
+    if unchecked_pvs:
+        raise ValidPVStatusError(
+            ", ".join(unchecked_pvs),
+            None,
+            expected_statuses,
+        )
 
 
 class RequestHTTPError(BaseMgmtError):
