@@ -31,6 +31,8 @@ Commands:
   resume            Resume Archiving PVs in the archiver.
 ```
 
+The tool creates a log file for every operation, please upload this with the ticket or into logbook after finishing a task.
+
 ## Development
 
 The package is built and packaged with [Hatch](https://hatch.pypa.io/latest/).
