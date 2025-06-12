@@ -1,4 +1,4 @@
-"""Pause or resume archiving."""
+"""Rearchive a pv to update the policy."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ LOG: logging.Logger = logging.getLogger(__name__)
 
 
 def create_new_archive_requests(pv_statuses: InfoResultList) -> list[ArchivePVRequest]:
-    """Create the archive requests from the appliance names in the pv statuses and new protocol.
+    """Create the archive requests from the appliance names in the pv statuses.
 
     Args:
         pv_statuses (InfoResultList): The statuses of the PVs.
@@ -41,7 +41,7 @@ def create_new_archive_requests(pv_statuses: InfoResultList) -> list[ArchivePVRe
 
 
 def repolicy(archiver_fqdn: str, pvs: Sequence[str]) -> None:
-    """Re do the policy of pvs in arhiver.
+    """Update the policy of pvs in arhiver.
 
     Args:
         archiver_fqdn (str): The url of the archiver.
@@ -65,7 +65,7 @@ def repolicy(archiver_fqdn: str, pvs: Sequence[str]) -> None:
 
     # Action
     LOG.info("Using archiver %s", archiver.info)
-    LOG.info("Re doing policy of the PVs %s", pvs)
+    LOG.info("Update the policy of the PVs %s", pvs)
     basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
     basic_commands.DeleteCommand().run_command(archiver_fqdn, pvs)
     archive.archive(archiver_fqdn, pv_requests, dry_run=False)

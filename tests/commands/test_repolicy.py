@@ -13,7 +13,6 @@ from epicsarchiver_mgmt.commands.repolicy import repolicy
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 
 
-# --- Tests for repolicy ---
 def test_repolicy_success(caplog: pytest.LogCaptureFixture) -> None:
     """Test successful repolicy operation."""
     caplog.set_level(logging.INFO)
@@ -54,7 +53,7 @@ def test_repolicy_success(caplog: pytest.LogCaptureFixture) -> None:
         mock_pause.assert_called_once_with(archiver_fqdn, pvs)
         mock_delete.assert_called_once_with(archiver_fqdn, pvs)
         mock_archive.assert_called_once_with(archiver_fqdn, pv_requests, dry_run=False)
-        assert f"Re doing policy of the PVs {pvs}" in caplog.text
+        assert f"Update the policy of the PVs {pvs}" in caplog.text
         assert f"Using archiver {mock_archiver.info}" in caplog.text
 
 

@@ -407,7 +407,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
 )
 @click.pass_context
 def repolicy(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
-    """Re check policy of PVs in the archiver.
+    """Re choose the policy of PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to change protocol.
 

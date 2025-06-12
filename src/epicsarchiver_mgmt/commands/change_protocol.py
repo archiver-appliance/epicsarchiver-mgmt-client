@@ -1,4 +1,4 @@
-"""Pause or resume archiving."""
+"""Change the archiving protocol in use."""
 
 from __future__ import annotations
 
