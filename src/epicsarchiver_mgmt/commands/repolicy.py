@@ -49,7 +49,7 @@ def repolicy(archiver_fqdn: str, pvs: Sequence[str]) -> None:
     """
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdn)
-    pv_statuses: InfoResultList = archiver_info.get_pv_status(list(pvs))
+    pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(pvs))
     validate_pvs_status(
         archiver_info=archiver_info,
         pvs=pvs,
