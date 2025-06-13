@@ -1,4 +1,4 @@
-"""Pause or resume archiving."""
+"""Change the type of the pv being archived."""
 
 from __future__ import annotations
 
