@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 LOG: logging.Logger = logging.getLogger(__name__)
 
 SIZE_KEY = "Estimated storage rate (MB/day)"
+SIZE_BAD_VAL = "Not enough info"
 MAX_STORAGE_MB = 1000
 
 
@@ -156,7 +157,7 @@ def validate_size(archiver: ArchiverMgmtInfo, old_pvs: list[str], max_storage: f
     for old_pv in old_pvs:
         pv_details = archiver.get_pv_details(old_pv)
         for detail in pv_details:
-            if detail["name"] == SIZE_KEY and float(detail["value"]) > max_storage:
+            if detail["name"] == SIZE_KEY and detail["value"] != SIZE_BAD_VAL and float(detail["value"]) > max_storage:
                 raise TooMuchStoredDataError(old_pv, float(detail["value"]))
 
 
