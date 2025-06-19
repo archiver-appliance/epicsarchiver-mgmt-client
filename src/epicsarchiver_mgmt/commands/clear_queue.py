@@ -44,7 +44,7 @@ def abort_archiving_pvs_in_queue(pvs: list[str], archiver: ArchiverMgmt, chunkin
             if ArchivingStatus.from_str(pv_status["status"]) == ArchivingStatus.BeingArchived
         }
         try:
-            basic_commands.AbortCommand().run_command(archiver.hostname, list(archiving_pvs))
+            basic_commands.AbortCommand().run_command(archiver.hostname, list(archiving_pvs), skip_validation=True)
         except Exception:
             LOG.exception("Failed to abort archiving for PVs %s", archiving_pvs)
 

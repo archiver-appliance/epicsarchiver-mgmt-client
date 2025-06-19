@@ -55,6 +55,8 @@ class BasicCommand:
         self,
         archiver_fqdn: str,
         pvs: Sequence[str],
+        *,
+        skip_validation: bool = False,
     ) -> None:
         """Basic command to modify PVs in the archiver.
 
@@ -64,13 +66,15 @@ class BasicCommand:
             expected_statuses (list[ArchivingStatus]): The expected statuses of the PVs.
             archiver_fqdn (str): The url of the archiver.
             pvs (list[str]): The PVs to change.
+            skip_validation (bool): Whether to skip validation of the PVs status.
 
         Raises:
             RequestHTTPError: If there is an error changing the PVs.
         """
         # Validate input
         archiver_info = ArchiverMgmtInfo(archiver_fqdn)
-        validate_pvs_status(archiver_info, pvs, self.expected_statuses)
+        if not skip_validation:
+            validate_pvs_status(archiver_info, pvs, self.expected_statuses)
 
         # Action
         LOG.info("%s PVs %s", self.command_name, pvs)
