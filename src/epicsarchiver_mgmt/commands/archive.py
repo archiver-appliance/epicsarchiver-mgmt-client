@@ -95,4 +95,6 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run:
         raise RequestHTTPError(e) from e
 
     # Validate output
-    validate_operation_results(pvs, archive_results, "archived", expected_status=ARCHIVE_OPERATION_RESULT_STATUS_OK)
+    validate_operation_results(
+        pvs, archive_results, "archived", expected_operation_results=[ARCHIVE_OPERATION_RESULT_STATUS_OK]
+    )

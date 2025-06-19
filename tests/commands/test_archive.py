@@ -46,7 +46,7 @@ def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:
             ["PV1"],
             {"PV1": ARCHIVE_OPERATION_RESULT_STATUS_OK},
             "archived",
-            expected_status=ARCHIVE_OPERATION_RESULT_STATUS_OK,
+            expected_operation_results=[ARCHIVE_OPERATION_RESULT_STATUS_OK],
         )
         assert "Archiving PVs" in caplog.text
         assert "Using archiver" in caplog.text
