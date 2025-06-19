@@ -46,7 +46,7 @@ def abort_archiving_pvs_in_queue(pvs: list[str], archiver: ArchiverMgmt, chunkin
         }
         basic_commands.AbortCommand().run_command(archiver.hostname, list(archiving_pvs), skip_validation=True)
 
-        out.union(archiving_pvs)
+        out.update(archiving_pvs)
 
     return out
 
