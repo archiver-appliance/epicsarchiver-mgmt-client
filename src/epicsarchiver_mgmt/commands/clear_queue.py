@@ -16,6 +16,7 @@ LOG: logging.Logger = logging.getLogger(__name__)
 
 CURRENT_STATE = "currentState"
 START_STATE = "START"
+SUBMIT_STATE = "ARCHIVE_REQUEST_SUBMITTED"
 
 
 def abort_archiving_pvs_in_queue(pvs: list[str], archiver: ArchiverMgmt, chunking: int = 1000) -> set[str]:
@@ -65,7 +66,7 @@ def clear_queue(archiver_fqdn: str) -> None:
         LOG.info("The queue is empty, nothing to clear.")
         return
     # Action
-    pvs = [item["pvName"] for item in queue_info if item[CURRENT_STATE] == START_STATE]
+    pvs = [item["pvName"] for item in queue_info if item[CURRENT_STATE] in {START_STATE, SUBMIT_STATE}]
     LOG.debug("PVs in the queue: %s", pvs)
     archiving_pvs = abort_archiving_pvs_in_queue(pvs, archiver)
     if not archiving_pvs:
