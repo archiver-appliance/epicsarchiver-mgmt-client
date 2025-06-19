@@ -177,3 +177,32 @@ class DeleteCommand(BasicCommand):
             OperationResult: The result of the command.
         """
         return archiver.delete_pv(pv)
+
+
+class AbortCommand(BasicCommand):
+    """Abort command to modify PVs in the archiver."""
+
+    def __init__(self) -> None:
+        """Initialize the AbortCommand class."""
+        super().__init__(
+            command_name="Aborting",
+            expected_statuses=[
+                ArchivingStatus.BeingArchived,
+            ],
+        )
+
+    @staticmethod
+    def command(
+        archiver: ArchiverMgmt,
+        pv: str,
+    ) -> OperationResult:
+        """Abort archiving PV in the archiver.
+
+        Args:
+            archiver (ArchiverMgmt): The archiver to use.
+            pv (str): The PV to abort.
+
+        Returns:
+            OperationResult: The result of the command.
+        """
+        return archiver.abort_pv(pv)
