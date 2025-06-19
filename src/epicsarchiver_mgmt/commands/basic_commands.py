@@ -32,6 +32,7 @@ class BasicCommand:
 
     command_name: str
     expected_statuses: list[ArchivingStatus]
+    expected_operation_results: list[str] | None = None
 
     @staticmethod
     @abstractmethod
@@ -91,7 +92,12 @@ class BasicCommand:
             raise RequestHTTPError(e) from e
 
         # Validate output
-        validate_operation_results(pvs, command_results, f"{self.command_name} done")
+        validate_operation_results(
+            pvs,
+            command_results,
+            f"{self.command_name} done",
+            expected_operation_results=self.expected_operation_results,
+        )
 
 
 class PauseCommand(BasicCommand):
@@ -193,6 +199,7 @@ class AbortCommand(BasicCommand):
             expected_statuses=[
                 ArchivingStatus.BeingArchived,
             ],
+            expected_operation_results=["ok", "no"],
         )
 
     @staticmethod
