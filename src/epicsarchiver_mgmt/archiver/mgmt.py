@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, cast
 
 from epicsarchiver.mgmt.archiver_mgmt_info import (
     ArchiverMgmtInfo,
+    InfoResultList,
 )
 
 if TYPE_CHECKING:
@@ -184,17 +185,18 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         response = self._get_or_post("/resumeArchivingPV", pv)
         return cast("OperationResult", response)
 
-    def abort_pv(self, pv: str) -> list[str]:
+    def abort_pv(self, pv: str) -> OperationResult:
         """Abort any pending requests for archiving this PV.
 
         Args:
             pv: name of the pv.
 
         Returns:
-            list of submitted PVs
+            OperationResult: Status of action and description.
+            Example: {"status":"ok","desc":"Aborted request for archiving PV PV1"}
         """
         r = self._get("/abortArchivingPV", params={"pv": pv})
-        return cast("list[str]", r.json())
+        return cast("OperationResult", r.json())
 
     def add_alias(self, pv: str, alias_name: str) -> OperationResult:
         """Add an alias to a pv.
@@ -357,3 +359,13 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         """
         r = self._get("/getPolicyList")
         return cast("dict[str, str]", r.json())
+
+    @property
+    def never_connected_pvs(self) -> InfoResultList:
+        """Get the never connected PVs of the archiver.
+
+        Returns:
+            InfoResultList: List of never connected items.
+        """
+        r = self._get("/getNeverConnectedPVs")
+        return cast("InfoResultList", r.json())

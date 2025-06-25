@@ -9,12 +9,18 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
     OperationResult,
 )
-from epicsarchiver_mgmt.commands.basic_commands import BasicCommand, DeleteCommand, PauseCommand, ResumeCommand
+from epicsarchiver_mgmt.commands.basic_commands import (
+    AbortCommand,
+    BasicCommand,
+    DeleteCommand,
+    PauseCommand,
+    ResumeCommand,
+)
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 
 
 @pytest.mark.parametrize(
-    ("command_name", "archiver_command", "basic_command", "expected_statuses"),
+    ("command_name", "archiver_command", "basic_command", "expected_statuses", "expected_operation_results"),
     [
         (
             "Pausing",
@@ -25,6 +31,7 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
                 ArchivingStatus.NotBeingArchived,
                 ArchivingStatus.Paused,
             ],
+            None,
         ),
         (
             "Resuming",
@@ -33,6 +40,7 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
             [
                 ArchivingStatus.Paused,
             ],
+            None,
         ),
         (
             "Deleting",
@@ -41,6 +49,16 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
             [
                 ArchivingStatus.Paused,
             ],
+            None,
+        ),
+        (
+            "Aborting",
+            "abort_pv",
+            AbortCommand(),
+            [
+                ArchivingStatus.BeingArchived,
+            ],
+            ["ok", "no"],
         ),
     ],
 )
@@ -49,6 +67,7 @@ def test_basic_command_success(
     archiver_command: str,
     basic_command: BasicCommand,
     expected_statuses: list[ArchivingStatus],
+    expected_operation_results: list[str] | None,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Test successful command operation."""
@@ -83,7 +102,9 @@ def test_basic_command_success(
         # Check that command_pv was called for each PV
         getattr(mock_archiver, archiver_command).assert_has_calls([call("PV1"), call("PV2")], any_order=False)
         # Check the validation call with the cast results
-        mock_validate_operation_results.assert_called_once_with(pvs, mock_command_results, f"{command_name} done")
+        mock_validate_operation_results.assert_called_once_with(
+            pvs, mock_command_results, f"{command_name} done", expected_operation_results=expected_operation_results
+        )
         assert f"{command_name} PVs {pvs}" in caplog.text
         assert f"Using archiver {mock_archiver.info}" in caplog.text
 
@@ -115,6 +136,14 @@ def test_basic_command_success(
             DeleteCommand(),
             [
                 ArchivingStatus.Paused,
+            ],
+        ),
+        (
+            "Aborting",
+            "abort_pv",
+            AbortCommand(),
+            [
+                ArchivingStatus.BeingArchived,
             ],
         ),
     ],

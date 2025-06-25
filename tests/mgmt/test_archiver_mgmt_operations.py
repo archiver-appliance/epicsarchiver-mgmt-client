@@ -129,7 +129,7 @@ def test_resume_pv_single() -> None:
 @responses.activate
 def test_abort_pv() -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
-    data = ["1", "2", "3"]
+    data = {"validation": "", "status": "no"}
     pv = "LEBT-010:PBI-NPM-001:HCAM-COM"
     responses.add(
         responses.GET,

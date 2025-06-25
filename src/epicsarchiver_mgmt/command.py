@@ -15,6 +15,7 @@ from epicsarchiver_mgmt.commands import basic_commands
 from epicsarchiver_mgmt.commands import change_parameter as c_param
 from epicsarchiver_mgmt.commands import change_protocol as cp
 from epicsarchiver_mgmt.commands import change_type as ct
+from epicsarchiver_mgmt.commands import clear_queue as cmd_clear_queue
 from epicsarchiver_mgmt.commands import rename as cmd_rename
 from epicsarchiver_mgmt.commands import repolicy as repol
 from epicsarchiver_mgmt.input_parsing import ParseCSVRowError, double_column_csv, single_column_csv
@@ -491,6 +492,29 @@ def change_parameter(
     ctx.exit(0)
 
 
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
+@click.pass_context
+def clear_queue(ctx: click.Context, archiver_fqdn: str) -> None:
+    """Clear Queue of already archiving PVs in the archiver.
+
+    Example usage:
+
+    .. code-block:: console
+
+        arch-mgmt clear-queue -a archiver.example.com
+    """
+    setup_file_handler(ctx.command_path)
+    try:
+        cmd_clear_queue.clear_queue(archiver_fqdn)
+    except Exception as e:
+        LOG.error("Error clearing queue: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error clearing queue.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
 @click.group()
 def alias() -> None:
     """Alias PVs in the archiver."""
@@ -618,3 +642,4 @@ cli.add_command(archive)
 cli.add_command(rename)
 cli.add_command(alias)
 cli.add_command(repolicy)
+cli.add_command(clear_queue)
