@@ -20,7 +20,7 @@ SUBMIT_STATE = "ARCHIVE_REQUEST_SUBMITTED"
 
 
 def abort_archiving_pvs_in_queue(pvs: list[str], archiver: ArchiverMgmt, chunking: int = 1000) -> set[str]:
-    """Get the list of PVs that are currently being archived in the queue.
+    """Get the list of PVs that are currently being archived in the queue and abort them.
 
     Args:
         pvs (list[str]): List of PV names to check.
@@ -44,9 +44,9 @@ def abort_archiving_pvs_in_queue(pvs: list[str], archiver: ArchiverMgmt, chunkin
             for pv_status in pv_statuses
             if ArchivingStatus.from_str(pv_status["status"]) == ArchivingStatus.BeingArchived
         }
-        basic_commands.AbortCommand().run_command(archiver.hostname, list(archiving_pvs), skip_validation=True)
-
-        out.update(archiving_pvs)
+        if archiving_pvs:
+            basic_commands.AbortCommand().run_command(archiver.hostname, list(archiving_pvs), skip_validation=True)
+            out.update(archiving_pvs)
 
     return out
 
