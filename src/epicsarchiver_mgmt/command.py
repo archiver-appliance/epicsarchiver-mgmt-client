@@ -502,7 +502,7 @@ def clear_queue(ctx: click.Context, archiver_fqdn: str) -> None:
 
     .. code-block:: console
 
-        arch-mgmt clear_queue -a archiver.example.com
+        arch-mgmt clear-queue -a archiver.example.com
     """
     setup_file_handler(ctx.command_path)
     try:
