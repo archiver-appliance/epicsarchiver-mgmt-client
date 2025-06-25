@@ -360,11 +360,11 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         r = self._get("/getPolicyList")
         return cast("dict[str, str]", r.json())
 
-    def get_queue(self) -> InfoResultList:
-        """Get the queue of the archiver.
+    def never_connected_pvs(self) -> InfoResultList:
+        """Get the never connected PVs of the archiver.
 
         Returns:
-            InfoResultList: List of queued items.
+            InfoResultList: List of never connected items.
         """
         r = self._get("/getNeverConnectedPVs")
         return cast("InfoResultList", r.json())

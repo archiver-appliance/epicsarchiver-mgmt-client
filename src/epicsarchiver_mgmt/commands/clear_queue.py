@@ -60,7 +60,7 @@ def clear_queue(archiver_fqdn: str) -> None:
     # Validate input
 
     archiver = ArchiverMgmt(archiver_fqdn)
-    queue_info: InfoResultList = archiver.get_queue()
+    queue_info: InfoResultList = archiver.never_connected_pvs()
 
     if not queue_info:
         LOG.info("The queue is empty, nothing to clear.")
