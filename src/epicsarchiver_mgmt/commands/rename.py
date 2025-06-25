@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 LOG: logging.Logger = logging.getLogger(__name__)
 
 SIZE_KEY = "Estimated storage rate (MB/day)"
-SIZE_BAD_VAL = "Not enough info"
+NO_SIZE_VAL = "Not enough info"
 MAX_STORAGE_MB = 1000
 
 
@@ -143,22 +143,28 @@ class TooMuchStoredDataError(BaseMgmtError):
         self.storage = storage
 
 
-def validate_size(archiver: ArchiverMgmtInfo, old_pvs: list[str], max_storage: float = MAX_STORAGE_MB) -> None:
+def validate_size(archiver: ArchiverMgmtInfo, pvs: list[str], max_storage: float = MAX_STORAGE_MB) -> None:
     """Validate the old PVs are not too large.
 
     Args:
         archiver (ArchiverMgmt): The archiver.
-        old_pvs (list[str]): The PVs to check.
+        pvs (list[str]): The PVs to check.
         max_storage (float): The maximum storage allowed in MB per day.
 
     Raises:
         TooMuchStoredDataError: If the old and new PVs are the same.
     """
-    for old_pv in old_pvs:
-        pv_details = archiver.get_pv_details(old_pv)
+    for pv in pvs:
+        pv_details = archiver.get_pv_details(pv)
         for detail in pv_details:
-            if detail["name"] == SIZE_KEY and detail["value"] != SIZE_BAD_VAL and float(detail["value"]) > max_storage:
-                raise TooMuchStoredDataError(old_pv, float(detail["value"]))
+            if detail["name"] != SIZE_KEY:
+                continue
+            size_value = detail["value"]
+            if size_value == NO_SIZE_VAL:
+                continue
+            pv_storage = float(size_value)
+            if pv_storage > max_storage:
+                raise TooMuchStoredDataError(pv, pv_storage)
 
 
 def rename_and_append(
