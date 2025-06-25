@@ -34,9 +34,9 @@ class BasicCommand:
     expected_statuses: list[ArchivingStatus]
     expected_operation_results: list[str] | None = None
 
-    @staticmethod
     @abstractmethod
-    def command(
+    def __call__(
+        self,
         archiver: ArchiverMgmt,
         pv: str,
     ) -> OperationResult:
@@ -62,9 +62,6 @@ class BasicCommand:
         """Basic command to modify PVs in the archiver.
 
         Args:
-            command_name (str): The name of the command.
-            command (Callable): The command to execute.
-            expected_statuses (list[ArchivingStatus]): The expected statuses of the PVs.
             archiver_fqdn (str): The url of the archiver.
             pvs (list[str]): The PVs to change.
             skip_validation (bool): Whether to skip validation of the PVs status.
@@ -85,7 +82,7 @@ class BasicCommand:
         LOG.info("Using archiver %s", archiver.info)
 
         try:
-            command_results = [self.command(archiver, pv) for pv in pvs]
+            command_results = [self(archiver, pv) for pv in pvs]
         except HTTPError as e:
             LOG.error("Error %s PVs: %s", self.command_name, str(e))  # noqa: TRY400
             LOG.debug("Error %s PVs.", self.command_name, exc_info=True)
@@ -114,8 +111,8 @@ class PauseCommand(BasicCommand):
             ],
         )
 
-    @staticmethod
-    def command(
+    def __call__(
+        self,
         archiver: ArchiverMgmt,
         pv: str,
     ) -> OperationResult:
@@ -143,8 +140,8 @@ class ResumeCommand(BasicCommand):
             ],
         )
 
-    @staticmethod
-    def command(
+    def __call__(
+        self,
         archiver: ArchiverMgmt,
         pv: str,
     ) -> OperationResult:
@@ -172,8 +169,8 @@ class DeleteCommand(BasicCommand):
             ],
         )
 
-    @staticmethod
-    def command(
+    def __call__(
+        self,
         archiver: ArchiverMgmt,
         pv: str,
     ) -> OperationResult:
@@ -202,8 +199,8 @@ class AbortCommand(BasicCommand):
             expected_operation_results=["ok", "no"],
         )
 
-    @staticmethod
-    def command(
+    def __call__(
+        self,
         archiver: ArchiverMgmt,
         pv: str,
     ) -> OperationResult:
