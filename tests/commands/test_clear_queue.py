@@ -44,7 +44,7 @@ def test_clear_queue_pvs_aborted_successfully(caplog: pytest.LogCaptureFixture, 
     # So, only "PV1" should be aborted.
     expected_aborted_pvs = {"PV1"}
 
-    mock_archiver_mgmt.get_queue.return_value = queue_data
+    mock_archiver_mgmt.never_connected_pvs = queue_data
     mock_archiver_mgmt.get_pv_status.return_value = pv_status_data
 
     with (
@@ -57,7 +57,6 @@ def test_clear_queue_pvs_aborted_successfully(caplog: pytest.LogCaptureFixture, 
         clear_queue(archiver_fqdn)
 
         mock_mgmt_class.assert_called_once_with(archiver_fqdn)
-        mock_archiver_mgmt.get_queue.assert_called_once()
         # The list of PVs passed to get_pv_status depends on the order from the set comprehension
         # in clear_queue, so we check the content rather than exact string.
         call_args = mock_archiver_mgmt.get_pv_status.call_args[0][0].split(",")
@@ -85,7 +84,7 @@ def test_clear_queue_http_error_on_abort_command(
     pv_status_data = [{"pvName": "PV1", "status": ArchivingStatus.BeingArchived.value}]
     # PV1 is in queue and being archived, so AbortCommand will be called for it.
 
-    mock_archiver_mgmt.get_queue.return_value = queue_data
+    mock_archiver_mgmt.never_connected_pvs = queue_data
     mock_archiver_mgmt.get_pv_status.return_value = pv_status_data
 
     http_error_response = Response()

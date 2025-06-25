@@ -360,6 +360,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         r = self._get("/getPolicyList")
         return cast("dict[str, str]", r.json())
 
+    @property
     def never_connected_pvs(self) -> InfoResultList:
         """Get the never connected PVs of the archiver.
 
