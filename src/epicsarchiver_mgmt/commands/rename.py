@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
 import click
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus, InfoResultList
 from requests import HTTPError
 
 from epicsarchiver_mgmt.archiver.mgmt import (
@@ -39,11 +39,7 @@ def _pause_pvs(archivers: list[ArchiverMgmt], pvs: list[str]) -> None:
         # pause all the pvs
         pause_results = [(archivers[i % len(archivers)]).pause_pv(pv) for i, pv in enumerate(pvs)]
 
-        validate_operation_results(
-            pvs,
-            pause_results,
-            "paused",
-        )
+        validate_operation_results(pvs, pause_results, "paused")
 
     except HTTPError as e:
         LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
@@ -65,24 +61,30 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
     validate_not_same(renames)
+    old_pvs = [old_pv for old_pv, _new_pv in renames]
+    new_pvs = [new_pv for _old_pv, new_pv in renames]
+    old_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(old_pvs))
+    new_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(new_pvs))
     validate_pvs_status(
         archiver_info,
-        [old_pv for old_pv, _new_pv in renames],
+        old_pvs,
         [
             ArchivingStatus.BeingArchived,
             ArchivingStatus.Paused,
         ],
+        existing_status_infos=old_pv_statuses,
     )
     validate_pvs_status(
         archiver_info,
-        [new_pv for _old_pv, new_pv in renames],
+        new_pvs,
         [
             ArchivingStatus.NotBeingArchived,
         ],
+        existing_status_infos=new_pv_statuses,
     )
     validate_size(
         archiver_info,
-        [old_pv for old_pv, _new_pv in renames],
+        old_pvs,
     )
 
     # Action
@@ -98,7 +100,7 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
 
     click.confirm(CONFIRMATION_PROMPT, abort=True)
 
-    _pause_pvs(archivers, [old_pv for old_pv, _new_pv in renames])
+    _pause_pvs(archivers, [pv["pvName"] for pv in old_pv_statuses if pv["status"] == ArchivingStatus.BeingArchived])
 
     try:
         # rename all the pvs, this can take a long time so we do it in parallel
@@ -110,7 +112,7 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
 
     # Validate output
     validate_operation_results(
-        [new_pv for _old_pv, new_pv in renames],
+        new_pvs,
         rename_results,
         "renamed",
     )
@@ -187,30 +189,36 @@ def rename_and_append(
     """
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
+    old_pvs = [old_pv for old_pv, _new_pv in renames]
+    new_pvs = [new_pv for _old_pv, new_pv in renames]
+    old_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(old_pvs))
+    new_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(new_pvs))
     validate_not_same(renames)
     validate_pvs_status(
         archiver_info,
-        [old_pv for old_pv, _new_pv in renames],
+        old_pvs,
         [
             ArchivingStatus.BeingArchived,
             ArchivingStatus.Paused,
         ],
+        existing_status_infos=old_pv_statuses,
     )
     validate_pvs_status(
         archiver_info,
-        [new_pv for _old_pv, new_pv in renames],
+        new_pvs,
         [
             ArchivingStatus.BeingArchived,
             ArchivingStatus.Paused,
         ],
+        existing_status_infos=new_pv_statuses,
     )
     validate_size(
         archiver_info,
-        [old_pv for old_pv, _new_pv in renames],
+        old_pvs,
     )
     validate_size(
         archiver_info,
-        [new_pv for _old_pv, new_pv in renames],
+        new_pvs,
     )
 
     # Action
@@ -226,7 +234,14 @@ def rename_and_append(
 
     click.confirm(CONFIRMATION_PROMPT, abort=True)
 
-    _pause_pvs(archivers, [old_pv for old_pv, _new_pv in renames] + [new_pv for _old_pv, new_pv in renames])
+    to_pause_pvs = [pv["pvName"] for pv in old_pv_statuses if pv["status"] == ArchivingStatus.BeingArchived] + [
+        pv["pvName"] for pv in new_pv_statuses if pv["status"] == ArchivingStatus.BeingArchived
+    ]
+    if not to_pause_pvs:
+        LOG.info("No PVs to pause, skipping.")
+    else:
+        LOG.info("Pausing PVs %s", to_pause_pvs)
+        _pause_pvs(archivers, to_pause_pvs)
 
     try:
         # rename all the pvs, this can take a long time so we do it in parallel
@@ -238,7 +253,7 @@ def rename_and_append(
 
     # Validate output
     validate_operation_results(
-        [new_pv for _old_pv, new_pv in renames],
+        new_pvs,
         rename_results,
         "Renamed and Appended",
     )
