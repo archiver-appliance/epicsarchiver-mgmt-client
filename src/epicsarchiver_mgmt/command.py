@@ -251,14 +251,15 @@ def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     ctx.exit(0)
 
 
-def _parse_archive_requests(file: TextIO) -> list[ArchivePVRequest]:
+def _parse_archive_requests(file: TextIO, appliance: str | None) -> list[ArchivePVRequest]:
     requests = double_column_csv(file)
-    return [ArchivePVRequest(pv, policy=policy) for pv, policy in requests]
+    return [ArchivePVRequest(pv, policy=policy, appliance=appliance) for pv, policy in requests]
 
 
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
 @click.option("--dry-run", "-d", is_flag=True, help="Do a dry run.", default=False)
+@click.option("--appliance", "-ap", type=str, help="Appliance to archive to.", default=None)
 @click.argument(
     "file",
     type=click.File(),
@@ -266,7 +267,7 @@ def _parse_archive_requests(file: TextIO) -> list[ArchivePVRequest]:
     default=sys.stdin,
 )
 @click.pass_context
-def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOWrapper) -> None:  # noqa: FBT001
+def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, appliance: str | None, file: TextIOWrapper) -> None:  # noqa: FBT001
     """Archive PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to archive. The csv file should have the following format:
@@ -288,7 +289,11 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, file: TextIOW
 
     """
     # Read input
-    pv_requests = _parse_archive_requests(file)
+    try:
+        pv_requests = _parse_archive_requests(file, appliance)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
     if not pv_requests:
         msg = "No PVs found in the input file. Please provide a valid CSV file with PVs to archive."
         raise click.BadParameter(
