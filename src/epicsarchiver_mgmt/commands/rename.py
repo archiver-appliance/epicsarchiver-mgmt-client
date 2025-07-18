@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import datetime
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
 import click
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus, InfoResultList
+from epicsarchiver.retrieval.archiver_retrieval.archiver_retrieval import ArchiverRetrieval
 from requests import HTTPError
 
 from epicsarchiver_mgmt.archiver.mgmt import (
@@ -171,6 +173,54 @@ def validate_size(archiver: ArchiverMgmtInfo, pvs: list[str], max_storage: float
                 raise TooMuchStoredDataError(pv, pv_storage)
 
 
+class DataIsTheSameError(BaseMgmtError):
+    """Exception for when the old and new PVs data is the same."""
+
+    def __init__(self, old_pv: str, new_pv: str) -> None:
+        """Error for when the old and new PVs data is the same.
+
+        Args:
+            old_pv (str): The old PV.
+            new_pv (str): The new PV.
+        """
+        super().__init__(f"Data for {old_pv} and {new_pv} is the same.")
+        self.old_pv = old_pv
+        self.new_pv = new_pv
+
+
+def validate_data(archiver: ArchiverMgmtInfo, renames: Sequence[tuple[str, str]]) -> None:
+    """Validate the old and new PVs data is not the same.
+
+    Args:
+        archiver (ArchiverMgmt): The archiver.
+        renames (Sequence[tuple[str, str]]): The PVs to check.
+
+    Raises:
+        DataIsTheSameError: If the old and new PVs data is the same.
+    """
+    arch_ret = ArchiverRetrieval(archiver.hostname)
+    now = datetime.datetime.now(tz=datetime.UTC)
+    for old_pv, new_pv in renames:
+        old_data = arch_ret.get_events(
+            old_pv,
+            start=datetime.datetime(now.year, 1, 1, tzinfo=datetime.UTC),
+            end=now,
+        )
+        if not old_data:
+            LOG.warning("No data found for PV %s", old_pv)
+            continue
+        new_data = arch_ret.get_events(
+            new_pv,
+            start=datetime.datetime(now.year, 1, 1, tzinfo=datetime.UTC),
+            end=now,
+        )
+        if not new_data:
+            LOG.warning("No data found for PV %s", new_pv)
+            continue
+        if [(e.val, e.pd_timestamp) for e in old_data] == [(e.val, e.pd_timestamp) for e in new_data]:
+            raise DataIsTheSameError(old_pv, new_pv)
+
+
 def rename_and_append(
     archiver_fqdns: list[str],
     renames: Sequence[tuple[str, str]],
@@ -222,6 +272,7 @@ def rename_and_append(
         archiver_info,
         new_pvs,
     )
+    validate_data(archiver_info, renames)
 
     # Action
     LOG.info("Renaming and Appending PVs %s", renames)
