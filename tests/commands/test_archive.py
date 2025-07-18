@@ -10,6 +10,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
 from epicsarchiver_mgmt.commands.archive import (
+    ARCHIVE_OPERATION_EXPECTED_STATUS,
     ARCHIVE_OPERATION_RESULT_STATUS_OK,
     ArchivePolicyNotFoundError,
     archive,
@@ -46,7 +47,7 @@ def test_archive_success(caplog: pytest.LogCaptureFixture) -> None:
             ["PV1"],
             {"PV1": ARCHIVE_OPERATION_RESULT_STATUS_OK},
             "archived",
-            expected_operation_results=[ARCHIVE_OPERATION_RESULT_STATUS_OK],
+            expected_operation_results=ARCHIVE_OPERATION_EXPECTED_STATUS,
         )
         assert "Archiving PVs" in caplog.text
         assert "Using archiver" in caplog.text

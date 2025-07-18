@@ -15,6 +15,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     OperationResult,
 )
 from epicsarchiver_mgmt.commands.validation import (
+    OPERATION_RESULT_STATUS,
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
@@ -25,6 +26,8 @@ if TYPE_CHECKING:
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
+PAUSE_EXPECTED_STATUS = {OPERATION_RESULT_STATUS: ["ok", "no"]}
+
 
 @dataclass
 class BasicCommand:
@@ -32,7 +35,7 @@ class BasicCommand:
 
     command_name: str
     expected_statuses: list[ArchivingStatus]
-    expected_operation_results: list[str] | None = None
+    expected_operation_results: dict[str, list[str]] | None = None
 
     @abstractmethod
     def __call__(
@@ -196,7 +199,7 @@ class AbortCommand(BasicCommand):
             expected_statuses=[
                 ArchivingStatus.BeingArchived,
             ],
-            expected_operation_results=["ok", "no"],
+            expected_operation_results=PAUSE_EXPECTED_STATUS,
         )
 
     def __call__(

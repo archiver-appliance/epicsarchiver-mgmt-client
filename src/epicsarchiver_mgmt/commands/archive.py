@@ -12,6 +12,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
 from epicsarchiver_mgmt.commands.validation import (
+    OPERATION_RESULT_STATUS,
     RequestHTTPError,
     validate_operation_results,
     validate_pvs_status,
@@ -53,6 +54,7 @@ def validate_policy_names(archiver: ArchiverMgmt, pv_requests: list[ArchivePVReq
 
 
 ARCHIVE_OPERATION_RESULT_STATUS_OK = "Archive request submitted"
+ARCHIVE_OPERATION_EXPECTED_STATUS = {OPERATION_RESULT_STATUS: [ARCHIVE_OPERATION_RESULT_STATUS_OK]}
 
 
 def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run: bool = False) -> None:
@@ -96,5 +98,8 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run:
 
     # Validate output
     validate_operation_results(
-        pvs, archive_results, "archived", expected_operation_results=[ARCHIVE_OPERATION_RESULT_STATUS_OK]
+        pvs,
+        archive_results,
+        "archived",
+        expected_operation_results=ARCHIVE_OPERATION_EXPECTED_STATUS,
     )

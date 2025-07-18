@@ -10,6 +10,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     OperationResult,
 )
 from epicsarchiver_mgmt.commands.basic_commands import (
+    PAUSE_EXPECTED_STATUS,
     AbortCommand,
     BasicCommand,
     DeleteCommand,
@@ -58,7 +59,7 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
             [
                 ArchivingStatus.BeingArchived,
             ],
-            ["ok", "no"],
+            PAUSE_EXPECTED_STATUS,
         ),
     ],
 )

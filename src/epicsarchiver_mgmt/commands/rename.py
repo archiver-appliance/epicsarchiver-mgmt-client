@@ -17,6 +17,8 @@ from epicsarchiver_mgmt.archiver.mgmt import (
 )
 from epicsarchiver_mgmt.commands.validation import (
     CONFIRMATION_PROMPT,
+    OPERATION_RESULT_OK,
+    OPERATION_RESULT_STATUS,
     RequestHTTPError,
     validate_not_same,
     validate_operation_results,
@@ -256,6 +258,7 @@ def rename_and_append(
         new_pvs,
         rename_results,
         "Renamed and Appended",
+        expected_operation_results={OPERATION_RESULT_STATUS: [OPERATION_RESULT_OK], "addAlias": [OPERATION_RESULT_OK]},
     )
 
 
