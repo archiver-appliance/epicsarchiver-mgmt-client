@@ -1,5 +1,6 @@
 """Command line tool for doing mgmt operations with the archiver."""
 
+import csv
 import logging
 import sys
 from io import TextIOWrapper
@@ -7,6 +8,7 @@ from typing import TextIO
 
 import click
 from epicsarchiver.common import ArchDbrType
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
 from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest, EpicsProto, SamplingMethod
 from epicsarchiver_mgmt.commands import alias as cmd_alias
@@ -18,6 +20,7 @@ from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import clear_queue as cmd_clear_queue
 from epicsarchiver_mgmt.commands import rename as cmd_rename
 from epicsarchiver_mgmt.commands import repolicy as repol
+from epicsarchiver_mgmt.commands import statuses as gs
 from epicsarchiver_mgmt.input_parsing import ParseCSVRowError, double_column_csv, single_column_csv
 from epicsarchiver_mgmt.logging import setup_file_handler
 
@@ -141,6 +144,66 @@ def delete(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     except Exception as e:
         LOG.error("Error deleting PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error deleting PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
+@click.argument(
+    "file",
+    type=click.File(),
+    callback=validate_file_input,
+    default=sys.stdin,
+)
+@click.option(
+    "--filter-statuses",
+    "-fs",
+    type=click.Choice(ArchivingStatus, case_sensitive=False),
+    multiple=True,
+    help="Filter PVs by status.",
+    default=[],
+)
+@click.option(
+    "--output-file",
+    "-o",
+    type=click.File(mode="w"),
+    help="Output file.",
+)
+@click.pass_context
+def statuses(
+    ctx: click.Context,
+    archiver_fqdn: str,
+    file: TextIOWrapper,
+    filter_statuses: list[ArchivingStatus],
+    output_file: TextIOWrapper | None = None,
+) -> None:
+    """Get the status of PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to get status.
+
+    Example usage:
+
+    .. code-block:: console
+
+        arch-mgmt statuses -a archiver.example.com pvs.csv
+
+    """
+    # Read input
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        filtered_pvs = gs.get_statuses(archiver_fqdn, pvs, filter_statuses=filter_statuses)
+        if output_file:
+            csv.writer(output_file).writerows([[pv] for pv in filtered_pvs])
+    except Exception as e:
+        LOG.error("Error getting status of PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error getting status of PVs.", exc_info=True)
         ctx.exit(1)
 
     ctx.exit(0)
@@ -648,3 +711,4 @@ cli.add_command(rename)
 cli.add_command(alias)
 cli.add_command(repolicy)
 cli.add_command(clear_queue)
+cli.add_command(statuses)
