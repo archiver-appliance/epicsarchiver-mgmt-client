@@ -1,6 +1,5 @@
 """Command line tool for doing mgmt operations with the archiver."""
 
-import csv
 import logging
 import sys
 from io import TextIOWrapper
@@ -8,7 +7,6 @@ from typing import TextIO
 
 import click
 from epicsarchiver.common import ArchDbrType
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
 from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest, EpicsProto, SamplingMethod
 from epicsarchiver_mgmt.commands import alias as cmd_alias
@@ -155,26 +153,18 @@ def delete(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 @archiver_fqdn_option
 @file_argument
 @click.option(
-    "--filter-statuses",
-    "-fs",
-    type=click.Choice(ArchivingStatus, case_sensitive=False),
-    multiple=True,
-    help="Filter PVs by status.",
-    default=[],
-)
-@click.option(
     "--output-file",
     "-o",
     type=click.File(mode="w"),
     help="Output file.",
+    default=sys.stdout,
 )
 @click.pass_context
 def statuses(
     ctx: click.Context,
     archiver_fqdn: str,
     file: TextIOWrapper,
-    filter_statuses: list[ArchivingStatus],
-    output_file: TextIOWrapper | None = None,
+    output_file: TextIOWrapper,
 ) -> None:
     """Get the status of PVs in the archiver.
 
@@ -195,9 +185,11 @@ def statuses(
 
     setup_file_handler(ctx.command_path)
     try:
-        filtered_pvs = gs.get_statuses(archiver_fqdn, pvs, filter_statuses=filter_statuses)
-        if output_file:
-            csv.writer(output_file).writerows([[pv] for pv in filtered_pvs])
+        status_pvs = gs.get_statuses(archiver_fqdn, pvs)
+        output_file.write("PV Statuses:\n")
+        for status, pv_list in status_pvs.items():
+            output_file.write(f"{status}:\n")
+            output_file.writelines(f"{pv}\n" for pv in pv_list)
     except Exception as e:
         LOG.error("Error getting status of PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error getting status of PVs.", exc_info=True)

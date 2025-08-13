@@ -2,7 +2,7 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 
 from epicsarchiver_mgmt.commands.statuses import get_statuses
 
@@ -22,4 +22,7 @@ def test_statuses_success(caplog: pytest.LogCaptureFixture) -> None:
     with (
         patch("epicsarchiver_mgmt.commands.statuses.ArchiverMgmtInfo", return_value=mock_archiver_info),
     ):
-        get_statuses(archiver_fqdn, pvs, filter_statuses=[ArchivingStatus.Paused])
+        res = get_statuses(archiver_fqdn, pvs)
+        assert res == {
+            "Paused": ["PV1", "PV2"],
+        }
