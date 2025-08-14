@@ -18,6 +18,7 @@ from epicsarchiver_mgmt.commands import change_type as ct
 from epicsarchiver_mgmt.commands import clear_queue as cmd_clear_queue
 from epicsarchiver_mgmt.commands import rename as cmd_rename
 from epicsarchiver_mgmt.commands import repolicy as repol
+from epicsarchiver_mgmt.commands import statuses as gs
 from epicsarchiver_mgmt.input_parsing import ParseCSVRowError, double_column_csv, single_column_csv
 from epicsarchiver_mgmt.logging import setup_file_handler
 
@@ -70,14 +71,21 @@ def cli() -> None:
     """Command line tool for doing mgmt operations with the archiver."""
 
 
-@click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
-@click.argument(
+archiver_fqdn_option = click.option(
+    "--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside."
+)
+
+file_argument = click.argument(
     "file",
     type=click.File(),
     callback=validate_file_input,
     default=sys.stdin,
 )
+
+
+@click.command(context_settings={"show_default": True})
+@archiver_fqdn_option
+@file_argument
 @click.pass_context
 def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """Pause PVs in the archiver.
@@ -109,13 +117,8 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@archiver_fqdn_option
+@file_argument
 @click.pass_context
 def delete(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """Delete PVs in the archiver.
@@ -147,13 +150,57 @@ def delete(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.", multiple=True)
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
+@archiver_fqdn_option
+@file_argument
+@click.option(
+    "--output-file",
+    "-o",
+    type=click.File(mode="w"),
+    help="Output file.",
+    default=sys.stdout,
 )
+@click.pass_context
+def statuses(
+    ctx: click.Context,
+    archiver_fqdn: str,
+    file: TextIOWrapper,
+    output_file: TextIOWrapper,
+) -> None:
+    """Get the status of PVs in the archiver.
+
+    ARGUMENT file csv file of what pvs to get status.
+
+    Example usage:
+
+    .. code-block:: console
+
+        arch-mgmt statuses -a archiver.example.com pvs.csv
+
+    """
+    # Read input
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        status_pvs = gs.get_statuses(archiver_fqdn, pvs)
+        output_file.write("PV Statuses:\n")
+        for status, pv_list in status_pvs.items():
+            output_file.write(f"{status}:\n")
+            output_file.writelines(f"{pv}\n" for pv in pv_list)
+    except Exception as e:
+        LOG.error("Error getting status of PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error getting status of PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+@click.command(context_settings={"show_default": True})
+@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.", multiple=True)
+@file_argument
 @click.option(
     "--and-append",
     "-aa",
@@ -214,13 +261,8 @@ def rename(
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@archiver_fqdn_option
+@file_argument
 @click.pass_context
 def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """Resume Archiving PVs in the archiver.
@@ -257,15 +299,10 @@ def _parse_archive_requests(file: TextIO, appliance: str | None) -> list[Archive
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
+@archiver_fqdn_option
 @click.option("--dry-run", "-d", is_flag=True, help="Do a dry run.", default=False)
 @click.option("--appliance", "-ap", type=str, help="Appliance to archive to.", default=None)
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@file_argument
 @click.pass_context
 def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, appliance: str | None, file: TextIOWrapper) -> None:  # noqa: FBT001
     """Archive PVs in the archiver.
@@ -314,7 +351,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, appliance: st
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
+@archiver_fqdn_option
 @click.option(
     "--new-type",
     "-t",
@@ -322,12 +359,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, appliance: st
     help="Type to change PVs to.",
     required=True,
 )
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@file_argument
 @click.pass_context
 def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new_type: ArchDbrType | None) -> None:
     """Change the type of PVs in the archiver.
@@ -359,7 +391,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
+@archiver_fqdn_option
 @click.option(
     "--protocol",
     "-p",
@@ -367,12 +399,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     help="Protocol to change PVs to.",
     required=True,
 )
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@file_argument
 @click.pass_context
 def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, protocol: EpicsProto | None) -> None:
     """Change the protocol of PVs in the archiver.
@@ -404,13 +431,8 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside.")
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@archiver_fqdn_option
+@file_argument
 @click.pass_context
 def repolicy(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """Re choose the policy of PVs in the archiver.
@@ -455,12 +477,7 @@ def repolicy(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> Non
     type=float,
     help="Sampling period swap to.",
 )
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@file_argument
 @click.pass_context
 def change_parameter(
     ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, method: SamplingMethod | None, period: float | None
@@ -527,12 +544,7 @@ def alias() -> None:
 
 @click.command("add", context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@file_argument
 @click.pass_context
 def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """Add alias to PVs in the archiver.
@@ -573,12 +585,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
 
 @click.command("remove", context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
-@click.argument(
-    "file",
-    type=click.File(),
-    callback=validate_file_input,
-    default=sys.stdin,
-)
+@file_argument
 @click.pass_context
 def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
     """Remove aliases to PVs in the archiver.
@@ -648,3 +655,4 @@ cli.add_command(rename)
 cli.add_command(alias)
 cli.add_command(repolicy)
 cli.add_command(clear_queue)
+cli.add_command(statuses)
