@@ -17,6 +17,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     OperationResult,
     Storage,
 )
+from epicsarchiver_mgmt.commands.basic_commands import PauseCommand, ResumeCommand
 from epicsarchiver_mgmt.commands.validation import (
     CONFIRMATION_PROMPT,
     OPERATION_RESULT_OK,
@@ -36,19 +37,6 @@ LOG: logging.Logger = logging.getLogger(__name__)
 SIZE_KEY = "Estimated storage rate (MB/day)"
 NO_SIZE_VAL = "Not enough info"
 MAX_STORAGE_MB = 1000
-
-
-def _pause_pvs(archivers: list[ArchiverMgmt], pvs: list[str]) -> None:
-    try:
-        # pause all the pvs
-        pause_results = [(archivers[i % len(archivers)]).pause_pv(pv) for i, pv in enumerate(pvs)]
-
-        validate_operation_results(pvs, pause_results, "paused")
-
-    except HTTPError as e:
-        LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
-        LOG.debug("Error pausing PVs.", exc_info=True)
-        raise RequestHTTPError(e) from e
 
 
 def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry_run: bool = False) -> None:
@@ -104,7 +92,11 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
 
     click.confirm(CONFIRMATION_PROMPT, abort=True)
 
-    _pause_pvs(archivers, [pv["pvName"] for pv in old_pv_statuses if pv["status"] == ArchivingStatus.BeingArchived])
+    PauseCommand().run_command(
+        archiver_fqdns,
+        [pv["pvName"] for pv in old_pv_statuses if pv["status"] == ArchivingStatus.BeingArchived],
+        skip_validation=True,
+    )
 
     try:
         # rename all the pvs, this can take a long time so we do it in parallel
@@ -120,6 +112,8 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
         rename_results,
         "renamed",
     )
+
+    ResumeCommand().run_command(archiver_fqdns, new_pvs)
 
 
 def _parallel_execute_rename(
@@ -294,7 +288,7 @@ def rename_and_append(
         LOG.info("No PVs to pause, skipping.")
     else:
         LOG.info("Pausing PVs %s", to_pause_pvs)
-        _pause_pvs(archivers, to_pause_pvs)
+        PauseCommand().run_command(archiver_fqdns, to_pause_pvs, skip_validation=True)
 
     try:
         # rename all the pvs, this can take a long time so we do it in parallel
@@ -311,6 +305,8 @@ def rename_and_append(
         "Renamed and Appended",
         expected_operation_results={OPERATION_RESULT_STATUS: [OPERATION_RESULT_OK], "addAlias": [OPERATION_RESULT_OK]},
     )
+
+    ResumeCommand().run_command(archiver_fqdns, new_pvs)
 
 
 def _parallel_execute_rename_and_append(

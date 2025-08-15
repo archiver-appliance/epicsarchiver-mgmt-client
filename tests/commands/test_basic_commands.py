@@ -94,7 +94,7 @@ def test_basic_command_success(
             "epicsarchiver_mgmt.commands.basic_commands.validate_operation_results"
         ) as mock_validate_operation_results,
     ):
-        basic_command.run_command(archiver_fqdn, pvs)
+        basic_command.run_command([archiver_fqdn], pvs)
         mock_validate_pvs_status.assert_called_once_with(
             mock_archiver_info,
             pvs,
@@ -107,7 +107,6 @@ def test_basic_command_success(
             pvs, mock_command_results, f"{command_name} done", expected_operation_results=expected_operation_results
         )
         assert f"{command_name} PVs {pvs}" in caplog.text
-        assert f"Using archiver {mock_archiver.info}" in caplog.text
 
 
 @pytest.mark.parametrize(
@@ -179,7 +178,7 @@ def test_raise_http_error(
         ) as mock_validate_operation_results,
     ):
         with pytest.raises(RequestHTTPError) as exc_info:
-            basic_command.run_command(archiver_fqdn, pvs)
+            basic_command.run_command([archiver_fqdn], pvs)
 
         mock_validate_pvs_status.assert_called_once_with(
             mock_archiver_info,

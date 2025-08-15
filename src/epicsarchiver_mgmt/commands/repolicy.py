@@ -66,6 +66,6 @@ def repolicy(archiver_fqdn: str, pvs: Sequence[str]) -> None:
     # Action
     LOG.info("Using archiver %s", archiver.info)
     LOG.info("Update the policy of the PVs %s", pvs)
-    basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
-    basic_commands.DeleteCommand().run_command(archiver_fqdn, pvs)
+    basic_commands.PauseCommand().run_command([archiver_fqdn], pvs)
+    basic_commands.DeleteCommand().run_command([archiver_fqdn], pvs)
     archive.archive(archiver_fqdn, pv_requests, dry_run=False)
