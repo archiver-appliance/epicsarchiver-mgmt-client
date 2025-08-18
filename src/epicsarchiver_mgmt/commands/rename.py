@@ -53,8 +53,8 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
     validate_not_same(renames)
-    old_pvs = [old_pv for old_pv, _new_pv in renames]
-    new_pvs = [new_pv for _old_pv, new_pv in renames]
+    # unpack list of pairs into two new lists
+    old_pvs, new_pvs = zip(*renames, strict=False)
     old_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(old_pvs))
     new_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(new_pvs))
     validate_pvs_status(
@@ -143,12 +143,12 @@ class TooMuchStoredDataError(BaseMgmtError):
         self.storage = storage
 
 
-def validate_size(archiver: ArchiverMgmtInfo, pvs: list[str], max_storage: float = MAX_STORAGE_MB) -> None:
+def validate_size(archiver: ArchiverMgmtInfo, pvs: Sequence[str], max_storage: float = MAX_STORAGE_MB) -> None:
     """Validate the old PVs are not too large.
 
     Args:
         archiver (ArchiverMgmt): The archiver.
-        pvs (list[str]): The PVs to check.
+        pvs (Sequence[str]): The PVs to check.
         max_storage (float): The maximum storage allowed in MB per day.
 
     Raises:
@@ -235,8 +235,8 @@ def rename_and_append(
     """
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
-    old_pvs = [old_pv for old_pv, _new_pv in renames]
-    new_pvs = [new_pv for _old_pv, new_pv in renames]
+    # unpack list of pairs into two new lists
+    old_pvs, new_pvs = zip(*renames, strict=False)
     old_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(old_pvs))
     new_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(new_pvs))
     validate_not_same(renames)

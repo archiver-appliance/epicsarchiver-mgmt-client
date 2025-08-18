@@ -61,7 +61,7 @@ def test_rename_success(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.Mo
         assert mock_validate_pvs_status.call_count == 2
         mock_validate_size.assert_called()
         mock_pause_command.assert_called_once()
-        mock_resume_command.assert_called_once_with(archiver_fqdns, ["new_pv1", "new_pv2"])
+        mock_resume_command.assert_called_once_with(archiver_fqdns, ("new_pv1", "new_pv2"))
         mock_validate_operation_results.assert_called_once()
         mock_parallel_execute_rename.assert_called_once()
         assert "Renaming PVs" in caplog.text
@@ -148,7 +148,7 @@ def test_append_rename_success(caplog: pytest.LogCaptureFixture, monkeypatch: py
         mock_validate_pvs_status.assert_called()
         mock_validate_size.assert_called()
         mock_validate_data.assert_called_once()
-        mock_resume_command.assert_called_once_with(archiver_fqdns, ["new_pv1", "new_pv2"])
+        mock_resume_command.assert_called_once_with(archiver_fqdns, ("new_pv1", "new_pv2"))
         assert mock_validate_pvs_status.call_count == 2
         mock_validate_operation_results.assert_called_once()
         mock_parallel_execute_rename_and_append.assert_called_once()
