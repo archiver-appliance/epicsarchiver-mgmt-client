@@ -75,7 +75,7 @@ archiver_fqdn_option = click.option(
     "--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside."
 )
 archiver_fqdns_option = click.option(
-    "--archiver-fqdns", "-a", type=str, multiple=True, callback=validate_str_input, help="Archiver where PVs reside."
+    "--archiver-fqdn", "-a", type=str, multiple=True, callback=validate_str_input, help="Archiver where PVs reside."
 )
 
 file_argument = click.argument(
@@ -90,7 +90,7 @@ file_argument = click.argument(
 @archiver_fqdns_option
 @file_argument
 @click.pass_context
-def pause(ctx: click.Context, archiver_fqdns: list[str], file: TextIOWrapper) -> None:
+def pause(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
     """Pause PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to pause.
@@ -110,7 +110,7 @@ def pause(ctx: click.Context, archiver_fqdns: list[str], file: TextIOWrapper) ->
 
     setup_file_handler(ctx.command_path)
     try:
-        basic_commands.PauseCommand().run_command(archiver_fqdns, pvs)
+        basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
     except Exception as e:
         LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error pausing PVs.", exc_info=True)
@@ -123,7 +123,7 @@ def pause(ctx: click.Context, archiver_fqdns: list[str], file: TextIOWrapper) ->
 @archiver_fqdns_option
 @file_argument
 @click.pass_context
-def delete(ctx: click.Context, archiver_fqdns: list[str], file: TextIOWrapper) -> None:
+def delete(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
     """Delete PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to delete.
@@ -143,7 +143,7 @@ def delete(ctx: click.Context, archiver_fqdns: list[str], file: TextIOWrapper) -
 
     setup_file_handler(ctx.command_path)
     try:
-        basic_commands.DeleteCommand().run_command(archiver_fqdns, pvs)
+        basic_commands.DeleteCommand().run_command(archiver_fqdn, pvs)
     except Exception as e:
         LOG.error("Error deleting PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error deleting PVs.", exc_info=True)
@@ -217,7 +217,7 @@ def statuses(
 @click.pass_context
 def rename(
     ctx: click.Context,
-    archiver_fqdns: list[str],
+    archiver_fqdn: list[str],
     file: TextIOWrapper,
     and_append: bool = False,  # noqa: FBT001, FBT002
     dry_run: bool = False,  # noqa: FBT001, FBT002
@@ -252,9 +252,9 @@ def rename(
     setup_file_handler(ctx.command_path)
     try:
         if and_append:
-            cmd_rename.rename_and_append(archiver_fqdns, pv_pairs, dry_run=dry_run)
+            cmd_rename.rename_and_append(archiver_fqdn, pv_pairs, dry_run=dry_run)
         else:
-            cmd_rename.rename(archiver_fqdns, pv_pairs, dry_run=dry_run)
+            cmd_rename.rename(archiver_fqdn, pv_pairs, dry_run=dry_run)
     except Exception as e:
         LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error renaming PVs.", exc_info=True)
@@ -267,7 +267,7 @@ def rename(
 @archiver_fqdns_option
 @file_argument
 @click.pass_context
-def resume(ctx: click.Context, archiver_fqdns: list[str], file: TextIOWrapper) -> None:
+def resume(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
     """Resume Archiving PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to resume.
@@ -287,7 +287,7 @@ def resume(ctx: click.Context, archiver_fqdns: list[str], file: TextIOWrapper) -
 
     setup_file_handler(ctx.command_path)
     try:
-        basic_commands.ResumeCommand().run_command(archiver_fqdns, pvs)
+        basic_commands.ResumeCommand().run_command(archiver_fqdn, pvs)
     except Exception as e:
         LOG.error("Error resuming PVs: %s", str(e))  # noqa: TRY400
         LOG.debug("Error resuming PVs.", exc_info=True)
