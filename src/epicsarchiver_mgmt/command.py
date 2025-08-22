@@ -72,10 +72,16 @@ def cli() -> None:
 
 
 archiver_fqdn_option = click.option(
-    "--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside."
+    "--archiver-fqdn", "-a", type=str, required=True, callback=validate_str_input, help="Archiver where PVs reside."
 )
 archiver_fqdns_option = click.option(
-    "--archiver-fqdn", "-a", type=str, multiple=True, callback=validate_str_input, help="Archiver where PVs reside."
+    "--archiver-fqdn",
+    "-a",
+    type=str,
+    required=True,
+    multiple=True,
+    callback=validate_str_input,
+    help="Archiver where PVs reside.",
 )
 
 file_argument = click.argument(
