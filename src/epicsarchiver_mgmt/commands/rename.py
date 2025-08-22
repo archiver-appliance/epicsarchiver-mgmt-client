@@ -23,6 +23,7 @@ from epicsarchiver_mgmt.commands.validation import (
     OPERATION_RESULT_OK,
     OPERATION_RESULT_STATUS,
     RequestHTTPError,
+    validate_archiver_fqdns,
     validate_not_same,
     validate_operation_results,
     validate_pvs_status,
@@ -51,6 +52,7 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
         RequestHTTPError: If there is an error renaming the PVs.
     """
     # Validate input
+    validate_archiver_fqdns(archiver_fqdns)
     archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
     validate_not_same(renames)
     # unpack list of pairs into two new lists
@@ -234,6 +236,7 @@ def rename_and_append(
         RequestHTTPError: If there is an error renaming the PVs.
     """
     # Validate input
+    validate_archiver_fqdns(archiver_fqdns)
     archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
     # unpack list of pairs into two new lists
     old_pvs, new_pvs = zip(*renames, strict=False)

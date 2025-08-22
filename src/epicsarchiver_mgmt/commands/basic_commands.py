@@ -18,6 +18,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
 from epicsarchiver_mgmt.commands.validation import (
     OPERATION_RESULT_STATUS,
     RequestHTTPError,
+    validate_archiver_fqdns,
     validate_operation_results,
     validate_pvs_status,
 )
@@ -74,6 +75,7 @@ class BasicCommand:
             RequestHTTPError: If there is an error changing the PVs.
         """
         # Validate input
+        validate_archiver_fqdns(archiver_fqdns)
         archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
         if not skip_validation:
             validate_pvs_status(archiver_info, pvs, self.expected_statuses)

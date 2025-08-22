@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
-from epicsarchiver_mgmt.archiver.mgmt import EpicsProto
+from epicsarchiver_mgmt.archiver.mgmt import ArchiverMgmt, EpicsProto
 from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
@@ -239,3 +239,36 @@ def validate_current_protocol(
         LOG.debug("PV %s has proto %s", pv, archiving_protocol)
         if archiving_protocol == protocol:
             raise ValidPVProtocolError(pv, archiving_protocol, protocol)
+
+
+class DifferentArchiverClusterError(BaseMgmtError):
+    """Exception for when the archiver FQDNs are not part of the same cluster."""
+
+    def __init__(self, archiver_fqdn: str) -> None:
+        """Initialize the exception.
+
+        Args:
+            archiver_fqdn (str): The archiver FQDN that is not part of the cluster.
+        """
+        super().__init__(f"Archiver {archiver_fqdn} is not part of the cluster.")
+        self.archiver_fqdn = archiver_fqdn
+
+
+def validate_archiver_fqdns(archiver_fqdns: Sequence[str]) -> None:
+    """Validate the archiver FQDNs.
+
+    Args:
+        archiver_fqdns (Sequence[str]): The archiver FQDNs to validate.
+
+    Raises:
+        DifferentArchiverClusterError: If the archiver FQDNs are not part of the same cluster.
+    """
+    if len(archiver_fqdns) == 1:
+        return
+    identities_in_cluster: list[str] = []
+    for archiver_fqdn in archiver_fqdns:
+        archiver = ArchiverMgmt(archiver_fqdn)
+        if not identities_in_cluster:
+            identities_in_cluster = [appliance["identity"] for appliance in archiver.appliances_in_cluster]
+        if archiver.info["identity"] not in identities_in_cluster:
+            raise DifferentArchiverClusterError(archiver_fqdn)
