@@ -55,8 +55,8 @@ def test_change_protocol_success(caplog: pytest.LogCaptureFixture) -> None:
             ],
             existing_status_infos=existing_status,
         )
-        mock_pause.assert_called_once_with(archiver_fqdn, pvs)
-        mock_delete.assert_called_once_with(archiver_fqdn, pvs)
+        mock_pause.assert_called_once_with([archiver_fqdn], pvs)
+        mock_delete.assert_called_once_with([archiver_fqdn], pvs)
         mock_archive.assert_called_once_with(archiver_fqdn, pv_requests, dry_run=False)
         assert f"Changing protocol of the PVs {pvs} to {protocol}" in caplog.text
         assert f"Using archiver {mock_archiver.info}" in caplog.text
@@ -104,8 +104,8 @@ def test_change_protocol_http_error_on_archive(caplog: pytest.LogCaptureFixture)
             ],
             existing_status_infos=existing_status,
         )
-        mock_pause.assert_called_once_with(archiver_fqdn, pvs)
-        mock_delete.assert_called_once_with(archiver_fqdn, pvs)
+        mock_pause.assert_called_once_with([archiver_fqdn], pvs)
+        mock_delete.assert_called_once_with([archiver_fqdn], pvs)
         mock_archive.assert_called_once_with(archiver_fqdn, pv_requests, dry_run=False)
         assert exc_info.value is archive_error  # Check it's the exact exception from archive
 
@@ -144,7 +144,7 @@ def test_change_protocol_error_on_pause(caplog: pytest.LogCaptureFixture) -> Non
             change_protocol(archiver_fqdn, pvs, protocol)
 
         mock_validate_pvs_status.assert_called_once()
-        mock_pause.assert_called_once_with(archiver_fqdn, pvs)
+        mock_pause.assert_called_once_with([archiver_fqdn], pvs)
         mock_delete.assert_not_called()
         mock_archive.assert_not_called()
         assert exc_info.value is pause_error  # Check it's the exact exception from pause
@@ -185,7 +185,7 @@ def test_change_protocol_error_on_delete(caplog: pytest.LogCaptureFixture) -> No
             change_protocol(archiver_fqdn, pvs, protocol)
 
         mock_validate_pvs_status.assert_called_once()
-        mock_pause.assert_called_once_with(archiver_fqdn, pvs)
-        mock_delete.assert_called_once_with(archiver_fqdn, pvs)
+        mock_pause.assert_called_once_with([archiver_fqdn], pvs)
+        mock_delete.assert_called_once_with([archiver_fqdn], pvs)
         mock_archive.assert_not_called()
         assert exc_info.value is delete_error  # Check it's the exact exception from delete

@@ -5,9 +5,11 @@ import pytest
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
 from epicsarchiver_mgmt.commands.validation import (
+    DifferentArchiverClusterError,
     NotSamePVError,
     ValidOperationResultsError,
     ValidPVStatusError,
+    validate_archiver_fqdns,
     validate_not_same,
     validate_operation_results,
     validate_pvs_status,
@@ -68,3 +70,31 @@ def test_validate_not_same_failure() -> None:
     with pytest.raises(NotSamePVError) as exc_info:
         validate_not_same(renames)
     assert str(exc_info.value) == "Old and new PVs are the same for PV pv1."
+
+
+def test_validate_archiver_fqdns_success(mocker: MagicMock) -> None:
+    archiver_mgmt = mocker.MagicMock()
+    archiver_mgmt.info = {"identity": "archiver1"}
+    archiver_mgmt.appliances_in_cluster = [
+        {
+            "identity": "archiver1",
+        }
+    ]
+    mocker.patch("epicsarchiver_mgmt.commands.validation.ArchiverMgmt", return_value=archiver_mgmt)
+
+    validate_archiver_fqdns(["archiver1.example.com", "archiver2.example.com"])
+    validate_archiver_fqdns(["archiver1.example.com"])
+
+
+def test_validate_archiver_fqdns_failure(mocker: MagicMock) -> None:
+    archiver_mgmt = mocker.MagicMock()
+    archiver_mgmt.info = {"identity": "archiver1"}
+    archiver_mgmt.appliances_in_cluster = [
+        {
+            "identity": "archiver2",
+        }
+    ]
+    mocker.patch("epicsarchiver_mgmt.commands.validation.ArchiverMgmt", return_value=archiver_mgmt)
+
+    with pytest.raises(DifferentArchiverClusterError):
+        validate_archiver_fqdns(["archiver1.example.com", "archiver2.example.com"])

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from abc import abstractmethod
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -15,7 +16,9 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     OperationResult,
 )
 from epicsarchiver_mgmt.commands.validation import (
+    OPERATION_RESULT_STATUS,
     RequestHTTPError,
+    validate_archiver_fqdns,
     validate_operation_results,
     validate_pvs_status,
 )
@@ -25,6 +28,8 @@ if TYPE_CHECKING:
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
+PAUSE_EXPECTED_STATUS = {OPERATION_RESULT_STATUS: ["ok", "no"]}
+
 
 @dataclass
 class BasicCommand:
@@ -32,7 +37,7 @@ class BasicCommand:
 
     command_name: str
     expected_statuses: list[ArchivingStatus]
-    expected_operation_results: list[str] | None = None
+    expected_operation_results: dict[str, list[str]] | None = None
 
     @abstractmethod
     def __call__(
@@ -54,7 +59,7 @@ class BasicCommand:
 
     def run_command(
         self,
-        archiver_fqdn: str,
+        archiver_fqdns: list[str],
         pvs: Sequence[str],
         *,
         skip_validation: bool = False,
@@ -62,7 +67,7 @@ class BasicCommand:
         """Basic command to modify PVs in the archiver.
 
         Args:
-            archiver_fqdn (str): The url of the archiver.
+            archiver_fqdns (list[str]): The urls of the archiver.
             pvs (list[str]): The PVs to change.
             skip_validation (bool): Whether to skip validation of the PVs status.
 
@@ -70,19 +75,28 @@ class BasicCommand:
             RequestHTTPError: If there is an error changing the PVs.
         """
         # Validate input
-        archiver_info = ArchiverMgmtInfo(archiver_fqdn)
+        validate_archiver_fqdns(archiver_fqdns)
+        archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
         if not skip_validation:
             validate_pvs_status(archiver_info, pvs, self.expected_statuses)
 
         # Action
         LOG.info("%s PVs %s", self.command_name, pvs)
 
-        archiver = ArchiverMgmt(archiver_fqdn)
+        archivers = [ArchiverMgmt(fqdn) for fqdn in archiver_fqdns]
 
-        LOG.info("Using archiver %s", archiver.info)
+        LOG.info("Using archivers %s", [archiver.info for archiver in archivers])
 
         try:
-            command_results = [self(archiver, pv) for pv in pvs]
+
+            def run_task(task_input: tuple[ArchiverMgmt, str]) -> OperationResult:
+                archiver, pv = task_input
+                return self(archiver, pv)
+
+            with ThreadPoolExecutor(max_workers=len(archivers)) as executer:
+                executer_input = [(archivers[i % len(archivers)], pv) for i, pv in enumerate(pvs)]
+                command_results = list(executer.map(run_task, executer_input))
+
         except HTTPError as e:
             LOG.error("Error %s PVs: %s", self.command_name, str(e))  # noqa: TRY400
             LOG.debug("Error %s PVs.", self.command_name, exc_info=True)
@@ -196,7 +210,7 @@ class AbortCommand(BasicCommand):
             expected_statuses=[
                 ArchivingStatus.BeingArchived,
             ],
-            expected_operation_results=["ok", "no"],
+            expected_operation_results=PAUSE_EXPECTED_STATUS,
         )
 
     def __call__(

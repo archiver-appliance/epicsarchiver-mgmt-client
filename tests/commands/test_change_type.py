@@ -54,12 +54,12 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture, monkeypatch: pyte
                 ArchivingStatus.Paused,
             ],
         )
-        mock_pause.assert_called_once_with(archiver_fqdn, pvs)
+        mock_pause.assert_called_once_with([archiver_fqdn], pvs)
         # Check that change_type was called for each PV
         mock_archiver.change_type.assert_has_calls([call("PV1", new_type), call("PV2", new_type)], any_order=False)
         # Check the validation call with the cast results
         mock_validate_operation_results.assert_called_once_with(pvs, mock_change_results, "change type")
-        mock_resume.assert_called_once_with(archiver_fqdn, pvs)
+        mock_resume.assert_called_once_with([archiver_fqdn], pvs)
         assert f"Changing type of the PVs {pvs} to {new_type}" in caplog.text
         assert f"Using archiver {mock_archiver.info}" in caplog.text
 
@@ -100,7 +100,7 @@ def test_change_type_http_error_on_change(caplog: pytest.LogCaptureFixture, monk
                 ArchivingStatus.Paused,
             ],
         )
-        mock_pause.assert_called_once_with(archiver_fqdn, pvs)
+        mock_pause.assert_called_once_with([archiver_fqdn], pvs)
         # change_type should have been called once before raising the error
         mock_archiver.change_type.assert_called_once_with("PV1", new_type)
         mock_validate_operation_results.assert_not_called()
@@ -141,7 +141,7 @@ def test_change_type_error_on_pause(caplog: pytest.LogCaptureFixture, monkeypatc
             change_type(archiver_fqdn, pvs, new_type)
 
         mock_validate_pvs_status.assert_called_once()
-        mock_pause.assert_called_once_with(archiver_fqdn, pvs)
+        mock_pause.assert_called_once_with([archiver_fqdn], pvs)
         mock_archiver.change_type.assert_not_called()
         mock_validate_operation_results.assert_not_called()
         mock_resume.assert_not_called()
@@ -181,8 +181,8 @@ def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture, monkeypat
             change_type(archiver_fqdn, pvs, new_type)
 
         mock_validate_pvs_status.assert_called_once()
-        mock_pause.assert_called_once_with(archiver_fqdn, pvs)
+        mock_pause.assert_called_once_with([archiver_fqdn], pvs)
         mock_archiver.change_type.assert_called_once_with("PV1", new_type)
         mock_validate_operation_results.assert_called_once()
-        mock_resume.assert_called_once_with(archiver_fqdn, pvs)
+        mock_resume.assert_called_once_with([archiver_fqdn], pvs)
         assert exc_info.value is resume_error  # Check it's the exact exception from resume

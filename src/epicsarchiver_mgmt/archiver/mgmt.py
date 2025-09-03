@@ -369,3 +369,13 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         """
         r = self._get("/getNeverConnectedPVs")
         return cast("InfoResultList", r.json())
+
+    @property
+    def appliances_in_cluster(self) -> list[dict[str, str]]:
+        """Get the appliances in the cluster.
+
+        Returns:
+            InfoResultList: List of appliances in the cluster.
+        """
+        r = self._get("/getAppliancesInCluster")
+        return cast("list[dict[str, str]]", r.json())

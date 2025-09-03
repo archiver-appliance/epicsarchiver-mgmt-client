@@ -72,7 +72,16 @@ def cli() -> None:
 
 
 archiver_fqdn_option = click.option(
-    "--archiver-fqdn", "-a", type=str, callback=validate_str_input, help="Archiver where PVs reside."
+    "--archiver-fqdn", "-a", type=str, required=True, callback=validate_str_input, help="Archiver where PVs reside."
+)
+archiver_fqdns_option = click.option(
+    "--archiver-fqdn",
+    "-a",
+    type=str,
+    required=True,
+    multiple=True,
+    callback=validate_str_input,
+    help="Archiver where PVs reside.",
 )
 
 file_argument = click.argument(
@@ -84,10 +93,10 @@ file_argument = click.argument(
 
 
 @click.command(context_settings={"show_default": True})
-@archiver_fqdn_option
+@archiver_fqdns_option
 @file_argument
 @click.pass_context
-def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
+def pause(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
     """Pause PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to pause.
@@ -117,10 +126,10 @@ def pause(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
 
 
 @click.command(context_settings={"show_default": True})
-@archiver_fqdn_option
+@archiver_fqdns_option
 @file_argument
 @click.pass_context
-def delete(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
+def delete(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
     """Delete PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to delete.
@@ -199,7 +208,7 @@ def statuses(
 
 
 @click.command(context_settings={"show_default": True})
-@click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.", multiple=True)
+@archiver_fqdns_option
 @file_argument
 @click.option(
     "--and-append",
@@ -261,10 +270,10 @@ def rename(
 
 
 @click.command(context_settings={"show_default": True})
-@archiver_fqdn_option
+@archiver_fqdns_option
 @file_argument
 @click.pass_context
-def resume(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> None:
+def resume(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
     """Resume Archiving PVs in the archiver.
 
     ARGUMENT file csv file of what pvs to resume.

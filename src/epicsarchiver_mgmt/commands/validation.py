@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
-from epicsarchiver_mgmt.archiver.mgmt import EpicsProto
+from epicsarchiver_mgmt.archiver.mgmt import ArchiverMgmt, EpicsProto
 from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
@@ -48,7 +48,7 @@ def validate_operation_results(
     action_results: list[OperationResult] | OperationResultList,
     operation_name: str,
     *,
-    expected_operation_results: list[str] | None = None,
+    expected_operation_results: dict[str, list[str]] | None = None,
 ) -> None:
     """Validate the results of an operation.
 
@@ -56,18 +56,24 @@ def validate_operation_results(
         pvs (Sequence[str]): The PVs that were acted on.
         action_results (list[OperationResult  |  OperationResultList]): The results of the operation.
         operation_name (str): The name of the operation.
-        expected_operation_results (list[str], optional): The expected statuses. Defaults to OPERATION_RESULT_OK.
+        expected_operation_results (dict[str, list[str]]): The expected statuses.
+            Defaults to {OPERATION_RESULT_STATUS: [OPERATION_RESULT_OK]}.
 
     Raises:
         ValidOperationResultsError: If the results are not valid.
     """
     if expected_operation_results is None:
-        expected_operation_results = [OPERATION_RESULT_OK]
+        expected_operation_results = {OPERATION_RESULT_STATUS: [OPERATION_RESULT_OK]}
     invalid_pvs: dict[str, OperationResult | OperationResultList] = {}
     for pv, result in zip(pvs, action_results, strict=False):
         LOG.debug("PV %s result %s for operation %s", pv, result, operation_name)
-        if result.get(OPERATION_RESULT_STATUS, "false") not in expected_operation_results:
-            invalid_pvs[pv] = result
+        for key, expected_results in expected_operation_results.items():
+            if key not in result:
+                LOG.error("Result for PV %s is missing key %s", pv, key)
+                invalid_pvs[pv] = result
+                continue
+            if result.get(key, "false") not in expected_results:
+                invalid_pvs[pv] = result
     if invalid_pvs != {}:
         raise ValidOperationResultsError(invalid_pvs, operation_name)
     LOG.info("Operation %s succeeded for PVs %s", operation_name, pvs)
@@ -233,3 +239,36 @@ def validate_current_protocol(
         LOG.debug("PV %s has proto %s", pv, archiving_protocol)
         if archiving_protocol == protocol:
             raise ValidPVProtocolError(pv, archiving_protocol, protocol)
+
+
+class DifferentArchiverClusterError(BaseMgmtError):
+    """Exception for when the archiver FQDNs are not part of the same cluster."""
+
+    def __init__(self, archiver_fqdn: str) -> None:
+        """Initialize the exception.
+
+        Args:
+            archiver_fqdn (str): The archiver FQDN that is not part of the cluster.
+        """
+        super().__init__(f"Archiver {archiver_fqdn} is not part of the cluster.")
+        self.archiver_fqdn = archiver_fqdn
+
+
+def validate_archiver_fqdns(archiver_fqdns: Sequence[str]) -> None:
+    """Validate the archiver FQDNs.
+
+    Args:
+        archiver_fqdns (Sequence[str]): The archiver FQDNs to validate.
+
+    Raises:
+        DifferentArchiverClusterError: If the archiver FQDNs are not part of the same cluster.
+    """
+    if len(archiver_fqdns) == 1:
+        return
+    identities_in_cluster: list[str] = []
+    for archiver_fqdn in archiver_fqdns:
+        archiver = ArchiverMgmt(archiver_fqdn)
+        if not identities_in_cluster:
+            identities_in_cluster = [appliance["identity"] for appliance in archiver.appliances_in_cluster]
+        if archiver.info["identity"] not in identities_in_cluster:
+            raise DifferentArchiverClusterError(archiver_fqdn)

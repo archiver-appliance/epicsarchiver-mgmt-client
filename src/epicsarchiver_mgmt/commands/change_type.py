@@ -52,7 +52,7 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
 
     archiver = ArchiverMgmt(archiver_fqdn)
 
-    basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
+    basic_commands.PauseCommand().run_command([archiver_fqdn], pvs)
     # Action
     LOG.info("Changing type of the PVs %s to %s", pvs, new_type)
 
@@ -69,4 +69,4 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
 
     # Validate output
     validate_operation_results(pvs, change_type_results, "change type")
-    basic_commands.ResumeCommand().run_command(archiver_fqdn, pvs)
+    basic_commands.ResumeCommand().run_command([archiver_fqdn], pvs)

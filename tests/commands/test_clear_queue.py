@@ -51,9 +51,8 @@ def test_clear_queue_pvs_aborted_successfully(caplog: pytest.LogCaptureFixture, 
         patch(
             "epicsarchiver_mgmt.commands.clear_queue.ArchiverMgmt", return_value=mock_archiver_mgmt
         ) as mock_mgmt_class,
-        patch("epicsarchiver_mgmt.commands.clear_queue.basic_commands.AbortCommand") as mock_abort_command,
+        patch("epicsarchiver_mgmt.commands.clear_queue.basic_commands.AbortCommand.run_command") as mock_abort_command,
     ):
-        mock_abort_instance = mock_abort_command.return_value
         clear_queue(archiver_fqdn)
 
         mock_mgmt_class.assert_called_once_with(archiver_fqdn)
@@ -63,8 +62,8 @@ def test_clear_queue_pvs_aborted_successfully(caplog: pytest.LogCaptureFixture, 
         assert sorted(call_args) == sorted(queue_pvs_to_check)
 
         mock_abort_command.assert_called_once()
-        mock_abort_instance.run_command.assert_called_once_with(
-            mock_archiver_mgmt.hostname, list(expected_aborted_pvs), skip_validation=True
+        mock_abort_command.assert_called_once_with(
+            [mock_archiver_mgmt.hostname], list(expected_aborted_pvs), skip_validation=True
         )
 
         # Check logs with caplog.text for INFO level
@@ -95,17 +94,14 @@ def test_clear_queue_http_error_on_abort_command(
 
     with (
         patch("epicsarchiver_mgmt.commands.clear_queue.ArchiverMgmt", return_value=mock_archiver_mgmt),
-        patch("epicsarchiver_mgmt.commands.clear_queue.basic_commands.AbortCommand") as mock_abort_command,
+        patch("epicsarchiver_mgmt.commands.clear_queue.basic_commands.AbortCommand.run_command") as mock_abort_command,
     ):
-        mock_abort_instance = mock_abort_command.return_value
-        mock_abort_instance.run_command.side_effect = abort_command_error
+        mock_abort_command.side_effect = abort_command_error
 
         with pytest.raises(RequestHTTPError) as exc_info:
             clear_queue(archiver_fqdn)
 
         assert exc_info.value is abort_command_error
-        mock_abort_instance.run_command.assert_called_once_with(
-            mock_archiver_mgmt.hostname, ["PV1"], skip_validation=True
-        )
+        mock_abort_command.assert_called_once_with([mock_archiver_mgmt.hostname], ["PV1"], skip_validation=True)
         # Check that the final success logs are not present
         assert "Queue cleared successfully." not in caplog.text
