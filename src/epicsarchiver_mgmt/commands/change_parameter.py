@@ -13,6 +13,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
     SamplingMethod,
 )
+from epicsarchiver_mgmt.commands.statuses import get_statuses_from_archiver
 from epicsarchiver_mgmt.commands.validation import (
     RequestHTTPError,
     validate_operation_results,
@@ -64,7 +65,7 @@ def change_parameter(
     """
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdn)
-    pv_statuses: InfoResultList = archiver_info.get_pv_status(list(pvs))
+    pv_statuses: InfoResultList = get_statuses_from_archiver(archiver_info, pvs)
     validate_pvs_status(
         archiver_info=archiver_info,
         pvs=pvs,

@@ -40,7 +40,10 @@ def test_validate_operation_results_failure() -> None:
 
 def test_validate_pvs_status_success(mocker: MagicMock) -> None:
     archiver_info = mocker.MagicMock()
-    archiver_info.get_archiving_status.side_effect = [ArchivingStatus.BeingArchived, ArchivingStatus.Paused]
+    archiver_info.get_pv_status.return_value = [
+        {"pvName": "pv1", "status": ArchivingStatus.BeingArchived.value},
+        {"pvName": "pv2", "status": ArchivingStatus.Paused.value},
+    ]
     pvs = ["pv1", "pv2"]
     expected_statuses = [ArchivingStatus.BeingArchived, ArchivingStatus.Paused]
 
@@ -50,7 +53,10 @@ def test_validate_pvs_status_success(mocker: MagicMock) -> None:
 
 def test_validate_pvs_status_failure(mocker: MagicMock) -> None:
     archiver_info = mocker.MagicMock()
-    archiver_info.get_archiving_status.side_effect = [ArchivingStatus.BeingArchived, ArchivingStatus.NotBeingArchived]
+    archiver_info.get_pv_status.return_value = [
+        {"pvName": "pv1", "status": ArchivingStatus.BeingArchived.value},
+        {"pvName": "pv2", "status": ArchivingStatus.NotBeingArchived.value},
+    ]
     pvs = ["pv1", "pv2"]
     expected_statuses = [ArchivingStatus.BeingArchived, ArchivingStatus.Paused]
 

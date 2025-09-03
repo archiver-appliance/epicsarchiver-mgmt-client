@@ -10,6 +10,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
 from epicsarchiver_mgmt.commands import basic_commands
+from epicsarchiver_mgmt.commands.statuses import get_statuses_from_archiver
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ def abort_archiving_pvs_in_queue(pvs: list[str], archiver: ArchiverMgmt, chunkin
     for i in range(0, len(pvs), chunking):
         chunk = pvs[i : i + chunking]
         LOG.debug("Checking PVs in chunk: %s", chunk)
-        pv_statuses = archiver.get_pv_status(",".join(chunk))
+        pv_statuses = get_statuses_from_archiver(archiver, chunk)
 
         if not pv_statuses:
             LOG.warning("No PV statuses found for chunk: %s", chunk)
