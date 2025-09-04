@@ -13,6 +13,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     EpicsProto,
 )
 from epicsarchiver_mgmt.commands import archive, basic_commands
+from epicsarchiver_mgmt.commands.statuses import get_statuses_from_archiver
 from epicsarchiver_mgmt.commands.validation import (
     validate_current_protocol,
     validate_pvs_status,
@@ -54,7 +55,7 @@ def change_protocol(archiver_fqdn: str, pvs: Sequence[str], protocol: EpicsProto
     """
     # Validate input
     archiver_info = ArchiverMgmtInfo(archiver_fqdn)
-    pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(pvs))
+    pv_statuses: InfoResultList = get_statuses_from_archiver(archiver_info, pvs)
     validate_pvs_status(
         archiver_info=archiver_info,
         pvs=pvs,

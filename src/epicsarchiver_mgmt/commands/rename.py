@@ -18,6 +18,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     Storage,
 )
 from epicsarchiver_mgmt.commands.basic_commands import PauseCommand, ResumeCommand
+from epicsarchiver_mgmt.commands.statuses import get_statuses_from_archiver
 from epicsarchiver_mgmt.commands.validation import (
     CONFIRMATION_PROMPT,
     OPERATION_RESULT_OK,
@@ -57,8 +58,8 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
     validate_not_same(renames)
     # unpack list of pairs into two new lists
     old_pvs, new_pvs = zip(*renames, strict=False)
-    old_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(old_pvs))
-    new_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(new_pvs))
+    old_pv_statuses: InfoResultList = get_statuses_from_archiver(archiver_info, old_pvs)
+    new_pv_statuses: InfoResultList = get_statuses_from_archiver(archiver_info, new_pvs)
     validate_pvs_status(
         archiver_info,
         old_pvs,
@@ -240,8 +241,8 @@ def rename_and_append(
     archiver_info = ArchiverMgmtInfo(archiver_fqdns[0])
     # unpack list of pairs into two new lists
     old_pvs, new_pvs = zip(*renames, strict=False)
-    old_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(old_pvs))
-    new_pv_statuses: InfoResultList = archiver_info.get_pv_status(",".join(new_pvs))
+    old_pv_statuses: InfoResultList = get_statuses_from_archiver(archiver_info, old_pvs)
+    new_pv_statuses: InfoResultList = get_statuses_from_archiver(archiver_info, new_pvs)
     validate_not_same(renames)
     validate_pvs_status(
         archiver_info,

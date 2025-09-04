@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
 from epicsarchiver_mgmt.archiver.mgmt import ArchiverMgmt, EpicsProto
+from epicsarchiver_mgmt.commands.statuses import get_statuses_from_archiver
 from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 
 if TYPE_CHECKING:
@@ -108,18 +109,12 @@ def validate_pvs_status(
         pvs (Sequence[str]): The PVs to validate.
         expected_statuses (list[ArchivingStatus]): The allowed statuses for the PVs.
         existing_status_infos (InfoResultList | None, optional): The existing statuses of the PVs. Defaults to None.
-
-    Raises:
-        ValidPVStatusError: If a PV is not in the expected status.
     """
     if existing_status_infos is not None:
         validate_pvs_status_from_existing_info(pvs, expected_statuses, existing_status_infos)
         return
-    for pv in pvs:
-        archiving_status = archiver_info.get_archiving_status(pv)
-        LOG.debug("PV %s has status %s must be one of %s", pv, archiving_status, expected_statuses)
-        if archiving_status not in expected_statuses:
-            raise ValidPVStatusError(pv, archiving_status, expected_statuses)
+    pv_statuses: InfoResultList = get_statuses_from_archiver(archiver_info, pvs)
+    validate_pvs_status_from_existing_info(pvs, expected_statuses, pv_statuses)
 
 
 def validate_pvs_status_from_existing_info(
