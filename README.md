@@ -22,14 +22,16 @@ Options:
 Commands:
   alias             Alias PVs in the archiver.
   archive           Archive PVs in the archiver.
-  change-parameter  Change the archiving parameters of PVs in the archiver.
-  change-protocol   Change the protocol of PVs in the archiver.
-  clear-queue       Clear Queue of already archiving PVs in the archiver.
+  change-parameter  Change the archiving parameters of PVs...
+  change-protocol   Change the protocol of PVs in the...
+  change-type       Change the type of PVs in the archiver.
+  clear-queue       Clear Queue of already archiving PVs...
   delete            Delete PVs in the archiver.
   pause             Pause PVs in the archiver.
   rename            Rename PVs in the archiver.
-  repolicy          Re choose the policy of PVs in the archiver.
+  repolicy          Re choose the policy of PVs in the...
   resume            Resume Archiving PVs in the archiver.
+  statuses          Get the status of PVs in the archiver.
 ```
 
 The tool creates a log file for every operation, please upload this with the ticket or into logbook after finishing a task.
