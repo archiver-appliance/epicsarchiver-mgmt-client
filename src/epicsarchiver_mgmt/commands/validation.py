@@ -192,38 +192,37 @@ def validate_not_same(pairs: Sequence[tuple[str, str]]) -> None:
             raise NotSamePVError(old_pv)
 
 
-class ValidPVProtocolError(BaseMgmtError):
-    """Exception for when a PV is not in the expected protocol."""
+class AlreadyNewProtocolError(BaseMgmtError):
+    """Exception for when a PV is already in the new protocol."""
 
-    def __init__(self, pv: str, archiving_protocol: EpicsProto, protocol: EpicsProto) -> None:
+    def __init__(self, pvs: set[str], protocol: EpicsProto) -> None:
         """Initialize the exception.
 
         Args:
-            pv (str): The PV that is not in the expected protocol.
-            archiving_protocol (EpicsProto): The current protocol of the PV.
+            pvs (set[str]): The PVs that are already in the new protocol.
             protocol (EpicsProto): The new protocol.
         """
-        super().__init__(f"PV {pv} archiving protocol is {archiving_protocol}.")
-        self.pv = pv
-        self.archiving_protocol = archiving_protocol
+        super().__init__(f"PVs {pvs} archiving protocol is {protocol}.")
+        self.pvs = pvs
         self.protocol = protocol
 
 
 def validate_current_protocol(
     archiver_info: ArchiverMgmtInfo,
     pvs: Sequence[str],
-    protocol: EpicsProto,
+    new_protocol: EpicsProto,
 ) -> None:
-    """Validate the current protocol of the PVs.
+    """Validate the current protocol of the pvs is not the new protocol.
 
     Args:
         archiver_info (ArchiverMgmtInfo): The archiver management server.
         pvs (Sequence[str]): The PVs to validate.
-        protocol (EpicsProto): The new protocol.
+        new_protocol (EpicsProto): The new protocol.
 
     Raises:
-        ValidPVProtocolError: If a PV is not in the expected protocol.
+        AlreadyNewProtocolError: If a PV is already in the new protocol.
     """
+    protocol_pvs: set[str] = set()
     for pv in pvs:
         archiving_details = archiver_info.get_pv_details(pv)
         archiving_protocol = EpicsProto.CA
@@ -232,8 +231,10 @@ def validate_current_protocol(
                 archiving_protocol = EpicsProto.PVA if archiving_detail["value"] == "Yes" else EpicsProto.CA
                 break
         LOG.debug("PV %s has proto %s", pv, archiving_protocol)
-        if archiving_protocol == protocol:
-            raise ValidPVProtocolError(pv, archiving_protocol, protocol)
+        if archiving_protocol == new_protocol:
+            protocol_pvs.add(pv)
+    if protocol_pvs:
+        raise AlreadyNewProtocolError(protocol_pvs, new_protocol)
 
 
 class DifferentArchiverClusterError(BaseMgmtError):
