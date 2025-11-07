@@ -208,7 +208,6 @@ class AbortCommand(BasicCommand):
         super().__init__(
             command_name="Aborting",
             expected_statuses=[ArchivingStatus.BeingArchived, None],
-            expected_operation_results=PAUSE_EXPECTED_STATUS,
         )
 
     def __call__(
