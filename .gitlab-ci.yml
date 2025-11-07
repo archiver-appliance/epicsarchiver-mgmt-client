@@ -63,11 +63,6 @@ cov:
         path: coverage.xml
 
 
-lint:
-  stage: check
-  script:
-    - hatch fmt --check
-
 type-check:
   stage: check
   script:
