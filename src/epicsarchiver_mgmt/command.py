@@ -129,6 +129,39 @@ def pause(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> 
 @archiver_fqdns_option
 @file_argument
 @click.pass_context
+def abort(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
+    """Abort PVs from the connection queue in the archiver.
+
+    ARGUMENT file csv file of what pvs to abort.
+
+    Example usage:
+
+    .. code-block:: console
+
+        arch-mgmt abort -a archiver.example.com pvs.csv
+
+    """
+    # Read input
+    try:
+        pvs = single_column_csv(file)
+    except ParseCSVRowError as err:
+        _parse_error_to_bad_param(ctx, err)
+
+    setup_file_handler(ctx.command_path)
+    try:
+        basic_commands.AbortCommand().run_command(archiver_fqdn, pvs)
+    except Exception as e:
+        LOG.error("Error aborting PVs: %s", str(e))  # noqa: TRY400
+        LOG.debug("Error aborting PVs.", exc_info=True)
+        ctx.exit(1)
+
+    ctx.exit(0)
+
+
+@click.command(context_settings={"show_default": True})
+@archiver_fqdns_option
+@file_argument
+@click.pass_context
 def delete(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> None:
     """Delete PVs in the archiver.
 
@@ -657,6 +690,7 @@ cli.add_command(change_type)
 cli.add_command(change_protocol)
 cli.add_command(change_parameter)
 cli.add_command(pause)
+cli.add_command(abort)
 cli.add_command(delete)
 cli.add_command(resume)
 cli.add_command(archive)

@@ -56,9 +56,7 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
             "Aborting",
             "abort_pv",
             AbortCommand(),
-            [
-                ArchivingStatus.BeingArchived,
-            ],
+            [ArchivingStatus.BeingArchived, None],
             PAUSE_EXPECTED_STATUS,
         ),
     ],
@@ -142,9 +140,7 @@ def test_basic_command_success(
             "Aborting",
             "abort_pv",
             AbortCommand(),
-            [
-                ArchivingStatus.BeingArchived,
-            ],
+            [ArchivingStatus.BeingArchived, None],
         ),
     ],
 )
@@ -152,7 +148,7 @@ def test_raise_http_error(
     command_name: str,
     archiver_command: str,
     basic_command: BasicCommand,
-    expected_statuses: list[ArchivingStatus],
+    expected_statuses: list[ArchivingStatus | None],
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Test pause/resume operation with HTTP error during API call."""
