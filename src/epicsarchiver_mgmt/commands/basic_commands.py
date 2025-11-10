@@ -36,7 +36,7 @@ class BasicCommand:
     """Basic command to modify PVs in the archiver."""
 
     command_name: str
-    expected_statuses: list[ArchivingStatus]
+    expected_statuses: Sequence[ArchivingStatus | None]
     expected_operation_results: dict[str, list[str]] | None = None
 
     @abstractmethod
@@ -207,10 +207,7 @@ class AbortCommand(BasicCommand):
         """Initialize the AbortCommand class."""
         super().__init__(
             command_name="Aborting",
-            expected_statuses=[
-                ArchivingStatus.BeingArchived,
-            ],
-            expected_operation_results=PAUSE_EXPECTED_STATUS,
+            expected_statuses=[ArchivingStatus.BeingArchived, None],
         )
 
     def __call__(

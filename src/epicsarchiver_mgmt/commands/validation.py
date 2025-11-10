@@ -84,14 +84,14 @@ class ValidPVStatusError(BaseMgmtError):
     """Exception for when a PV is not in the expected status."""
 
     def __init__(
-        self, pv: str, archiving_status: ArchivingStatus | None, expected_statuses: list[ArchivingStatus]
+        self, pv: str, archiving_status: ArchivingStatus | None, expected_statuses: Sequence[ArchivingStatus | None]
     ) -> None:
         """Initialize the exception.
 
         Args:
             pv (str): The PV that is not in the expected status.
             archiving_status (ArchivingStatus | None): The status of the PV.
-            expected_statuses (list[ArchivingStatus]): The expected statuses of the PV.
+            expected_statuses (Sequence[ArchivingStatus | None]): The expected statuses of the PV.
         """
         super().__init__(f"PV {pv} archiving status is {archiving_status}, needs to be in {expected_statuses}.")
 
@@ -99,7 +99,7 @@ class ValidPVStatusError(BaseMgmtError):
 def validate_pvs_status(
     archiver_info: ArchiverMgmtInfo,
     pvs: Sequence[str],
-    expected_statuses: list[ArchivingStatus],
+    expected_statuses: Sequence[ArchivingStatus | None],
     existing_status_infos: InfoResultList | None = None,
 ) -> None:
     """Validate the status of PVs.
@@ -107,7 +107,7 @@ def validate_pvs_status(
     Args:
         archiver_info (ArchiverMgmtInfo): The archiver management server.
         pvs (Sequence[str]): The PVs to validate.
-        expected_statuses (list[ArchivingStatus]): The allowed statuses for the PVs.
+        expected_statuses (Sequence[ArchivingStatus | None]): The allowed statuses for the PVs.
         existing_status_infos (InfoResultList | None, optional): The existing statuses of the PVs. Defaults to None.
     """
     if existing_status_infos is not None:
@@ -119,7 +119,7 @@ def validate_pvs_status(
 
 def validate_pvs_status_from_existing_info(
     pvs: Sequence[str],
-    expected_statuses: list[ArchivingStatus],
+    expected_statuses: Sequence[ArchivingStatus | None],
     existing_status_infos: InfoResultList,
 ) -> None:
     """Validate the status of PVs from existing information.
@@ -130,7 +130,7 @@ def validate_pvs_status_from_existing_info(
 
     Args:.
         pvs (Sequence[str]): The PVs to validate.
-        expected_statuses (list[ArchivingStatus]): The allowed statuses for the PVs.
+        expected_statuses (Sequence[ArchivingStatus | None]): The allowed statuses for the PVs.
         existing_status_infos (InfoResultList): The existing statuses of the PVs.
 
     Raises:
