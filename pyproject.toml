@@ -21,7 +21,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dynamic = [ "version" ]
-dependencies = [ "click>=8", "py-epicsarchiver>=0.16", "rich>=13" ]
+dependencies = [ "click>=8", "py-epicsarchiver>=0.16", "python-dateutil", "pytz", "rich>=13" ]
 
 urls.Documentation = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt#readme"
 urls.Issues = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt/issues"

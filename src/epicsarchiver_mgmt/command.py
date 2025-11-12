@@ -1,5 +1,6 @@
 """Command line tool for doing mgmt operations with the archiver."""
 
+import datetime
 import logging
 import sys
 from io import TextIOWrapper
@@ -19,6 +20,7 @@ from epicsarchiver_mgmt.commands import clear_queue as cmd_clear_queue
 from epicsarchiver_mgmt.commands import rename as cmd_rename
 from epicsarchiver_mgmt.commands import repolicy as repol
 from epicsarchiver_mgmt.commands import statuses as gs
+from epicsarchiver_mgmt.commands.clear_queue import QueueFilter
 from epicsarchiver_mgmt.input_parsing import ParseCSVRowError, double_column_csv, single_column_csv
 from epicsarchiver_mgmt.logging import setup_file_handler
 
@@ -558,8 +560,22 @@ def change_parameter(
 
 @click.command(context_settings={"show_default": True})
 @click.option("--archiver-fqdn", "-a", type=str, help="Archivers where PVs reside.")
+@click.option(
+    "--old-time",
+    "-o",
+    type=int,
+    help="Time after which a PV is considered stuck.",
+    default=24,
+)
+@click.option(
+    "--queue-filter",
+    "-f",
+    type=click.Choice(QueueFilter, case_sensitive=False),
+    help="Filter to apply to the queue.",
+    default=QueueFilter.ALL,
+)
 @click.pass_context
-def clear_queue(ctx: click.Context, archiver_fqdn: str) -> None:
+def clear_queue(ctx: click.Context, archiver_fqdn: str, old_time: int, queue_filter: QueueFilter) -> None:
     """Clear Queue of already archiving PVs in the archiver.
 
     Example usage:
@@ -569,8 +585,9 @@ def clear_queue(ctx: click.Context, archiver_fqdn: str) -> None:
         arch-mgmt clear-queue -a archiver.example.com
     """
     setup_file_handler(ctx.command_path)
+
     try:
-        cmd_clear_queue.clear_queue(archiver_fqdn)
+        cmd_clear_queue.clear_queue(archiver_fqdn, queue_filter, datetime.timedelta(hours=old_time))
     except Exception as e:
         LOG.error("Error clearing queue: %s", str(e))  # noqa: TRY400
         LOG.debug("Error clearing queue.", exc_info=True)
