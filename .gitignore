@@ -172,3 +172,11 @@ cython_debug/
 *archiver_mgmt.log
 .vscode
 src/epicsarchiver_mgmt/_version.py
+
+# agent stuff
+agent/
+./claude/
+./cusor/
+CLAUDE.md
+GEMINI.md
+AGENTS.md
