@@ -8,8 +8,9 @@ import logging
 import pytest
 import responses
 
-from epicsarchiver_mgmt.archiver.info import ArchDbrType, ArchiverResponseError
+from epicsarchiver_mgmt.archiver import ArchiverResponseError
 from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchDbrType,
     ArchivePVRequest,
     ArchiverMgmt,
     PutInfoType,

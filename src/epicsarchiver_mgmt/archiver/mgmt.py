@@ -4,17 +4,15 @@ from __future__ import annotations
 
 import enum
 import logging
-from collections.abc import Collection
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast
+from enum import auto
+from typing import cast
 
 from epicsarchiver_mgmt.archiver.info import (
     ArchiverMgmtInfo,
     InfoResultList,
+    TypeInfo,
 )
-
-if TYPE_CHECKING:
-    from epicsarchiver_mgmt.archiver.info import ArchDbrType
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -34,7 +32,6 @@ class PutInfoType(enum.Enum):
     CreateNew = enum.auto()
 
 
-TypeInfo = dict[str, Collection[str]]
 OperationResult = dict[str, str]
 OperationResultList = list[OperationResult]
 
@@ -62,6 +59,26 @@ class SamplingMethod(enum.StrEnum):
 
     SCAN = "SCAN"
     MONITOR = "MONITOR"
+
+
+class ArchDbrType(enum.Enum):
+    """List of Dbr Types that the archiver uses."""
+
+    DBR_SCALAR_STRING = auto()
+    DBR_SCALAR_SHORT = auto()
+    DBR_SCALAR_FLOAT = auto()
+    DBR_SCALAR_ENUM = auto()
+    DBR_SCALAR_BYTE = auto()
+    DBR_SCALAR_INT = auto()
+    DBR_SCALAR_DOUBLE = auto()
+    DBR_WAVEFORM_STRING = auto()
+    DBR_WAVEFORM_SHORT = auto()
+    DBR_WAVEFORM_FLOAT = auto()
+    DBR_WAVEFORM_ENUM = auto()
+    DBR_WAVEFORM_BYTE = auto()
+    DBR_WAVEFORM_INT = auto()
+    DBR_WAVEFORM_DOUBLE = auto()
+    DBR_V4_GENERIC_BYTES = auto()
 
 
 @dataclass

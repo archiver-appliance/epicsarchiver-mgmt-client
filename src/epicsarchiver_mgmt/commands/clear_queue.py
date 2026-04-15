@@ -14,7 +14,7 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
 from epicsarchiver_mgmt.commands import basic_commands
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.exceptions import BaseMgmtError
 
 if TYPE_CHECKING:
     from epicsarchiver_mgmt.archiver.info import InfoResultList

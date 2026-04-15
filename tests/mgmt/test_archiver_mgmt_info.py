@@ -6,7 +6,7 @@ import logging
 
 import responses
 
-from epicsarchiver.mgmt.archiver.info import ArchiverMgmtInfo
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

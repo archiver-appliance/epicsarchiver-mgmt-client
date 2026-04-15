@@ -4,8 +4,9 @@ from unittest.mock import MagicMock, call, patch
 import pytest
 from requests import HTTPError, Response
 
-from epicsarchiver_mgmt.archiver.info import ArchDbrType, ArchiverMgmtInfo, ArchivingStatus
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchDbrType,
     ArchiverMgmt,
 )
 from epicsarchiver_mgmt.commands.change_type import (

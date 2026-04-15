@@ -27,7 +27,7 @@ from epicsarchiver_mgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.exceptions import BaseMgmtError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

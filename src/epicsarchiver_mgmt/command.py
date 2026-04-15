@@ -8,8 +8,7 @@ from typing import TextIO
 
 import click
 
-from epicsarchiver_mgmt.archiver.info import ArchDbrType
-from epicsarchiver_mgmt.archiver.mgmt import ArchivePVRequest, EpicsProto, SamplingMethod
+from epicsarchiver_mgmt.archiver.mgmt import ArchDbrType, ArchivePVRequest, EpicsProto, SamplingMethod
 from epicsarchiver_mgmt.commands import alias as cmd_alias
 from epicsarchiver_mgmt.commands import archive as cmd_archive
 from epicsarchiver_mgmt.commands import basic_commands
