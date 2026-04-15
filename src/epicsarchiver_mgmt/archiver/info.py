@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Collection
-from enum import Enum
+from enum import StrEnum
 from typing import cast
 
 from epicsarchiver_mgmt.archiver.base import BaseArchiverAppliance
@@ -25,7 +25,7 @@ InfoResultList = list[InfoResult]
 # ---------------------------------------------------------------------------
 
 
-class ArchivingStatus(str, Enum):
+class ArchivingStatus(StrEnum):
     """Enum of archiving status in the archiver."""
 
     Paused = "Paused"
