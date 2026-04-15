@@ -173,7 +173,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         """
         request_data = [request.as_dict() for request in pv_requests]
         LOG.debug("Archiving PVs %s", request_data)
-        r = self._post("/archivePV", json=request_data)
+        r = self._post("/archivePV", json_data=request_data)
         return cast("OperationResultList", r.json())
 
     def pause_pv(self, pv: str) -> OperationResult:
@@ -260,7 +260,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         Returns:
             list of submitted PVs
         """
-        response = self._get("/deletePV", params={"pv": pv, "delete_data": delete_data})
+        response = self._get("/deletePV", params={"pv": pv, "delete_data": str(delete_data)})
         return cast("OperationResult", response.json())
 
     def rename_pv(self, pv: str, newname: str) -> OperationResult:
@@ -362,7 +362,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         response = self._post(
             "/putPVTypeInfo",
             params=params,
-            json=type_info,
+            json_data=type_info,
         )
         result = cast("TypeInfo", response.json())
         LOG.debug("Put type info %s for pv %s", result, pv)

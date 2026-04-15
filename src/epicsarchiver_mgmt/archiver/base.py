@@ -34,7 +34,7 @@ class ArchiverError(BaseMgmtError):
 class ArchiverConnectionError(ArchiverError):
     """Exception raised when there is a connection error with the archiver."""
 
-    def __init__(self, base_url: str, message: str | None = None):
+    def __init__(self, base_url: str, message: str | None = None) -> None:
         """Initialize the ArchiverConnectionError.
 
         Args:
@@ -56,7 +56,7 @@ class ArchiverResponseError(ArchiverError):
         url: str | None = None,
         response: str | None = None,
         message: str | None = None,
-    ):
+    ) -> None:
         """Initialize the ArchiverResponseError.
 
         Args:
@@ -74,8 +74,7 @@ class ArchiverResponseError(ArchiverError):
         self.response = response
         if message is None:
             message = (
-                f"Received an unexpected response '{response}' "
-                f"from the archiver {self.base_url} for URL: {self.url}"
+                f"Received an unexpected response '{response}' from the archiver {self.base_url} for URL: {self.url}"
             )
         super().__init__(message)
 
@@ -90,7 +89,7 @@ class BaseArchiverAppliance:
         port: EPICS Archiver Appliance management port [default: 17665]
     """
 
-    def __init__(self, hostname: str = "localhost", port: int = 17665):
+    def __init__(self, hostname: str = "localhost", port: int = 17665) -> None:
         """Create Archiver Appliance object.
 
         Args:
@@ -112,13 +111,22 @@ class BaseArchiverAppliance:
         """
         return f"ArchiverAppliance({self.hostname}, {self.port})"
 
-    def _request(self, method: str, *args: Any, **kwargs: Any) -> Response:
+    def _request(
+        self,
+        method: str,
+        url: str,
+        params: dict[str, str | list[str]] | dict[str, str] | None = None,
+        data: str | dict[str, str] | None = None,
+        json_data: Any | None = None,  # noqa: ANN401
+    ) -> Response:
         """Send a request using the session.
 
         Args:
             method: HTTP method
-            *args: Optional arguments
-            **kwargs: Optional keyword arguments
+            url: The URL to send the request to
+            params: Optional arguments
+            data: Optional data to be sent
+            json_data: Optional JSON data to be sent
 
         Returns:
             :class:`requests.Response <Response>` object
@@ -128,7 +136,7 @@ class BaseArchiverAppliance:
             ArchiverResponseError: If the response is not successful.
         """
         try:
-            r = self.session.request(method, *args, **kwargs)
+            r = self.session.request(method, url, params=params, data=data, json=json_data)
             r.raise_for_status()
         except requests.ConnectionError as e:
             raise ArchiverConnectionError(
@@ -137,38 +145,50 @@ class BaseArchiverAppliance:
         except requests.HTTPError as e:
             raise ArchiverResponseError(
                 base_url=self.mgmt_url,
-                url=args[0] if args else None,
+                url=url,
                 response=e.response.text if e.response else None,
             ) from e
         else:
             return r
 
-    def _get(self, endpoint: str, **kwargs: Any) -> Response:
-        r"""Send a GET request to the given endpoint.
+    def _get(
+        self,
+        endpoint: str,
+        params: dict[str, str | list[str]] | dict[str, str] | None = None,
+    ) -> Response:
+        """Send a GET request to the given endpoint.
 
         Args:
             endpoint: API endpoint (relative or absolute)
-            **kwargs: Optional arguments to be sent
+            params: Optional arguments to be sent
 
         Returns:
             :class:`requests.Response <Response>` object
         """
         url = urllib.parse.urljoin(self.mgmt_url, endpoint.lstrip("/"))
         LOG.debug("GET url: %s", url)
-        return self._request("GET", url, **kwargs)
+        return self._request("GET", url, params=params)
 
-    def _post(self, endpoint: str, **kwargs: Any) -> Response:
-        r"""Send a POST request to the given endpoint.
+    def _post(
+        self,
+        endpoint: str,
+        params: dict[str, str | list[str]] | dict[str, str] | None = None,
+        data: str | dict[str, str] | None = None,
+        json_data: Any | None = None,  # noqa: ANN401
+    ) -> Response:
+        """Send a POST request to the given endpoint.
 
         Args:
             endpoint: API endpoint (relative or absolute)
-            **kwargs: Optional arguments to be sent
+            params: Optional arguments to be sent
+            data: Optional data to be sent
+            json_data: Optional JSON data to be sent
 
         Returns:
             :class:`requests.Response <Response>` object
         """
         url = urllib.parse.urljoin(self.mgmt_url, endpoint.lstrip("/"))
-        return self._request("POST", url, **kwargs)
+        return self._request("POST", url, params=params, data=data, json_data=json_data)
 
     @property
     def info(self) -> dict[str, str]:
@@ -188,7 +208,7 @@ class BaseArchiverAppliance:
         """EPICS Archiver Appliance version."""
         return self.info.get("version")
 
-    def _get_or_post(self, endpoint: str, pv: str) -> Any:
+    def _get_or_post(self, endpoint: str, pv: str) -> Any:  # noqa: ANN401
         """Send a GET or POST if pv is a comma separated list.
 
         Args:
@@ -199,9 +219,5 @@ class BaseArchiverAppliance:
         Returns:
             Any: list of submitted PVs
         """
-        r = (
-            self._post(endpoint, data=pv)
-            if "," in pv
-            else self._get(endpoint, params={"pv": pv})
-        )
+        r = self._post(endpoint, data=pv) if "," in pv else self._get(endpoint, params={"pv": pv})
         return r.json()
