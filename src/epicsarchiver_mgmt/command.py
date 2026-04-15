@@ -119,7 +119,7 @@ def pause(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> 
     try:
         basic_commands.PauseCommand().run_command(archiver_fqdn, pvs)
     except Exception as e:
-        LOG.error("Error pausing PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error pausing PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error pausing PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -152,7 +152,7 @@ def abort(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) -> 
     try:
         basic_commands.AbortCommand().run_command(archiver_fqdn, pvs)
     except Exception as e:
-        LOG.error("Error aborting PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error aborting PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error aborting PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -185,7 +185,7 @@ def delete(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) ->
     try:
         basic_commands.DeleteCommand().run_command(archiver_fqdn, pvs)
     except Exception as e:
-        LOG.error("Error deleting PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error deleting PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error deleting PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -234,7 +234,7 @@ def statuses(
             output_file.write(f"{status}:\n")
             output_file.writelines(f"{pv}\n" for pv in pv_list)
     except Exception as e:
-        LOG.error("Error getting status of PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error getting status of PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error getting status of PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -296,7 +296,7 @@ def rename(
         else:
             cmd_rename.rename(archiver_fqdn, pv_pairs, dry_run=dry_run)
     except Exception as e:
-        LOG.error("Error renaming PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error renaming PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error renaming PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -329,7 +329,7 @@ def resume(ctx: click.Context, archiver_fqdn: list[str], file: TextIOWrapper) ->
     try:
         basic_commands.ResumeCommand().run_command(archiver_fqdn, pvs)
     except Exception as e:
-        LOG.error("Error resuming PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error resuming PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error resuming PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -386,7 +386,7 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, appliance: st
     try:
         cmd_archive.archive(archiver_fqdn, pv_requests, dry_run=dry_run)
     except Exception as e:
-        LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error archiving PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error archiving PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -426,7 +426,7 @@ def change_type(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper, new
     try:
         ct.change_type(archiver_fqdn, pvs, new_type)  # type: ignore[arg-type] # Ignoring because of the check in the function
     except Exception as e:
-        LOG.error("Error changing type of PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error changing type of PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error changing type of PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -466,7 +466,7 @@ def change_protocol(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper,
     try:
         cp.change_protocol(archiver_fqdn, pvs, protocol)  # type: ignore[arg-type] # Ignoring because of the check in the function
     except Exception as e:
-        LOG.error("Error changing protocol of PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error changing protocol of PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error changing protocol of PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -499,7 +499,7 @@ def repolicy(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> Non
     try:
         repol.repolicy(archiver_fqdn, pvs)
     except Exception as e:
-        LOG.error("Error repolicy of PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error repolicy of PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error repolicy of PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -550,7 +550,7 @@ def change_parameter(
     try:
         c_param.change_parameter(archiver_fqdn, pvs, method, period)
     except Exception as e:
-        LOG.error("Error changing parameter of PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error changing parameter of PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error changing parameter of PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -588,7 +588,7 @@ def clear_queue(ctx: click.Context, archiver_fqdn: str, old_time: int, queue_fil
     try:
         cmd_clear_queue.clear_queue(archiver_fqdn, queue_filter, datetime.timedelta(hours=old_time))
     except Exception as e:
-        LOG.error("Error clearing queue: %s", str(e))  # noqa: TRY400
+        LOG.error("Error clearing queue: %s", e)  # noqa: TRY400
         LOG.debug("Error clearing queue.", exc_info=True)
         ctx.exit(1)
 
@@ -634,7 +634,7 @@ def add_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) -> No
     try:
         cmd_alias.add_aliases(archiver_fqdn, pv_pairs)
     except Exception as e:
-        LOG.error("Error adding alias PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error adding alias PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error adding alias PVs.", exc_info=True)
         ctx.exit(1)
 
@@ -674,7 +674,7 @@ def remove_alias(ctx: click.Context, archiver_fqdn: str, file: TextIOWrapper) ->
     try:
         cmd_alias.remove_aliases(archiver_fqdn, pv_pairs)
     except Exception as e:
-        LOG.error("Error removing alias PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error removing alias PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error removing alias PVs.", exc_info=True)
         ctx.exit(1)
 

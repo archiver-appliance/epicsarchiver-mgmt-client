@@ -98,7 +98,7 @@ class BasicCommand:
                 command_results = list(executer.map(run_task, executer_input))
 
         except HTTPError as e:
-            LOG.error("Error %s PVs: %s", self.command_name, str(e))  # noqa: TRY400
+            LOG.error("Error %s PVs: %s", self.command_name, e)  # noqa: TRY400
             LOG.debug("Error %s PVs.", self.command_name, exc_info=True)
             raise RequestHTTPError(e) from e
 

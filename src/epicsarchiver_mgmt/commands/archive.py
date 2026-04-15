@@ -92,7 +92,7 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run:
     try:
         archive_results = archiver.archive_pv_requests(pv_requests)
     except HTTPError as e:
-        LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error archiving PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error archiving PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 

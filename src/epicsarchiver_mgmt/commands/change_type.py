@@ -63,7 +63,7 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
     try:
         change_type_results = [archiver.change_type(pv, new_type) for pv in pvs]
     except HTTPError as e:
-        LOG.error("Error changing type of PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error changing type of PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error changing type of PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 

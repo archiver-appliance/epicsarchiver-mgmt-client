@@ -103,7 +103,7 @@ def rename(archiver_fqdns: list[str], renames: Sequence[tuple[str, str]], *, dry
         # rename all the pvs, this can take a long time so we do it in parallel
         rename_results = _parallel_execute_rename(archivers, renames)
     except HTTPError as e:
-        LOG.error("Error Renaming PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error Renaming PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error Renaming PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 
@@ -247,7 +247,7 @@ def rename_and_append(
         # rename all the pvs, this can take a long time so we do it in parallel
         rename_results = _parallel_execute_rename_and_append(archivers, renames, storage)
     except HTTPError as e:
-        LOG.error("Error Renaming and Appending PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error Renaming and Appending PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error Renaming and Appending PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 
