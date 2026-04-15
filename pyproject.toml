@@ -63,6 +63,24 @@ extra-dependencies = [
 [tool.hatch.envs.hatch-test]
 extra-dependencies = [ "responses", "pytest-mock", "pytest" ]
 
+[tool.hatch.envs.docs]
+extra-dependencies = [
+  "astroid==3.3.11",
+  "sphinx",
+  "sphinx-copybutton>=0.5.1",
+  "sphinx-click",
+  "sphinx-autobuild",
+  "sphinx-autoapi>=3.6.0",
+  "sphinx_rtd_theme",
+  "myst-parser",
+]
+
+[tool.hatch.envs.docs.scripts]
+build = [ "make -C docs html" ]
+check = [ 'make -C docs html SPHINXOPTS="-W --keep-going"' ]
+live = [ "sphinx-autobuild docs/source docs/build/html" ]
+clean = [ "make -C docs clean html" ]
+
 [tool.ruff]
 line-length = 120
 preview = true
@@ -74,6 +92,9 @@ lint.ignore = [
   "COM812", # ignore checking for trailing comma, let formatter handle it
   "CPY001", # ignore copyright header checking (not needed for internal projects)
   "ISC001", # Conflicts with the formatter
+]
+lint.per-file-ignores."docs/**/*" = [
+  "INP001", # docs/ is not a Python package
 ]
 lint.per-file-ignores."src/epicsarchiver_mgmt/command.py" = [
   "BLE001", # ignore "bare except" in command.py as it is a command line tool
