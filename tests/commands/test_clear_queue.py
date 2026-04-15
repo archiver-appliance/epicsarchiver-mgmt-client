@@ -17,7 +17,11 @@ from epicsarchiver_mgmt.commands.validation import RequestHTTPError
 
 @pytest.fixture
 def mock_archiver_mgmt() -> MagicMock:
-    """Fixture for a mocked ArchiverMgmt instance."""
+    """Fixture for a mocked ArchiverMgmt instance.
+
+    Returns:
+        MagicMock: Mocked ArchiverMgmt instance.
+    """
     mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.hostname = "mock.archiver.host"
     return mock_archiver
