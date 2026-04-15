@@ -367,6 +367,8 @@ def archive(ctx: click.Context, archiver_fqdn: str, dry_run: bool, appliance: st
 
         arch-mgmt archive -a archiver.example.com pvs.csv
 
+    Raises:
+        click.BadParameter: If no PVs are found in the input file.
     """
     # Read input
     try:
@@ -535,6 +537,8 @@ def change_parameter(
 
         arch-mgmt change-parameter -a archiver.example.com --method SCAN --period 10.0 pvs.csv
 
+    Raises:
+        click.BadParameter: If neither method nor period is provided.
     """
     if method is None and period is None:
         param = method or period
