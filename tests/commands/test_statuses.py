@@ -2,8 +2,8 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo
 from epicsarchiver_mgmt.commands.statuses import get_statuses
 
 

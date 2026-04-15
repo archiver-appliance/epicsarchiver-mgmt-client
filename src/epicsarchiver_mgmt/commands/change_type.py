@@ -6,9 +6,9 @@ import logging
 from typing import TYPE_CHECKING
 
 import click
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
@@ -23,7 +23,7 @@ from epicsarchiver_mgmt.commands.validation import (
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from epicsarchiver.common import ArchDbrType
+    from epicsarchiver_mgmt.archiver.info import ArchDbrType
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

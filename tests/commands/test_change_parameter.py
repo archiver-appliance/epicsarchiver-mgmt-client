@@ -2,12 +2,11 @@ import logging
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError, Response
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
-    OperationResult,
     SamplingMethod,
 )
 from epicsarchiver_mgmt.commands.change_parameter import change_parameter
@@ -24,8 +23,8 @@ def test_change_parameter_success(caplog: pytest.LogCaptureFixture) -> None:
     mock_archiver.info = "Archiver Info"
     # Simulate the list comprehension result
     mock_change_parameter_results = [
-        OperationResult(pv="PV1", statusCode=200, statusMessage="OK"),
-        OperationResult(pv="PV2", statusCode=200, statusMessage="OK"),
+        {"pv": "PV1", "statusCode": "200", "statusMessage": "OK"},
+        {"pv": "PV2", "statusCode": "200", "statusMessage": "OK"},
     ]
     # Make the mock iterable and return specific results for each call
     mock_archiver.update_pv.side_effect = mock_change_parameter_results

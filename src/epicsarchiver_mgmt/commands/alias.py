@@ -6,9 +6,9 @@ import logging
 from itertools import starmap
 from typing import TYPE_CHECKING
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )

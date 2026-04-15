@@ -8,13 +8,13 @@ from collections.abc import Collection
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
-from epicsarchiver.mgmt.archiver_mgmt_info import (
+from epicsarchiver_mgmt.archiver.info import (
     ArchiverMgmtInfo,
     InfoResultList,
 )
 
 if TYPE_CHECKING:
-    from epicsarchiver.common import ArchDbrType
+    from epicsarchiver_mgmt.archiver.info import ArchDbrType
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

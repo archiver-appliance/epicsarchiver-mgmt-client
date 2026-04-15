@@ -2,8 +2,8 @@ import io
 from unittest.mock import MagicMock
 
 import pytest
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
+from epicsarchiver_mgmt.archiver.info import ArchivingStatus
 from epicsarchiver_mgmt.commands.validation import (
     DifferentArchiverClusterError,
     NotSamePVError,

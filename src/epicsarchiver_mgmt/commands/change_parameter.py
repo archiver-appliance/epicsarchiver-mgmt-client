@@ -5,9 +5,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus, InfoResultList
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus, InfoResultList
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchivePVRequest,
     ArchiverMgmt,

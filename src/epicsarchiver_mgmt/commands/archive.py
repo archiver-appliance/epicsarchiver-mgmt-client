@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import logging
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchivePVRequest,
     ArchiverMgmt,

@@ -2,13 +2,11 @@ import logging
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from epicsarchiver.common import ArchDbrType
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError, Response
 
+from epicsarchiver_mgmt.archiver.info import ArchDbrType, ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
-    OperationResult,
 )
 from epicsarchiver_mgmt.commands.change_type import (
     change_type,
@@ -29,8 +27,8 @@ def test_change_type_success(caplog: pytest.LogCaptureFixture, monkeypatch: pyte
     mock_archiver.info = "Archiver Info"
     # Simulate the list comprehension result for change_type
     mock_change_results = [
-        OperationResult(pv="PV1", statusCode=200, statusMessage="OK"),
-        OperationResult(pv="PV2", statusCode=200, statusMessage="OK"),
+        {"pv": "PV1", "statusCode": "200", "statusMessage": "OK"},
+        {"pv": "PV2", "statusCode": "200", "statusMessage": "OK"},
     ]
     # Make the mock iterable and return specific results for each call
     mock_archiver.change_type.side_effect = mock_change_results
@@ -157,7 +155,7 @@ def test_change_type_error_on_resume(caplog: pytest.LogCaptureFixture, monkeypat
     mock_archiver_info = MagicMock(spec=ArchiverMgmtInfo)
     mock_archiver = MagicMock(spec=ArchiverMgmt)
     mock_archiver.info = "Archiver Info"
-    mock_change_results = [OperationResult(pv="PV1", statusCode=200, statusMessage="OK")]
+    mock_change_results = [{"pv": "PV1", "statusCode": "200", "statusMessage": "OK"}]
     mock_archiver.change_type.side_effect = mock_change_results
 
     request_response = Response()

@@ -5,8 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
-
+from epicsarchiver_mgmt.archiver.info import ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import ArchiverMgmt, EpicsProto
 from epicsarchiver_mgmt.commands.statuses import get_statuses_from_archiver
 from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
@@ -14,9 +13,9 @@ from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, InfoResultList
     from requests import HTTPError
 
+    from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, InfoResultList
     from epicsarchiver_mgmt.archiver.mgmt import (
         OperationResult,
         OperationResultList,
