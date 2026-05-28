@@ -41,9 +41,11 @@ html_theme = "sphinx_rtd_theme"
 
 html_static_path: list[str] = []
 
-# Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
+    "arch-retrieval": ("https://epicsarchiver-retrieval-client.readthedocs.io/en/latest/", None),
+    "epicsarchiverap": ("https://epicsarchiver.readthedocs.io/en/latest/", None),
+    "epics-controls": ("https://docs.epics-controls.org/en/latest/", None),
 }
 
 # Enable special syntax for admonitions (:::{directive})
