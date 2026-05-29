@@ -5,7 +5,7 @@
 ## Install
 
 ```console
-pip install epicsarchiver-mgmt
+pip install epicsarchiver-mgmt-client
 ```
 
 Once installed, the `arch-mgmt` command is available on your `PATH`.

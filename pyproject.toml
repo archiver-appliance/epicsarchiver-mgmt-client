@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 requires = [ "hatch-vcs>=0.3", "hatchling>=1.24.2" ]
 
 [project]
-name = "epicsarchiver-mgmt"
+name = "epicsarchiver-mgmt-client"
 description = "Tool for doing archiver mgmt operations"
 readme = "README.md"
 keywords = [  ]
@@ -37,6 +37,9 @@ local_scheme = "no-local-version"
 
 [tool.hatch.build.hooks.vcs]
 version-file = "src/epicsarchiver_mgmt/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = [ "src/epicsarchiver_mgmt" ]
 
 [tool.hatch.envs.default.scripts]
 type-check = "hatch run types:check"
@@ -113,7 +116,7 @@ parallel = true
 omit = [ "src/epicsarchiver_mgmt/__about__.py" ]
 
 [tool.coverage.paths]
-epicsarchiver-mgmt = [
+epicsarchiver-mgmt-client = [
   "src/epicsarchiver_mgmt",
 ]
 tests = [ "tests" ]

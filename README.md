@@ -8,7 +8,7 @@ Project for tracking changes to the archiver via the mgmt operations interface. 
 ## Installation
 
 ```console
-pip install epicsarchiver-mgmt
+pip install epicsarchiver-mgmt-client
 ```
 
 ## Usage
