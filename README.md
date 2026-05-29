@@ -2,10 +2,13 @@
 
 Project for tracking changes to the archiver via the mgmt operations interface. For example, change types, complicated renames, adding aliases.
 
+- [Documentation](https://epicsarchiver-mgmt-client.readthedocs.io/en/latest/)
+- [Repository](https://github.com/archiver-appliance/epicsarchiver-mgmt-client)
+
 ## Installation
 
 ```console
-pip install epicsarchiver-mgmt -i https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple
+pip install epicsarchiver-mgmt
 ```
 
 ## Usage

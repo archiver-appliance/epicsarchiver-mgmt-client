@@ -23,9 +23,9 @@ classifiers = [
 dynamic = [ "version" ]
 dependencies = [ "click>=8", "python-dateutil", "pytz", "requests>=2", "rich>=13" ]
 
-urls.Documentation = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt#readme"
-urls.Issues = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt/issues"
-urls.Source = "https://gitlab.esss.lu.se/ics-software/archiver-appliance/epicsarchiver-mgmt"
+urls.Documentation = "https://epicsarchiver-mgmt-client.readthedocs.io/en/latest/"
+urls.Issues = "https://github.com/archiver-appliance/epicsarchiver-mgmt-client/issues"
+urls.Source = "https://github.com/archiver-appliance/epicsarchiver-mgmt-client"
 scripts.arch-mgmt = "epicsarchiver_mgmt.command:cli"
 
 [tool.hatch.version]
@@ -33,17 +33,10 @@ source = "vcs"
 
 [tool.hatch.version.raw-options]
 git_describe_command = [ "git", "describe", "--dirty", "--tags", "--long" ]
+local_scheme = "no-local-version"
 
 [tool.hatch.build.hooks.vcs]
 version-file = "src/epicsarchiver_mgmt/_version.py"
-
-[tool.hatch.envs.default.env-vars]
-UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
-PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
-
-[tool.hatch.envs.hatch-test.env-vars]
-UV_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
-PIP_EXTRA_INDEX_URL = "https://artifactory.esss.lu.se/artifactory/api/pypi/pypi-virtual/simple"
 
 [tool.hatch.envs.default.scripts]
 type-check = "hatch run types:check"
