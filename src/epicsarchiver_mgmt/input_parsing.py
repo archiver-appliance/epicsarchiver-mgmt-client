@@ -5,7 +5,7 @@ import logging
 from collections.abc import Sequence
 from typing import TextIO
 
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.exceptions import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

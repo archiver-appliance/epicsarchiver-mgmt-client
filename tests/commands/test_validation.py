@@ -2,8 +2,8 @@ import io
 from unittest.mock import MagicMock
 
 import pytest
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
+from epicsarchiver_mgmt.archiver.info import ArchivingStatus
 from epicsarchiver_mgmt.commands.validation import (
     DifferentArchiverClusterError,
     NotSamePVError,
@@ -60,7 +60,7 @@ def test_validate_pvs_status_failure(mocker: MagicMock) -> None:
     pvs = ["pv1", "pv2"]
     expected_statuses = [ArchivingStatus.BeingArchived, ArchivingStatus.Paused]
 
-    with pytest.raises(ValidPVStatusError, match=r"PV pv2 archiving status is ArchivingStatus.NotBeingArchived"):
+    with pytest.raises(ValidPVStatusError, match=r"PV pv2 archiving status is Not being archived"):
         validate_pvs_status(archiver_info, pvs, expected_statuses)
 
 

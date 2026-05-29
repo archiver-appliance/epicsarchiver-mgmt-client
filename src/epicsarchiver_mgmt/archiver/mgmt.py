@@ -4,17 +4,15 @@ from __future__ import annotations
 
 import enum
 import logging
-from collections.abc import Collection
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast
+from enum import auto
+from typing import cast
 
-from epicsarchiver.mgmt.archiver_mgmt_info import (
+from epicsarchiver_mgmt.archiver.info import (
     ArchiverMgmtInfo,
     InfoResultList,
+    TypeInfo,
 )
-
-if TYPE_CHECKING:
-    from epicsarchiver.common import ArchDbrType
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -34,7 +32,6 @@ class PutInfoType(enum.Enum):
     CreateNew = enum.auto()
 
 
-TypeInfo = dict[str, Collection[str]]
 OperationResult = dict[str, str]
 OperationResultList = list[OperationResult]
 
@@ -62,6 +59,26 @@ class SamplingMethod(enum.StrEnum):
 
     SCAN = "SCAN"
     MONITOR = "MONITOR"
+
+
+class ArchDbrType(enum.Enum):
+    """List of Dbr Types that the archiver uses."""
+
+    DBR_SCALAR_STRING = auto()
+    DBR_SCALAR_SHORT = auto()
+    DBR_SCALAR_FLOAT = auto()
+    DBR_SCALAR_ENUM = auto()
+    DBR_SCALAR_BYTE = auto()
+    DBR_SCALAR_INT = auto()
+    DBR_SCALAR_DOUBLE = auto()
+    DBR_WAVEFORM_STRING = auto()
+    DBR_WAVEFORM_SHORT = auto()
+    DBR_WAVEFORM_FLOAT = auto()
+    DBR_WAVEFORM_ENUM = auto()
+    DBR_WAVEFORM_BYTE = auto()
+    DBR_WAVEFORM_INT = auto()
+    DBR_WAVEFORM_DOUBLE = auto()
+    DBR_V4_GENERIC_BYTES = auto()
 
 
 @dataclass
@@ -156,7 +173,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         """
         request_data = [request.as_dict() for request in pv_requests]
         LOG.debug("Archiving PVs %s", request_data)
-        r = self._post("/archivePV", json=request_data)
+        r = self._post("/archivePV", json_data=request_data)
         return cast("OperationResultList", r.json())
 
     def pause_pv(self, pv: str) -> OperationResult:
@@ -243,7 +260,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         Returns:
             list of submitted PVs
         """
-        response = self._get("/deletePV", params={"pv": pv, "delete_data": delete_data})
+        response = self._get("/deletePV", params={"pv": pv, "delete_data": str(delete_data)})
         return cast("OperationResult", response.json())
 
     def rename_pv(self, pv: str, newname: str) -> OperationResult:
@@ -345,7 +362,7 @@ class ArchiverMgmt(ArchiverMgmtInfo):
         response = self._post(
             "/putPVTypeInfo",
             params=params,
-            json=type_info,
+            json_data=type_info,
         )
         result = cast("TypeInfo", response.json())
         LOG.debug("Put type info %s for pv %s", result, pv)

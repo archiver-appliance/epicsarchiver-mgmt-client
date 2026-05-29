@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, InfoResultList
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, InfoResultList
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

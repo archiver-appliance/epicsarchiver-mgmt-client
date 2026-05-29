@@ -7,10 +7,10 @@ import logging
 
 import pytest
 import responses
-from epicsarchiver.common import ArchDbrType
-from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver import ArchiverResponseError
 from epicsarchiver_mgmt.archiver.mgmt import (
+    ArchDbrType,
     ArchivePVRequest,
     ArchiverMgmt,
     PutInfoType,
@@ -239,7 +239,7 @@ def test_add_alias_pv_does_not_exist() -> None:
         status=500,
         match_querystring=True,
     )
-    with pytest.raises(HTTPError):
+    with pytest.raises(ArchiverResponseError):
         archiver.add_alias(pv, newname)
 
 

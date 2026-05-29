@@ -3,20 +3,16 @@ from collections.abc import Generator
 from unittest.mock import MagicMock, patch
 
 import pytest
-from epicsarchiver import ArchiveEvent
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo
-from epicsarchiver.retrieval.archiver_retrieval.archiver_retrieval import ArchiverRetrieval
 from requests import HTTPError, Response
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
 from epicsarchiver_mgmt.commands.rename import (
-    DataIsTheSameError,
     TooMuchStoredDataError,
     rename,
     rename_and_append,
-    validate_data,
     validate_size,
 )
 from epicsarchiver_mgmt.commands.validation import RequestHTTPError
@@ -54,7 +50,6 @@ def rename_fixture() -> Generator[dict[str, MagicMock]]:
         "validate_not_same": patch("epicsarchiver_mgmt.commands.rename.validate_not_same"),
         "validate_pvs_status": patch("epicsarchiver_mgmt.commands.rename.validate_pvs_status"),
         "validate_size": patch("epicsarchiver_mgmt.commands.rename.validate_size"),
-        "validate_data": patch("epicsarchiver_mgmt.commands.rename.validate_data"),
         "PauseCommand": patch("epicsarchiver_mgmt.commands.rename.PauseCommand.run_command"),
         "ResumeCommand": patch("epicsarchiver_mgmt.commands.rename.ResumeCommand.run_command"),
         "validate_operation_results": patch("epicsarchiver_mgmt.commands.rename.validate_operation_results"),
@@ -141,7 +136,6 @@ def test_append_rename_success(
     rename_fixture["validate_not_same"].assert_called_once_with(renames)
     rename_fixture["validate_pvs_status"].assert_called()
     rename_fixture["validate_size"].assert_called()
-    rename_fixture["validate_data"].assert_called_once()
     rename_fixture["ResumeCommand"].assert_called_once_with(archiver_fqdns, ("new_pv1", "new_pv2"))
     assert rename_fixture["validate_pvs_status"].call_count == 2
     rename_fixture["validate_operation_results"].assert_called_once()
@@ -170,7 +164,6 @@ def test_append_rename_http_error(
     rename_fixture["validate_not_same"].assert_called_once_with(renames)
     rename_fixture["validate_pvs_status"].assert_called()
     rename_fixture["validate_size"].assert_called()
-    rename_fixture["validate_data"].assert_called_once()
     assert rename_fixture["validate_pvs_status"].call_count == 2
     rename_fixture["_parallel_execute_rename_and_append"].assert_called_once()
     assert "Error Renaming and Appending PVs" in caplog.text
@@ -201,36 +194,3 @@ def test_validate_not_large_failure() -> None:
             validate_size(mock_archiver, old_pvs)
 
         assert "Old PV old_pv1 has 1500.0 MB data stored. Manual intervention required." in str(exc_info.value)
-
-
-def test_validate_data_success(caplog: pytest.LogCaptureFixture) -> None:
-    """Test validate_data with PVs that have the same data."""
-    caplog.set_level(logging.INFO)
-    mock_archiver = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver.hostname = "archiver.example.com"
-    mock_ret = MagicMock(spec=ArchiverRetrieval)
-    mock_ret.get_events.return_value = [
-        ArchiveEvent(pv="old_pv1", val=1, secondsintoyear=0, year=2023, nanos=0, severity=0, status=0, field_values=[])
-    ]
-    mock_ret.get_events.return_value = []
-    with patch("epicsarchiver_mgmt.commands.rename.ArchiverRetrieval", return_value=mock_ret):
-        validate_data(mock_archiver, [("old_pv1", "new_pv1")])
-
-    assert "Data for old_pv1 is the same as new_pv1" not in caplog.text
-
-
-def test_validate_data_failure() -> None:
-    """Test validate_data with PVs that have the same data."""
-    mock_archiver = MagicMock(spec=ArchiverMgmtInfo)
-    mock_archiver.hostname = "archiver.example.com"
-    mock_ret = MagicMock(spec=ArchiverRetrieval)
-    mock_ret.get_events.return_value = [
-        ArchiveEvent(pv="old_pv1", val=1, secondsintoyear=0, year=2023, nanos=0, severity=0, status=0, field_values=[])
-    ]
-    mock_ret.get_events.return_value = [
-        ArchiveEvent(pv="new_pv1", val=1, secondsintoyear=0, year=2023, nanos=0, severity=0, status=0, field_values=[])
-    ]
-    with patch("epicsarchiver_mgmt.commands.rename.ArchiverRetrieval", return_value=mock_ret):
-        with pytest.raises(DataIsTheSameError) as exc_info:
-            validate_data(mock_archiver, [("old_pv1", "new_pv1")])
-        assert "Data for old_pv1 and new_pv1 is the same." in str(exc_info.value)

@@ -6,9 +6,9 @@ import logging
 from typing import TYPE_CHECKING
 
 import click
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
@@ -23,7 +23,7 @@ from epicsarchiver_mgmt.commands.validation import (
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from epicsarchiver.common import ArchDbrType
+    from epicsarchiver_mgmt.archiver.mgmt import ArchDbrType
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def change_type(archiver_fqdn: str, pvs: Sequence[str], new_type: ArchDbrType) -
     try:
         change_type_results = [archiver.change_type(pv, new_type) for pv in pvs]
     except HTTPError as e:
-        LOG.error("Error changing type of PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error changing type of PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error changing type of PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 

@@ -28,7 +28,7 @@ def log_location(command_path: str) -> Path:
         Path: The location of the log file.
     """
     current_time = datetime.datetime.now(tz=tz.tzlocal()).strftime("%Y-%m-%dT%H_%M_%S")
-    return Path(f"{current_time}_{command_path.replace(" ", "_")}_archiver_mgmt.log")
+    return Path(f"{current_time}_{command_path.replace(' ', '_')}_archiver_mgmt.log")
 
 
 def setup_file_handler(command_path: str) -> logging.Handler:

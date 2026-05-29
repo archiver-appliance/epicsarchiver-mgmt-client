@@ -6,9 +6,9 @@ import logging
 from itertools import starmap
 from typing import TYPE_CHECKING
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
@@ -65,7 +65,7 @@ def add_aliases(archiver_fqdn: str, alias_maps: Sequence[tuple[str, str]]) -> No
         add_alias_results = list(starmap(archiver.add_alias, alias_maps))
 
     except HTTPError as e:
-        LOG.error("Error adding alias PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error adding alias PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error adding alias PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 
@@ -118,7 +118,7 @@ def remove_aliases(archiver_fqdn: str, alias_maps: Sequence[tuple[str, str]]) ->
         remove_alias_results = list(starmap(archiver.remove_alias, alias_maps))
 
     except HTTPError as e:
-        LOG.error("Error removing alias PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error removing alias PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error removing alias PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 

@@ -2,12 +2,11 @@ import logging
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError, Response
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
-    OperationResult,
 )
 from epicsarchiver_mgmt.commands.basic_commands import (
     AbortCommand,
@@ -77,8 +76,8 @@ def test_basic_command_success(
     mock_archiver.info = "Archiver Info"
     # Simulate the list comprehension result
     mock_command_results = [
-        OperationResult(pv="PV1", statusCode=200, statusMessage="OK"),
-        OperationResult(pv="PV2", statusCode=200, statusMessage="OK"),
+        {"pv": "PV1", "statusCode": "200", "statusMessage": "OK"},
+        {"pv": "PV2", "statusCode": "200", "statusMessage": "OK"},
     ]
     # Make the mock iterable and return specific results for each call
     getattr(mock_archiver, archiver_command).side_effect = mock_command_results

@@ -8,9 +8,9 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
     OperationResult,
@@ -98,7 +98,7 @@ class BasicCommand:
                 command_results = list(executer.map(run_task, executer_input))
 
         except HTTPError as e:
-            LOG.error("Error %s PVs: %s", self.command_name, str(e))  # noqa: TRY400
+            LOG.error("Error %s PVs: %s", self.command_name, e)  # noqa: TRY400
             LOG.debug("Error %s PVs.", self.command_name, exc_info=True)
             raise RequestHTTPError(e) from e
 

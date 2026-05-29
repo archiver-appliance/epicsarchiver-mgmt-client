@@ -14,10 +14,10 @@ from epicsarchiver_mgmt.archiver.mgmt import (
     ArchiverMgmt,
 )
 from epicsarchiver_mgmt.commands import basic_commands
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.exceptions import BaseMgmtError
 
 if TYPE_CHECKING:
-    from epicsarchiver.mgmt.archiver_mgmt_info import InfoResultList
+    from epicsarchiver_mgmt.archiver.info import InfoResultList
 
 LOG: logging.Logger = logging.getLogger(__name__)
 

@@ -5,9 +5,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus, InfoResultList
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus, InfoResultList
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchivePVRequest,
     ArchiverMgmt,
@@ -100,7 +100,7 @@ def change_parameter(
             for request in archive_pv_requests
         ]
     except HTTPError as e:
-        LOG.error("Error changing sampling method and period of PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error changing sampling method and period of PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error changing sampling method and period of PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 

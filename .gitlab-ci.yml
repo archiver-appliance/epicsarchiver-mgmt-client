@@ -68,6 +68,11 @@ type-check:
   script:
     - hatch run type-check
 
+lint-docs:
+  stage: check
+  script:
+    - hatch run docs:check
+
 build:
   stage: build
   script:
@@ -80,3 +85,14 @@ build:
 build-pypi-package:
   only:
     - never
+
+pages:
+  stage: deploy
+  script:
+    - hatch run docs:build
+    - mv docs/build/html public
+  artifacts:
+    paths:
+      - public
+  only:
+    - tags

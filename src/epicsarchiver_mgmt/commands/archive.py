@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import logging
 
-from epicsarchiver.mgmt.archiver_mgmt_info import ArchiverMgmtInfo, ArchivingStatus
 from requests import HTTPError
 
+from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo, ArchivingStatus
 from epicsarchiver_mgmt.archiver.mgmt import (
     ArchivePVRequest,
     ArchiverMgmt,
@@ -17,7 +17,7 @@ from epicsarchiver_mgmt.commands.validation import (
     validate_operation_results,
     validate_pvs_status,
 )
-from epicsarchiver_mgmt.mgmt_exception import BaseMgmtError
+from epicsarchiver_mgmt.exceptions import BaseMgmtError
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ def archive(archiver_fqdn: str, pv_requests: list[ArchivePVRequest], *, dry_run:
     try:
         archive_results = archiver.archive_pv_requests(pv_requests)
     except HTTPError as e:
-        LOG.error("Error archiving PVs: %s", str(e))  # noqa: TRY400
+        LOG.error("Error archiving PVs: %s", e)  # noqa: TRY400
         LOG.debug("Error archiving PVs.", exc_info=True)
         raise RequestHTTPError(e) from e
 
