@@ -311,7 +311,7 @@ def test_put_pv_type_info_ok(caplog: pytest.LogCaptureFixture) -> None:
     archiver = ArchiverMgmt(TEST_DOMAIN)
     pv = "MY:PV"
     newtypeinfo = {
-        "hostName": "idmz-ro-epics-gw-tn.esss.lu.se",
+        "hostName": "epics-gw.example.org",
         "paused": "false",
         "creationTime": "2025-01-23T12:04:58.973Z",
         "lowerAlarmLimit": "NaN",

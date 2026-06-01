@@ -112,7 +112,7 @@ def test_get_pv_status() -> None:
 def test_get_pv_type_info() -> None:
     archiver = ArchiverMgmtInfo(TEST_DOMAIN)
     data = {
-        "hostName": "idmz-ro-epics-gw-tn.esss.lu.se",
+        "hostName": "epics-gw.example.org",
         "paused": "false",
         "creationTime": "2025-01-23T12:04:58.973Z",
         "lowerAlarmLimit": "NaN",
