@@ -9,10 +9,10 @@ from importlib.metadata import version as get_version
 
 # -- Project information -----------------------------------------------------
 
-project = "epicsarchiver-mgmt"
+project = "epicsarchiver-mgmt-client"
 copyright = "2026, European Spallation Source ERIC"  # noqa: A001
 authors = ["Sky Brewer"]
-release = get_version("epicsarchiver-mgmt")
+release = get_version("epicsarchiver-mgmt-client")
 version = ".".join(release.split(".")[0:2])
 
 

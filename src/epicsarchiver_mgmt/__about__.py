@@ -1,4 +1,4 @@
-"""The version of the epicsarchiver-mgmt package."""
+"""The version of the epicsarchiver-mgmt-client package."""
 
 # SPDX-FileCopyrightText: 2024-present skybrewer <sky.brewer@ess.eu>
 #

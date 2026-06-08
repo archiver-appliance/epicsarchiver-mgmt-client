@@ -67,7 +67,7 @@ class ArchiverMgmtInfo(BaseArchiverAppliance):
 
         from epicsarchiver_mgmt.archiver.info import ArchiverMgmtInfo
 
-        archappl = ArchiverMgmtInfo("archiver-01.tn.esss.lu.se")
+        archappl = ArchiverMgmtInfo("archiver.example.org")
         print(archappl.version)
         archappl.get_pv_status(pv="BPM*")
     """

@@ -1,0 +1,13 @@
+name: Merge to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_ci.yml
+
+  build:
+    uses: ./.github/workflows/_build.yml
