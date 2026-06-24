@@ -1,6 +1,4 @@
-"""The version of the epicsarchiver-mgmt-client package."""
-
 # SPDX-FileCopyrightText: 2024-present skybrewer <sky.brewer@ess.eu>
 #
 # SPDX-License-Identifier: MIT
-__version__ = "0.0.1"
+"""Epics archiver appliance mgmt client module."""
