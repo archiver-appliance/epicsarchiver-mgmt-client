@@ -1,4 +1,4 @@
-# mgmt_operations
+# Epics Archiver Appliance Management Python Client
 
 Project for tracking changes to the archiver via the mgmt operations interface. For example, change types, complicated renames, adding aliases.
 
@@ -64,3 +64,11 @@ Run formatting and check:
 ```console
 hatch fmt
 ```
+
+## License
+
+Distributed under the terms of the [MIT license][license]
+
+<!-- sphinx-include-end -->
+
+[license]: LICENSE

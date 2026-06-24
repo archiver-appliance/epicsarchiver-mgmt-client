@@ -1,7 +1,9 @@
 
-```{include} ../../README.md
-```
+[license]: license
 
+```{include} ../../README.md
+:end-before: <!-- sphinx-include-end -->
+```
 
 ```{toctree}
 :hidden:
@@ -18,6 +20,5 @@ License <license>
 * :ref:`search`
 ```
 
-[license]: license
 [command-line reference]: usage
 [reference]: autoapi
