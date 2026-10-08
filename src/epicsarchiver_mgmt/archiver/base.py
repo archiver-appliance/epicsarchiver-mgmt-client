@@ -169,6 +169,22 @@ class BaseArchiverAppliance:
         LOG.debug("GET url: %s", url)
         return self._request("GET", url, params=params)
 
+    def _get_json(
+        self,
+        endpoint: str,
+        params: dict[str, str | list[str]] | dict[str, str] | None = None,
+    ) -> Any:  # noqa: ANN401
+        """Send a GET request and unwrap the json from the given endpoint.
+
+        Args:
+            endpoint: API endpoint (relative or absolute)
+            params: Optional arguments to be sent
+
+        Returns:
+            :class:`Any` object as all json
+        """
+        return self._get(endpoint, params=params).json()
+
     def _post(
         self,
         endpoint: str,
