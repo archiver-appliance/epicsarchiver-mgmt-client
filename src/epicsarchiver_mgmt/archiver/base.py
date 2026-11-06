@@ -96,9 +96,14 @@ class BaseArchiverAppliance:
             hostname (str, optional): hostname of archiver. Defaults to "localhost".
             port (int, optional): port number of mgmt interface. Defaults to 17665.
         """
-        self.hostname = hostname
-        self.port = port
-        self.mgmt_url = mgmt_url(hostname, port)
+        if ":" in hostname:
+            temp_hostname, temp_port = hostname.split(":")
+            self.hostname = temp_hostname
+            self.port = int(temp_port)
+        else:
+            self.hostname = hostname
+            self.port = port
+        self.mgmt_url = mgmt_url(self.hostname, self.port)
         self._info: dict[str, str] = {}
         self._data_retrieval_url: str | None = None
         self.session = requests.Session()
